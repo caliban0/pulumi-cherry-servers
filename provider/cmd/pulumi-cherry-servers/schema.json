@@ -1,0 +1,111 @@
+{
+  "name": "pulumi-cherry-servers",
+  "displayName": "pulumi-cherry-servers",
+  "namespace": "caliban0",
+  "meta": {
+    "moduleFormat": "(.*)"
+  },
+  "language": {
+    "csharp": {
+      "respectSchemaVersion": true
+    },
+    "go": {
+      "generateResourceContainerTypes": true,
+      "importBasePath": "github.com/caliban0/pulumi-cherry-servers/sdk/go/pulumi-cherry-servers",
+      "respectSchemaVersion": true
+    },
+    "nodejs": {
+      "respectSchemaVersion": true
+    },
+    "python": {
+      "pyproject": {
+        "enabled": true
+      },
+      "respectSchemaVersion": true
+    }
+  },
+  "config": {
+    "variables": {
+      "token": {
+        "type": "string",
+        "description": "Cherry Servers API token.",
+        "secret": true
+      }
+    },
+    "defaults": [
+      "token"
+    ]
+  },
+  "types": {
+    "pulumi-cherry-servers:provider:ProjectBgpState": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "localASN": {
+          "type": "integer"
+        }
+      },
+      "type": "object",
+      "required": [
+        "enabled",
+        "localASN"
+      ]
+    }
+  },
+  "provider": {
+    "properties": {
+      "token": {
+        "type": "string",
+        "description": "Cherry Servers API token.",
+        "secret": true
+      }
+    },
+    "type": "object",
+    "required": [
+      "token"
+    ],
+    "inputProperties": {
+      "token": {
+        "type": "string",
+        "description": "Cherry Servers API token.",
+        "secret": true
+      }
+    },
+    "requiredInputs": [
+      "token"
+    ]
+  },
+  "resources": {
+    "pulumi-cherry-servers:provider:Project": {
+      "properties": {
+        "bgp": {
+          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBgpState"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "bgp",
+        "name"
+      ],
+      "inputProperties": {
+        "bgp": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "team": {
+          "type": "integer"
+        }
+      },
+      "requiredInputs": [
+        "name",
+        "team"
+      ]
+    }
+  }
+}
