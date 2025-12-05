@@ -18,10 +18,20 @@ type Project struct {
 	getClient projectClientFactory
 }
 
+func (p *Project) Annotate(a infer.Annotator) {
+	a.Describe(&p, "A Cherry Servers project.")
+}
+
 type ProjectArgs struct {
 	Name string `pulumi:"name"`
 	Team int    `pulumi:"team"`
 	Bgp  bool   `pulumi:"bgp,optional"`
+}
+
+func (p *ProjectArgs) Annotate(a infer.Annotator) {
+	a.Describe(&p.Name, "Project name.")
+	a.Describe(&p.Team, "ID of the team the project will belong to.")
+	a.Describe(&p.Bgp, "Whether BGP should be enabled for the project.")
 }
 
 type ProjectBgpState struct {
@@ -29,10 +39,27 @@ type ProjectBgpState struct {
 	LocalASN int  `pulumi:"localASN"`
 }
 
+func (p *ProjectBgpState) Annotate(a infer.Annotator) {
+	a.Describe(&p.Enabled, "Whether BGP is enabled.")
+	a.Describe(&p.LocalASN, "LocalASN assigned to the project.")
+}
+
 type ProjectState struct {
 	Name string          `pulumi:"name"`
 	Bgp  ProjectBgpState `pulumi:"bgp"`
 }
+
+func (p *ProjectState) Annotate(a infer.Annotator) {
+	a.Describe(&p.Name, "Project name.")
+	a.Describe(&p.Bgp, "Project BGP status.")
+}
+
+var (
+	_ infer.Annotated = (*Project)(nil)
+	_ infer.Annotated = (*ProjectArgs)(nil)
+	_ infer.Annotated = (*ProjectBgpState)(nil)
+	_ infer.Annotated = (*ProjectState)(nil)
+)
 
 func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArgs]) (
 	infer.CreateResponse[ProjectState], error) {
