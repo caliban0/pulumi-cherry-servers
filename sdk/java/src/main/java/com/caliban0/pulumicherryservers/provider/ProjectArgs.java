@@ -18,23 +18,47 @@ public final class ProjectArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final ProjectArgs Empty = new ProjectArgs();
 
+    /**
+     * Whether BGP should be enabled for the project.
+     * 
+     */
     @Import(name="bgp")
     private @Nullable Output<Boolean> bgp;
 
+    /**
+     * @return Whether BGP should be enabled for the project.
+     * 
+     */
     public Optional<Output<Boolean>> bgp() {
         return Optional.ofNullable(this.bgp);
     }
 
+    /**
+     * Project name.
+     * 
+     */
     @Import(name="name", required=true)
     private Output<String> name;
 
+    /**
+     * @return Project name.
+     * 
+     */
     public Output<String> name() {
         return this.name;
     }
 
+    /**
+     * ID of the team the project will belong to.
+     * 
+     */
     @Import(name="team", required=true)
     private Output<Integer> team;
 
+    /**
+     * @return ID of the team the project will belong to.
+     * 
+     */
     public Output<Integer> team() {
         return this.team;
     }
@@ -65,29 +89,65 @@ public final class ProjectArgs extends com.pulumi.resources.ResourceArgs {
             $ = new ProjectArgs(Objects.requireNonNull(defaults));
         }
 
+        /**
+         * @param bgp Whether BGP should be enabled for the project.
+         * 
+         * @return builder
+         * 
+         */
         public Builder bgp(@Nullable Output<Boolean> bgp) {
             $.bgp = bgp;
             return this;
         }
 
+        /**
+         * @param bgp Whether BGP should be enabled for the project.
+         * 
+         * @return builder
+         * 
+         */
         public Builder bgp(Boolean bgp) {
             return bgp(Output.of(bgp));
         }
 
+        /**
+         * @param name Project name.
+         * 
+         * @return builder
+         * 
+         */
         public Builder name(Output<String> name) {
             $.name = name;
             return this;
         }
 
+        /**
+         * @param name Project name.
+         * 
+         * @return builder
+         * 
+         */
         public Builder name(String name) {
             return name(Output.of(name));
         }
 
+        /**
+         * @param team ID of the team the project will belong to.
+         * 
+         * @return builder
+         * 
+         */
         public Builder team(Output<Integer> team) {
             $.team = team;
             return this;
         }
 
+        /**
+         * @param team ID of the team the project will belong to.
+         * 
+         * @return builder
+         * 
+         */
         public Builder team(Integer team) {
             return team(Output.of(team));
         }

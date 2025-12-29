@@ -13,17 +13,37 @@ import com.pulumi.core.internal.Codegen;
 import java.lang.String;
 import javax.annotation.Nullable;
 
+/**
+ * A Cherry Servers project.
+ * 
+ */
 @ResourceType(type="pulumi-cherry-servers:provider:Project")
 public class Project extends com.pulumi.resources.CustomResource {
+    /**
+     * Project BGP status.
+     * 
+     */
     @Export(name="bgp", refs={ProjectBgpState.class}, tree="[0]")
     private Output<ProjectBgpState> bgp;
 
+    /**
+     * @return Project BGP status.
+     * 
+     */
     public Output<ProjectBgpState> bgp() {
         return this.bgp;
     }
+    /**
+     * Project name.
+     * 
+     */
     @Export(name="name", refs={String.class}, tree="[0]")
     private Output<String> name;
 
+    /**
+     * @return Project name.
+     * 
+     */
     public Output<String> name() {
         return this.name;
     }

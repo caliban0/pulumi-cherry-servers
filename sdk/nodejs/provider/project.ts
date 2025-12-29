@@ -6,6 +6,9 @@ import * as inputs from "../types/input";
 import * as outputs from "../types/output";
 import * as utilities from "../utilities";
 
+/**
+ * A Cherry Servers project.
+ */
 export class Project extends pulumi.CustomResource {
     /**
      * Get an existing Project resource's state with the given name, ID, and optional extra
@@ -33,7 +36,13 @@ export class Project extends pulumi.CustomResource {
         return obj['__pulumiType'] === Project.__pulumiType;
     }
 
+    /**
+     * Project BGP status.
+     */
     declare public readonly bgp: pulumi.Output<outputs.provider.ProjectBgpState>;
+    /**
+     * Project name.
+     */
     declare public readonly name: pulumi.Output<string>;
 
     /**
@@ -69,7 +78,16 @@ export class Project extends pulumi.CustomResource {
  * The set of arguments for constructing a Project resource.
  */
 export interface ProjectArgs {
+    /**
+     * Whether BGP should be enabled for the project.
+     */
     bgp?: pulumi.Input<boolean>;
+    /**
+     * Project name.
+     */
     name: pulumi.Input<string>;
+    /**
+     * ID of the team the project will belong to.
+     */
     team: pulumi.Input<number>;
 }

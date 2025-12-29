@@ -10,12 +10,21 @@ using Pulumi;
 
 namespace Caliban0.PulumiCherryServers.Provider
 {
+    /// <summary>
+    /// A Cherry Servers project.
+    /// </summary>
     [PulumiCherryServersResourceType("pulumi-cherry-servers:provider:Project")]
     public partial class Project : global::Pulumi.CustomResource
     {
+        /// <summary>
+        /// Project BGP status.
+        /// </summary>
         [Output("bgp")]
         public Output<Outputs.ProjectBgpState> Bgp { get; private set; } = null!;
 
+        /// <summary>
+        /// Project name.
+        /// </summary>
         [Output("name")]
         public Output<string> Name { get; private set; } = null!;
 
@@ -64,12 +73,21 @@ namespace Caliban0.PulumiCherryServers.Provider
 
     public sealed class ProjectArgs : global::Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// Whether BGP should be enabled for the project.
+        /// </summary>
         [Input("bgp")]
         public Input<bool>? Bgp { get; set; }
 
+        /// <summary>
+        /// Project name.
+        /// </summary>
         [Input("name", required: true)]
         public Input<string> Name { get; set; } = null!;
 
+        /// <summary>
+        /// ID of the team the project will belong to.
+        /// </summary>
         [Input("team", required: true)]
         public Input<int> Team { get; set; } = null!;
 

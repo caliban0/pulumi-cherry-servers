@@ -7,7 +7,13 @@ import * as outputs from "../types/output";
 
 export namespace provider {
     export interface ProjectBgpState {
+        /**
+         * Whether BGP is enabled.
+         */
         enabled: boolean;
+        /**
+         * LocalASN assigned to the project.
+         */
         localASN: number;
     }
 

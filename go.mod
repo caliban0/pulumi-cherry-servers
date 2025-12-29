@@ -3,6 +3,7 @@ module github.com/caliban0/pulumi-cherry-servers
 go 1.25.4
 
 require (
+	github.com/cherryservers/cherrygo/v3 v3.8.0
 	github.com/pulumi/pulumi-go-provider v1.2.0
 	github.com/pulumi/pulumi/sdk/v3 v3.169.0
 )
@@ -23,7 +24,6 @@ require (
 	github.com/charmbracelet/bubbletea v0.25.0 // indirect
 	github.com/charmbracelet/lipgloss v0.7.1 // indirect
 	github.com/cheggaaa/pb v1.0.29 // indirect
-	github.com/cherryservers/cherrygo/v3 v3.8.0 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.6 // indirect

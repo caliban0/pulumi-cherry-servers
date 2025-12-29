@@ -2,9 +2,12 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/cherryservers/cherrygo/v3"
+	prov "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
@@ -63,6 +66,10 @@ var (
 
 func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArgs]) (
 	infer.CreateResponse[ProjectState], error) {
+	if req.DryRun {
+		return infer.CreateResponse[ProjectState]{}, nil
+	}
+
 	client, err := p.getClient(infer.GetConfig[Config](ctx))
 	if err != nil {
 		return infer.CreateResponse[ProjectState]{}, err
@@ -84,4 +91,23 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 				Enabled: project.Bgp.Enabled, LocalASN: project.Bgp.LocalASN},
 		},
 	}, nil
+}
+
+func (p *Project) Delete(ctx context.Context, req infer.DeleteRequest[ProjectState]) (infer.DeleteResponse, error) {
+	client, err := p.getClient(infer.GetConfig[Config](ctx))
+	if err != nil {
+		return infer.DeleteResponse{}, err
+	}
+
+	id, err := strconv.Atoi(req.ID)
+	if err != nil {
+		return infer.DeleteResponse{}, fmt.Errorf("id not an int: %w", err)
+	}
+
+	r, err := client.Delete(id)
+	if err != nil && r.StatusCode == http.StatusNotFound {
+		prov.GetLogger(ctx).Warningf("project %s already deleted", req.ID)
+		err = nil
+	}
+	return infer.DeleteResponse{}, err
 }

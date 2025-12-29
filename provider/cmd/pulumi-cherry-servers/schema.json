@@ -40,10 +40,12 @@
     "pulumi-cherry-servers:provider:ProjectBgpState": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether BGP is enabled."
         },
         "localASN": {
-          "type": "integer"
+          "type": "integer",
+          "description": "LocalASN assigned to the project."
         }
       },
       "type": "object",
@@ -78,12 +80,15 @@
   },
   "resources": {
     "pulumi-cherry-servers:provider:Project": {
+      "description": "A Cherry Servers project.",
       "properties": {
         "bgp": {
-          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBgpState"
+          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBgpState",
+          "description": "Project BGP status."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Project name."
         }
       },
       "type": "object",
@@ -93,13 +98,16 @@
       ],
       "inputProperties": {
         "bgp": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether BGP should be enabled for the project."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Project name."
         },
         "team": {
-          "type": "integer"
+          "type": "integer",
+          "description": "ID of the team the project will belong to."
         }
       },
       "requiredInputs": [

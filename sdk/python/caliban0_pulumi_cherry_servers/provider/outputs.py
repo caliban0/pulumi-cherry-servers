@@ -40,17 +40,27 @@ class ProjectBgpState(dict):
     def __init__(__self__, *,
                  enabled: _builtins.bool,
                  local_asn: _builtins.int):
+        """
+        :param _builtins.bool enabled: Whether BGP is enabled.
+        :param _builtins.int local_asn: LocalASN assigned to the project.
+        """
         pulumi.set(__self__, "enabled", enabled)
         pulumi.set(__self__, "local_asn", local_asn)
 
     @_builtins.property
     @pulumi.getter
     def enabled(self) -> _builtins.bool:
+        """
+        Whether BGP is enabled.
+        """
         return pulumi.get(self, "enabled")
 
     @_builtins.property
     @pulumi.getter(name="localASN")
     def local_asn(self) -> _builtins.int:
+        """
+        LocalASN assigned to the project.
+        """
         return pulumi.get(self, "local_asn")
 
 

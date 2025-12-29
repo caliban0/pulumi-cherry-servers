@@ -12,11 +12,14 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// A Cherry Servers project.
 type Project struct {
 	pulumi.CustomResourceState
 
-	Bgp  ProjectBgpStateOutput `pulumi:"bgp"`
-	Name pulumi.StringOutput   `pulumi:"name"`
+	// Project BGP status.
+	Bgp ProjectBgpStateOutput `pulumi:"bgp"`
+	// Project name.
+	Name pulumi.StringOutput `pulumi:"name"`
 }
 
 // NewProject registers a new resource with the given unique name, arguments, and options.
@@ -65,15 +68,21 @@ func (ProjectState) ElementType() reflect.Type {
 }
 
 type projectArgs struct {
-	Bgp  *bool  `pulumi:"bgp"`
+	// Whether BGP should be enabled for the project.
+	Bgp *bool `pulumi:"bgp"`
+	// Project name.
 	Name string `pulumi:"name"`
-	Team int    `pulumi:"team"`
+	// ID of the team the project will belong to.
+	Team int `pulumi:"team"`
 }
 
 // The set of arguments for constructing a Project resource.
 type ProjectArgs struct {
-	Bgp  pulumi.BoolPtrInput
+	// Whether BGP should be enabled for the project.
+	Bgp pulumi.BoolPtrInput
+	// Project name.
 	Name pulumi.StringInput
+	// ID of the team the project will belong to.
 	Team pulumi.IntInput
 }
 
@@ -164,10 +173,12 @@ func (o ProjectOutput) ToProjectOutputWithContext(ctx context.Context) ProjectOu
 	return o
 }
 
+// Project BGP status.
 func (o ProjectOutput) Bgp() ProjectBgpStateOutput {
 	return o.ApplyT(func(v *Project) ProjectBgpStateOutput { return v.Bgp }).(ProjectBgpStateOutput)
 }
 
+// Project name.
 func (o ProjectOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *Project) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }

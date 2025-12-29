@@ -14,8 +14,10 @@ import (
 var _ = internal.GetEnvOrDefault
 
 type ProjectBgpState struct {
-	Enabled  bool `pulumi:"enabled"`
-	LocalASN int  `pulumi:"localASN"`
+	// Whether BGP is enabled.
+	Enabled bool `pulumi:"enabled"`
+	// LocalASN assigned to the project.
+	LocalASN int `pulumi:"localASN"`
 }
 
 type ProjectBgpStateOutput struct{ *pulumi.OutputState }
@@ -32,10 +34,12 @@ func (o ProjectBgpStateOutput) ToProjectBgpStateOutputWithContext(ctx context.Co
 	return o
 }
 
+// Whether BGP is enabled.
 func (o ProjectBgpStateOutput) Enabled() pulumi.BoolOutput {
 	return o.ApplyT(func(v ProjectBgpState) bool { return v.Enabled }).(pulumi.BoolOutput)
 }
 
+// LocalASN assigned to the project.
 func (o ProjectBgpStateOutput) LocalASN() pulumi.IntOutput {
 	return o.ApplyT(func(v ProjectBgpState) int { return v.LocalASN }).(pulumi.IntOutput)
 }

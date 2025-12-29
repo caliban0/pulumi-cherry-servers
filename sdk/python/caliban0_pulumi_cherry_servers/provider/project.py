@@ -25,6 +25,9 @@ class ProjectArgs:
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None):
         """
         The set of arguments for constructing a Project resource.
+        :param pulumi.Input[_builtins.str] name: Project name.
+        :param pulumi.Input[_builtins.int] team: ID of the team the project will belong to.
+        :param pulumi.Input[_builtins.bool] bgp: Whether BGP should be enabled for the project.
         """
         pulumi.set(__self__, "name", name)
         pulumi.set(__self__, "team", team)
@@ -34,6 +37,9 @@ class ProjectArgs:
     @_builtins.property
     @pulumi.getter
     def name(self) -> pulumi.Input[_builtins.str]:
+        """
+        Project name.
+        """
         return pulumi.get(self, "name")
 
     @name.setter
@@ -43,6 +49,9 @@ class ProjectArgs:
     @_builtins.property
     @pulumi.getter
     def team(self) -> pulumi.Input[_builtins.int]:
+        """
+        ID of the team the project will belong to.
+        """
         return pulumi.get(self, "team")
 
     @team.setter
@@ -52,6 +61,9 @@ class ProjectArgs:
     @_builtins.property
     @pulumi.getter
     def bgp(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether BGP should be enabled for the project.
+        """
         return pulumi.get(self, "bgp")
 
     @bgp.setter
@@ -70,9 +82,13 @@ class Project(pulumi.CustomResource):
                  team: Optional[pulumi.Input[_builtins.int]] = None,
                  __props__=None):
         """
-        Create a Project resource with the given unique name, props, and options.
+        A Cherry Servers project.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[_builtins.bool] bgp: Whether BGP should be enabled for the project.
+        :param pulumi.Input[_builtins.str] name: Project name.
+        :param pulumi.Input[_builtins.int] team: ID of the team the project will belong to.
         """
         ...
     @overload
@@ -81,7 +97,8 @@ class Project(pulumi.CustomResource):
                  args: ProjectArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Create a Project resource with the given unique name, props, and options.
+        A Cherry Servers project.
+
         :param str resource_name: The name of the resource.
         :param ProjectArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -145,10 +162,16 @@ class Project(pulumi.CustomResource):
     @_builtins.property
     @pulumi.getter
     def bgp(self) -> pulumi.Output['outputs.ProjectBgpState']:
+        """
+        Project BGP status.
+        """
         return pulumi.get(self, "bgp")
 
     @_builtins.property
     @pulumi.getter
     def name(self) -> pulumi.Output[_builtins.str]:
+        """
+        Project name.
+        """
         return pulumi.get(self, "name")
 

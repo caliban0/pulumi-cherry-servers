@@ -11,13 +11,29 @@ import java.util.Objects;
 
 @CustomType
 public final class ProjectBgpState {
+    /**
+     * @return Whether BGP is enabled.
+     * 
+     */
     private Boolean enabled;
+    /**
+     * @return LocalASN assigned to the project.
+     * 
+     */
     private Integer localASN;
 
     private ProjectBgpState() {}
+    /**
+     * @return Whether BGP is enabled.
+     * 
+     */
     public Boolean enabled() {
         return this.enabled;
     }
+    /**
+     * @return LocalASN assigned to the project.
+     * 
+     */
     public Integer localASN() {
         return this.localASN;
     }
