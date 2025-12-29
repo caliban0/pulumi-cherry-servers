@@ -44,6 +44,7 @@ export class Project extends pulumi.CustomResource {
      * Project name.
      */
     declare public readonly name: pulumi.Output<string>;
+    declare public readonly team: pulumi.Output<number>;
 
     /**
      * Create a Project resource with the given unique name, arguments, and options.
@@ -56,9 +57,6 @@ export class Project extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if (args?.name === undefined && !opts.urn) {
-                throw new Error("Missing required property 'name'");
-            }
             if (args?.team === undefined && !opts.urn) {
                 throw new Error("Missing required property 'team'");
             }
@@ -68,6 +66,7 @@ export class Project extends pulumi.CustomResource {
         } else {
             resourceInputs["bgp"] = undefined /*out*/;
             resourceInputs["name"] = undefined /*out*/;
+            resourceInputs["team"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Project.__pulumiType, name, resourceInputs, opts);
@@ -85,7 +84,7 @@ export interface ProjectArgs {
     /**
      * Project name.
      */
-    name: pulumi.Input<string>;
+    name?: pulumi.Input<string>;
     /**
      * ID of the team the project will belong to.
      */

@@ -89,12 +89,16 @@
         "name": {
           "type": "string",
           "description": "Project name."
+        },
+        "team": {
+          "type": "integer"
         }
       },
       "type": "object",
       "required": [
         "bgp",
-        "name"
+        "name",
+        "team"
       ],
       "inputProperties": {
         "bgp": {
@@ -111,7 +115,6 @@
         }
       },
       "requiredInputs": [
-        "name",
         "team"
       ]
     }

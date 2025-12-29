@@ -20,31 +20,20 @@ __all__ = ['ProjectArgs', 'Project']
 @pulumi.input_type
 class ProjectArgs:
     def __init__(__self__, *,
-                 name: pulumi.Input[_builtins.str],
                  team: pulumi.Input[_builtins.int],
-                 bgp: Optional[pulumi.Input[_builtins.bool]] = None):
+                 bgp: Optional[pulumi.Input[_builtins.bool]] = None,
+                 name: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a Project resource.
-        :param pulumi.Input[_builtins.str] name: Project name.
         :param pulumi.Input[_builtins.int] team: ID of the team the project will belong to.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP should be enabled for the project.
+        :param pulumi.Input[_builtins.str] name: Project name.
         """
-        pulumi.set(__self__, "name", name)
         pulumi.set(__self__, "team", team)
         if bgp is not None:
             pulumi.set(__self__, "bgp", bgp)
-
-    @_builtins.property
-    @pulumi.getter
-    def name(self) -> pulumi.Input[_builtins.str]:
-        """
-        Project name.
-        """
-        return pulumi.get(self, "name")
-
-    @name.setter
-    def name(self, value: pulumi.Input[_builtins.str]):
-        pulumi.set(self, "name", value)
+        if name is not None:
+            pulumi.set(__self__, "name", name)
 
     @_builtins.property
     @pulumi.getter
@@ -69,6 +58,18 @@ class ProjectArgs:
     @bgp.setter
     def bgp(self, value: Optional[pulumi.Input[_builtins.bool]]):
         pulumi.set(self, "bgp", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Project name.
+        """
+        return pulumi.get(self, "name")
+
+    @name.setter
+    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "name", value)
 
 
 @pulumi.type_token("pulumi-cherry-servers:provider:Project")
@@ -127,8 +128,6 @@ class Project(pulumi.CustomResource):
             __props__ = ProjectArgs.__new__(ProjectArgs)
 
             __props__.__dict__["bgp"] = bgp
-            if name is None and not opts.urn:
-                raise TypeError("Missing required property 'name'")
             __props__.__dict__["name"] = name
             if team is None and not opts.urn:
                 raise TypeError("Missing required property 'team'")
@@ -157,6 +156,7 @@ class Project(pulumi.CustomResource):
 
         __props__.__dict__["bgp"] = None
         __props__.__dict__["name"] = None
+        __props__.__dict__["team"] = None
         return Project(resource_name, opts=opts, __props__=__props__)
 
     @_builtins.property
@@ -174,4 +174,9 @@ class Project(pulumi.CustomResource):
         Project name.
         """
         return pulumi.get(self, "name")
+
+    @_builtins.property
+    @pulumi.getter
+    def team(self) -> pulumi.Output[_builtins.int]:
+        return pulumi.get(self, "team")
 

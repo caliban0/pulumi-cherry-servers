@@ -10,6 +10,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
 import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
+import java.lang.Integer;
 import java.lang.String;
 import javax.annotation.Nullable;
 
@@ -46,6 +47,12 @@ public class Project extends com.pulumi.resources.CustomResource {
      */
     public Output<String> name() {
         return this.name;
+    }
+    @Export(name="team", refs={Integer.class}, tree="[0]")
+    private Output<Integer> team;
+
+    public Output<Integer> team() {
+        return this.team;
     }
 
     /**

@@ -20,6 +20,7 @@ type Project struct {
 	Bgp ProjectBgpStateOutput `pulumi:"bgp"`
 	// Project name.
 	Name pulumi.StringOutput `pulumi:"name"`
+	Team pulumi.IntOutput    `pulumi:"team"`
 }
 
 // NewProject registers a new resource with the given unique name, arguments, and options.
@@ -29,9 +30,6 @@ func NewProject(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.Name == nil {
-		return nil, errors.New("invalid value for required argument 'Name'")
-	}
 	if args.Team == nil {
 		return nil, errors.New("invalid value for required argument 'Team'")
 	}
@@ -71,7 +69,7 @@ type projectArgs struct {
 	// Whether BGP should be enabled for the project.
 	Bgp *bool `pulumi:"bgp"`
 	// Project name.
-	Name string `pulumi:"name"`
+	Name *string `pulumi:"name"`
 	// ID of the team the project will belong to.
 	Team int `pulumi:"team"`
 }
@@ -81,7 +79,7 @@ type ProjectArgs struct {
 	// Whether BGP should be enabled for the project.
 	Bgp pulumi.BoolPtrInput
 	// Project name.
-	Name pulumi.StringInput
+	Name pulumi.StringPtrInput
 	// ID of the team the project will belong to.
 	Team pulumi.IntInput
 }
@@ -181,6 +179,10 @@ func (o ProjectOutput) Bgp() ProjectBgpStateOutput {
 // Project name.
 func (o ProjectOutput) Name() pulumi.StringOutput {
 	return o.ApplyT(func(v *Project) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
+}
+
+func (o ProjectOutput) Team() pulumi.IntOutput {
+	return o.ApplyT(func(v *Project) pulumi.IntOutput { return v.Team }).(pulumi.IntOutput)
 }
 
 type ProjectArrayOutput struct{ *pulumi.OutputState }

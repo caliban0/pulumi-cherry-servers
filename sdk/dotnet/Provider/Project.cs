@@ -28,6 +28,9 @@ namespace Caliban0.PulumiCherryServers.Provider
         [Output("name")]
         public Output<string> Name { get; private set; } = null!;
 
+        [Output("team")]
+        public Output<int> Team { get; private set; } = null!;
+
 
         /// <summary>
         /// Create a Project resource with the given unique name, arguments, and options.
@@ -82,8 +85,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// Project name.
         /// </summary>
-        [Input("name", required: true)]
-        public Input<string> Name { get; set; } = null!;
+        [Input("name")]
+        public Input<string>? Name { get; set; }
 
         /// <summary>
         /// ID of the team the project will belong to.
