@@ -204,7 +204,11 @@ func (p *Project) Read(
 		return infer.ReadResponse[ProjectArgs, ProjectState]{}, err
 	}
 
-	project, _, err := client.Get(id, nil)
+	project, r, err := client.Get(id, nil)
+	if err != nil && r.StatusCode == http.StatusNotFound {
+		return infer.ReadResponse[ProjectArgs, ProjectState]{}, nil
+	}
+
 	return infer.ReadResponse[ProjectArgs, ProjectState]{
 		ID: req.ID,
 		Inputs: ProjectArgs{
