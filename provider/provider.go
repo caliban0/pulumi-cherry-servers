@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"os"
+
 	"github.com/cherryservers/cherrygo/v3"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
@@ -24,6 +26,10 @@ func (c *Config) Annotate(a infer.Annotator) {
 var _ infer.Annotated = (*Config)(nil)
 
 func getProjectClient(cfg Config) (projectClient, error) {
+	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
+		cfg.Token = token
+	}
+
 	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
 	if err != nil {
 		return nil, err
@@ -39,7 +45,7 @@ func Provider() (p.Provider, error) {
 		WithResources(
 			infer.Resource(&Project{getProjectClient}),
 		).
-		WithDisplayName("pulumi-cherry-servers").
+		WithDisplayName(Name).
 		WithNamespace("caliban0").
 		WithConfig(infer.Config(&Config{})).
 		Build()
