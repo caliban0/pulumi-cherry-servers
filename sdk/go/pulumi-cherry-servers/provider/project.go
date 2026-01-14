@@ -17,7 +17,7 @@ type Project struct {
 	pulumi.CustomResourceState
 
 	// Project BGP status.
-	Bgp ProjectBgpStateOutput `pulumi:"bgp"`
+	Bgp ProjectBGPStateOutput `pulumi:"bgp"`
 	// Project name.
 	Name pulumi.StringOutput `pulumi:"name"`
 	Team pulumi.IntOutput    `pulumi:"team"`
@@ -172,8 +172,8 @@ func (o ProjectOutput) ToProjectOutputWithContext(ctx context.Context) ProjectOu
 }
 
 // Project BGP status.
-func (o ProjectOutput) Bgp() ProjectBgpStateOutput {
-	return o.ApplyT(func(v *Project) ProjectBgpStateOutput { return v.Bgp }).(ProjectBgpStateOutput)
+func (o ProjectOutput) Bgp() ProjectBGPStateOutput {
+	return o.ApplyT(func(v *Project) ProjectBGPStateOutput { return v.Bgp }).(ProjectBGPStateOutput)
 }
 
 // Project name.

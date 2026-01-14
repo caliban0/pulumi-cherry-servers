@@ -6,7 +6,7 @@ import * as inputs from "../types/input";
 import * as outputs from "../types/output";
 
 export namespace provider {
-    export interface ProjectBgpState {
+    export interface ProjectBGPState {
         /**
          * Whether BGP is enabled.
          */

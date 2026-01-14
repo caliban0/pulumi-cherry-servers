@@ -13,37 +13,37 @@ import (
 
 var _ = internal.GetEnvOrDefault
 
-type ProjectBgpState struct {
+type ProjectBGPState struct {
 	// Whether BGP is enabled.
 	Enabled bool `pulumi:"enabled"`
 	// LocalASN assigned to the project.
 	LocalASN int `pulumi:"localASN"`
 }
 
-type ProjectBgpStateOutput struct{ *pulumi.OutputState }
+type ProjectBGPStateOutput struct{ *pulumi.OutputState }
 
-func (ProjectBgpStateOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*ProjectBgpState)(nil)).Elem()
+func (ProjectBGPStateOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*ProjectBGPState)(nil)).Elem()
 }
 
-func (o ProjectBgpStateOutput) ToProjectBgpStateOutput() ProjectBgpStateOutput {
+func (o ProjectBGPStateOutput) ToProjectBGPStateOutput() ProjectBGPStateOutput {
 	return o
 }
 
-func (o ProjectBgpStateOutput) ToProjectBgpStateOutputWithContext(ctx context.Context) ProjectBgpStateOutput {
+func (o ProjectBGPStateOutput) ToProjectBGPStateOutputWithContext(ctx context.Context) ProjectBGPStateOutput {
 	return o
 }
 
 // Whether BGP is enabled.
-func (o ProjectBgpStateOutput) Enabled() pulumi.BoolOutput {
-	return o.ApplyT(func(v ProjectBgpState) bool { return v.Enabled }).(pulumi.BoolOutput)
+func (o ProjectBGPStateOutput) Enabled() pulumi.BoolOutput {
+	return o.ApplyT(func(v ProjectBGPState) bool { return v.Enabled }).(pulumi.BoolOutput)
 }
 
 // LocalASN assigned to the project.
-func (o ProjectBgpStateOutput) LocalASN() pulumi.IntOutput {
-	return o.ApplyT(func(v ProjectBgpState) int { return v.LocalASN }).(pulumi.IntOutput)
+func (o ProjectBGPStateOutput) LocalASN() pulumi.IntOutput {
+	return o.ApplyT(func(v ProjectBGPState) int { return v.LocalASN }).(pulumi.IntOutput)
 }
 
 func init() {
-	pulumi.RegisterOutputType(ProjectBgpStateOutput{})
+	pulumi.RegisterOutputType(ProjectBGPStateOutput{})
 }

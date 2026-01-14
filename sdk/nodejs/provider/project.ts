@@ -39,7 +39,7 @@ export class Project extends pulumi.CustomResource {
     /**
      * Project BGP status.
      */
-    declare public readonly bgp: pulumi.Output<outputs.provider.ProjectBgpState>;
+    declare public readonly bgp: pulumi.Output<outputs.provider.ProjectBGPState>;
     /**
      * Project name.
      */

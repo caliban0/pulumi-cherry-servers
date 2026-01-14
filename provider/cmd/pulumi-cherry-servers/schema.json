@@ -37,7 +37,7 @@
     ]
   },
   "types": {
-    "pulumi-cherry-servers:provider:ProjectBgpState": {
+    "pulumi-cherry-servers:provider:ProjectBGPState": {
       "properties": {
         "enabled": {
           "type": "boolean",
@@ -83,7 +83,7 @@
       "description": "A Cherry Servers project.",
       "properties": {
         "bgp": {
-          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBgpState",
+          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBGPState",
           "description": "Project BGP status."
         },
         "name": {

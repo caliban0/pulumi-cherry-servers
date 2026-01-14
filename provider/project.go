@@ -28,21 +28,21 @@ func (p *Project) Annotate(a infer.Annotator) {
 type ProjectArgs struct {
 	Name string `pulumi:"name,optional"`
 	Team int    `pulumi:"team"`
-	Bgp  bool   `pulumi:"bgp,optional"`
+	BGP  bool   `pulumi:"bgp,optional"`
 }
 
 func (p *ProjectArgs) Annotate(a infer.Annotator) {
 	a.Describe(&p.Name, "Project name.")
 	a.Describe(&p.Team, "ID of the team the project will belong to.")
-	a.Describe(&p.Bgp, "Whether BGP should be enabled for the project.")
+	a.Describe(&p.BGP, "Whether BGP should be enabled for the project.")
 }
 
-type ProjectBgpState struct {
+type ProjectBGPState struct {
 	Enabled  bool `pulumi:"enabled"`
 	LocalASN int  `pulumi:"localASN"`
 }
 
-func (p *ProjectBgpState) Annotate(a infer.Annotator) {
+func (p *ProjectBGPState) Annotate(a infer.Annotator) {
 	a.Describe(&p.Enabled, "Whether BGP is enabled.")
 	a.Describe(&p.LocalASN, "LocalASN assigned to the project.")
 }
@@ -50,18 +50,18 @@ func (p *ProjectBgpState) Annotate(a infer.Annotator) {
 type ProjectState struct {
 	Name string          `pulumi:"name"`
 	Team int             `pulumi:"team"`
-	Bgp  ProjectBgpState `pulumi:"bgp"`
+	BGP  ProjectBGPState `pulumi:"bgp"`
 }
 
 func (p *ProjectState) Annotate(a infer.Annotator) {
 	a.Describe(&p.Name, "Project name.")
-	a.Describe(&p.Bgp, "Project BGP status.")
+	a.Describe(&p.BGP, "Project BGP status.")
 }
 
 var (
 	_ infer.Annotated                                       = (*Project)(nil)
 	_ infer.Annotated                                       = (*ProjectArgs)(nil)
-	_ infer.Annotated                                       = (*ProjectBgpState)(nil)
+	_ infer.Annotated                                       = (*ProjectBGPState)(nil)
 	_ infer.Annotated                                       = (*ProjectState)(nil)
 	_ infer.CustomDelete[ProjectState]                      = (*Project)(nil)
 	_ infer.CustomCheck[ProjectArgs]                        = (*Project)(nil)
@@ -84,7 +84,7 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 
 	project, _, err := client.Create(req.Inputs.Team, &cherrygo.CreateProject{
 		Name: req.Inputs.Name,
-		Bgp:  req.Inputs.Bgp,
+		Bgp:  req.Inputs.BGP,
 	})
 	if err != nil {
 		return infer.CreateResponse[ProjectState]{}, err
@@ -140,8 +140,8 @@ func (p *Project) Update(
 			Output: ProjectState{
 				Name: req.Inputs.Name,
 				Team: req.Inputs.Team,
-				Bgp: ProjectBgpState{
-					Enabled: req.Inputs.Bgp,
+				BGP: ProjectBGPState{
+					Enabled: req.Inputs.BGP,
 				},
 			},
 		}, nil
@@ -159,7 +159,7 @@ func (p *Project) Update(
 
 	project, _, err := client.Update(id, &cherrygo.UpdateProject{
 		Name: &req.Inputs.Name,
-		Bgp:  &req.Inputs.Bgp,
+		Bgp:  &req.Inputs.BGP,
 	})
 
 	return infer.UpdateResponse[ProjectState]{
@@ -176,7 +176,7 @@ func (p *Project) Diff(
 		diff["name"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if req.Inputs.Bgp != req.State.Bgp.Enabled {
+	if req.Inputs.BGP != req.State.BGP.Enabled {
 		diff["bgp"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
@@ -213,7 +213,7 @@ func (p *Project) Read(
 		ID: req.ID,
 		Inputs: ProjectArgs{
 			Name: req.Inputs.Name,
-			Bgp:  req.Inputs.Bgp,
+			BGP:  req.Inputs.BGP,
 			Team: req.Inputs.Team,
 		},
 		State: projectStateFromClientResp(project, req.Inputs.Team),
@@ -224,7 +224,7 @@ func projectStateFromClientResp(p cherrygo.Project, teamID int) ProjectState {
 	return ProjectState{
 		Name: p.Name,
 		Team: teamID,
-		Bgp: ProjectBgpState{
+		BGP: ProjectBGPState{
 			Enabled:  p.Bgp.Enabled,
 			LocalASN: p.Bgp.LocalASN,
 		},
@@ -235,5 +235,5 @@ func (*Project) WireDependencies(
 	f infer.FieldSelector, args *ProjectArgs, state *ProjectState) {
 	f.OutputField(&state.Name).DependsOn(f.InputField(&args.Name))
 	f.OutputField(&state.Team).DependsOn(f.InputField(&args.Team))
-	f.OutputField(&state.Bgp).DependsOn(f.InputField(&args.Bgp))
+	f.OutputField(&state.BGP).DependsOn(f.InputField(&args.BGP))
 }

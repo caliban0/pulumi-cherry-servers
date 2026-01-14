@@ -20,7 +20,7 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// Project BGP status.
         /// </summary>
         [Output("bgp")]
-        public Output<Outputs.ProjectBgpState> Bgp { get; private set; } = null!;
+        public Output<Outputs.ProjectBGPState> Bgp { get; private set; } = null!;
 
         /// <summary>
         /// Project name.

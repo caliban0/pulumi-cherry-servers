@@ -12,7 +12,7 @@ namespace Caliban0.PulumiCherryServers.Provider.Outputs
 {
 
     [OutputType]
-    public sealed class ProjectBgpState
+    public sealed class ProjectBGPState
     {
         /// <summary>
         /// Whether BGP is enabled.
@@ -24,7 +24,7 @@ namespace Caliban0.PulumiCherryServers.Provider.Outputs
         public readonly int LocalASN;
 
         [OutputConstructor]
-        private ProjectBgpState(
+        private ProjectBGPState(
             bool enabled,
 
             int localASN)

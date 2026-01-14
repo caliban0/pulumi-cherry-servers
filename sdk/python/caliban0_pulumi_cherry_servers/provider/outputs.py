@@ -15,11 +15,11 @@ else:
 from .. import _utilities
 
 __all__ = [
-    'ProjectBgpState',
+    'ProjectBGPState',
 ]
 
 @pulumi.output_type
-class ProjectBgpState(dict):
+class ProjectBGPState(dict):
     @staticmethod
     def __key_warning(key: str):
         suggest = None
@@ -27,14 +27,14 @@ class ProjectBgpState(dict):
             suggest = "local_asn"
 
         if suggest:
-            pulumi.log.warn(f"Key '{key}' not found in ProjectBgpState. Access the value via the '{suggest}' property getter instead.")
+            pulumi.log.warn(f"Key '{key}' not found in ProjectBGPState. Access the value via the '{suggest}' property getter instead.")
 
     def __getitem__(self, key: str) -> Any:
-        ProjectBgpState.__key_warning(key)
+        ProjectBGPState.__key_warning(key)
         return super().__getitem__(key)
 
     def get(self, key: str, default = None) -> Any:
-        ProjectBgpState.__key_warning(key)
+        ProjectBGPState.__key_warning(key)
         return super().get(key, default)
 
     def __init__(__self__, *,

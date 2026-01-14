@@ -5,7 +5,7 @@ package com.caliban0.pulumicherryservers.provider;
 
 import com.caliban0.pulumicherryservers.Utilities;
 import com.caliban0.pulumicherryservers.provider.ProjectArgs;
-import com.caliban0.pulumicherryservers.provider.outputs.ProjectBgpState;
+import com.caliban0.pulumicherryservers.provider.outputs.ProjectBGPState;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
 import com.pulumi.core.annotations.ResourceType;
@@ -24,14 +24,14 @@ public class Project extends com.pulumi.resources.CustomResource {
      * Project BGP status.
      * 
      */
-    @Export(name="bgp", refs={ProjectBgpState.class}, tree="[0]")
-    private Output<ProjectBgpState> bgp;
+    @Export(name="bgp", refs={ProjectBGPState.class}, tree="[0]")
+    private Output<ProjectBGPState> bgp;
 
     /**
      * @return Project BGP status.
      * 
      */
-    public Output<ProjectBgpState> bgp() {
+    public Output<ProjectBGPState> bgp() {
         return this.bgp;
     }
     /**

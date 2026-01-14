@@ -10,7 +10,7 @@ import java.lang.Integer;
 import java.util.Objects;
 
 @CustomType
-public final class ProjectBgpState {
+public final class ProjectBGPState {
     /**
      * @return Whether BGP is enabled.
      * 
@@ -22,7 +22,7 @@ public final class ProjectBgpState {
      */
     private Integer localASN;
 
-    private ProjectBgpState() {}
+    private ProjectBGPState() {}
     /**
      * @return Whether BGP is enabled.
      * 
@@ -42,7 +42,7 @@ public final class ProjectBgpState {
         return new Builder();
     }
 
-    public static Builder builder(ProjectBgpState defaults) {
+    public static Builder builder(ProjectBGPState defaults) {
         return new Builder(defaults);
     }
     @CustomType.Builder
@@ -50,7 +50,7 @@ public final class ProjectBgpState {
         private Boolean enabled;
         private Integer localASN;
         public Builder() {}
-        public Builder(ProjectBgpState defaults) {
+        public Builder(ProjectBGPState defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.enabled = defaults.enabled;
     	      this.localASN = defaults.localASN;
@@ -59,7 +59,7 @@ public final class ProjectBgpState {
         @CustomType.Setter
         public Builder enabled(Boolean enabled) {
             if (enabled == null) {
-              throw new MissingRequiredPropertyException("ProjectBgpState", "enabled");
+              throw new MissingRequiredPropertyException("ProjectBGPState", "enabled");
             }
             this.enabled = enabled;
             return this;
@@ -67,13 +67,13 @@ public final class ProjectBgpState {
         @CustomType.Setter
         public Builder localASN(Integer localASN) {
             if (localASN == null) {
-              throw new MissingRequiredPropertyException("ProjectBgpState", "localASN");
+              throw new MissingRequiredPropertyException("ProjectBGPState", "localASN");
             }
             this.localASN = localASN;
             return this;
         }
-        public ProjectBgpState build() {
-            final var _resultValue = new ProjectBgpState();
+        public ProjectBGPState build() {
+            final var _resultValue = new ProjectBGPState();
             _resultValue.enabled = enabled;
             _resultValue.localASN = localASN;
             return _resultValue;

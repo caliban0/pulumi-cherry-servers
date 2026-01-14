@@ -161,7 +161,7 @@ class Project(pulumi.CustomResource):
 
     @_builtins.property
     @pulumi.getter
-    def bgp(self) -> pulumi.Output['outputs.ProjectBgpState']:
+    def bgp(self) -> pulumi.Output['outputs.ProjectBGPState']:
         """
         Project BGP status.
         """
