@@ -25,7 +25,7 @@ func (c *Config) Annotate(a infer.Annotator) {
 
 var _ infer.Annotated = (*Config)(nil)
 
-func getProjectClient(cfg Config) (projectClient, error) {
+func getProjectClient(cfg Config) (ProjectClient, error) {
 	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
 		cfg.Token = token
 	}
@@ -38,7 +38,7 @@ func getProjectClient(cfg Config) (projectClient, error) {
 	return client.Projects, nil
 }
 
-var _ projectClientFactory = getProjectClient
+var _ ProjectClientFactory = getProjectClient
 
 func Provider() (p.Provider, error) {
 	return infer.NewProviderBuilder().

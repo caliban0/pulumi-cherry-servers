@@ -11,14 +11,14 @@ import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
-type projectClient interface {
+type ProjectClient interface {
 	cherrygo.ProjectsService
 }
 
-type projectClientFactory func(cfg Config) (projectClient, error)
+type ProjectClientFactory func(cfg Config) (ProjectClient, error)
 
 type Project struct {
-	getClient projectClientFactory
+	GetClient ProjectClientFactory
 }
 
 func (p *Project) Annotate(a infer.Annotator) {
@@ -77,7 +77,7 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 		return infer.CreateResponse[ProjectState]{}, nil
 	}
 
-	client, err := p.getClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(infer.GetConfig[Config](ctx))
 	if err != nil {
 		return infer.CreateResponse[ProjectState]{}, err
 	}
@@ -97,7 +97,7 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 }
 
 func (p *Project) Delete(ctx context.Context, req infer.DeleteRequest[ProjectState]) (infer.DeleteResponse, error) {
-	client, err := p.getClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(infer.GetConfig[Config](ctx))
 	if err != nil {
 		return infer.DeleteResponse{}, err
 	}
@@ -147,7 +147,7 @@ func (p *Project) Update(
 		}, nil
 	}
 
-	client, err := p.getClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(infer.GetConfig[Config](ctx))
 	if err != nil {
 		return infer.UpdateResponse[ProjectState]{}, err
 	}
@@ -194,7 +194,7 @@ func (p *Project) Diff(
 func (p *Project) Read(
 	ctx context.Context, req infer.ReadRequest[ProjectArgs, ProjectState]) (
 	infer.ReadResponse[ProjectArgs, ProjectState], error) {
-	client, err := p.getClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(infer.GetConfig[Config](ctx))
 	if err != nil {
 		return infer.ReadResponse[ProjectArgs, ProjectState]{}, err
 	}
