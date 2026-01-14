@@ -111,7 +111,7 @@
         },
         "team": {
           "type": "integer",
-          "description": "ID of the team the project will belong to."
+          "description": "ID of the team the project belongs to."
         }
       },
       "requiredInputs": [

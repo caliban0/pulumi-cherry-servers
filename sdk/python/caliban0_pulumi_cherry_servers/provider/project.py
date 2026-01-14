@@ -25,7 +25,7 @@ class ProjectArgs:
                  name: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a Project resource.
-        :param pulumi.Input[_builtins.int] team: ID of the team the project will belong to.
+        :param pulumi.Input[_builtins.int] team: ID of the team the project belongs to.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP should be enabled for the project.
         :param pulumi.Input[_builtins.str] name: Project name.
         """
@@ -39,7 +39,7 @@ class ProjectArgs:
     @pulumi.getter
     def team(self) -> pulumi.Input[_builtins.int]:
         """
-        ID of the team the project will belong to.
+        ID of the team the project belongs to.
         """
         return pulumi.get(self, "team")
 
@@ -89,7 +89,7 @@ class Project(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP should be enabled for the project.
         :param pulumi.Input[_builtins.str] name: Project name.
-        :param pulumi.Input[_builtins.int] team: ID of the team the project will belong to.
+        :param pulumi.Input[_builtins.int] team: ID of the team the project belongs to.
         """
         ...
     @overload

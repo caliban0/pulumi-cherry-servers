@@ -86,7 +86,7 @@ export interface ProjectArgs {
      */
     name?: pulumi.Input<string>;
     /**
-     * ID of the team the project will belong to.
+     * ID of the team the project belongs to.
      */
     team: pulumi.Input<number>;
 }

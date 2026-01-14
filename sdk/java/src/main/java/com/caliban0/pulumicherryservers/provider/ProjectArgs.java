@@ -49,14 +49,14 @@ public final class ProjectArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * ID of the team the project will belong to.
+     * ID of the team the project belongs to.
      * 
      */
     @Import(name="team", required=true)
     private Output<Integer> team;
 
     /**
-     * @return ID of the team the project will belong to.
+     * @return ID of the team the project belongs to.
      * 
      */
     public Output<Integer> team() {
@@ -132,7 +132,7 @@ public final class ProjectArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param team ID of the team the project will belong to.
+         * @param team ID of the team the project belongs to.
          * 
          * @return builder
          * 
@@ -143,7 +143,7 @@ public final class ProjectArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param team ID of the team the project will belong to.
+         * @param team ID of the team the project belongs to.
          * 
          * @return builder
          * 

@@ -89,7 +89,7 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Input<string>? Name { get; set; }
 
         /// <summary>
-        /// ID of the team the project will belong to.
+        /// ID of the team the project belongs to.
         /// </summary>
         [Input("team", required: true)]
         public Input<int> Team { get; set; } = null!;

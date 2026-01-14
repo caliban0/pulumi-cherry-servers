@@ -70,7 +70,7 @@ type projectArgs struct {
 	Bgp *bool `pulumi:"bgp"`
 	// Project name.
 	Name *string `pulumi:"name"`
-	// ID of the team the project will belong to.
+	// ID of the team the project belongs to.
 	Team int `pulumi:"team"`
 }
 
@@ -80,7 +80,7 @@ type ProjectArgs struct {
 	Bgp pulumi.BoolPtrInput
 	// Project name.
 	Name pulumi.StringPtrInput
-	// ID of the team the project will belong to.
+	// ID of the team the project belongs to.
 	Team pulumi.IntInput
 }
 

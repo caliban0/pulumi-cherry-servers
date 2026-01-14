@@ -33,7 +33,7 @@ type ProjectArgs struct {
 
 func (p *ProjectArgs) Annotate(a infer.Annotator) {
 	a.Describe(&p.Name, "Project name.")
-	a.Describe(&p.Team, "ID of the team the project will belong to.")
+	a.Describe(&p.Team, "ID of the team the project belongs to.")
 	a.Describe(&p.BGP, "Whether BGP should be enabled for the project.")
 }
 
