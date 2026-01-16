@@ -13,7 +13,6 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import NotRequired, TypedDict, TypeAlias
 from .. import _utilities
-from . import outputs
 
 __all__ = ['ProjectArgs', 'Project']
 
@@ -132,6 +131,7 @@ class Project(pulumi.CustomResource):
             if team is None and not opts.urn:
                 raise TypeError("Missing required property 'team'")
             __props__.__dict__["team"] = team
+            __props__.__dict__["local_asn"] = None
         super(Project, __self__).__init__(
             'pulumi-cherry-servers:provider:Project',
             resource_name,
@@ -155,21 +155,30 @@ class Project(pulumi.CustomResource):
         __props__ = ProjectArgs.__new__(ProjectArgs)
 
         __props__.__dict__["bgp"] = None
+        __props__.__dict__["local_asn"] = None
         __props__.__dict__["name"] = None
         __props__.__dict__["team"] = None
         return Project(resource_name, opts=opts, __props__=__props__)
 
     @_builtins.property
     @pulumi.getter
-    def bgp(self) -> pulumi.Output['outputs.ProjectBGPState']:
+    def bgp(self) -> pulumi.Output[Optional[_builtins.bool]]:
         """
-        Project BGP status.
+        Whether BGP should be enabled for the project.
         """
         return pulumi.get(self, "bgp")
 
     @_builtins.property
+    @pulumi.getter(name="localASN")
+    def local_asn(self) -> pulumi.Output[Optional[_builtins.int]]:
+        """
+        LocalASN assigned to the project.
+        """
+        return pulumi.get(self, "local_asn")
+
+    @_builtins.property
     @pulumi.getter
-    def name(self) -> pulumi.Output[_builtins.str]:
+    def name(self) -> pulumi.Output[Optional[_builtins.str]]:
         """
         Project name.
         """
@@ -178,5 +187,8 @@ class Project(pulumi.CustomResource):
     @_builtins.property
     @pulumi.getter
     def team(self) -> pulumi.Output[_builtins.int]:
+        """
+        ID of the team the project belongs to.
+        """
         return pulumi.get(self, "team")
 

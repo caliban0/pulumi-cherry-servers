@@ -2,8 +2,6 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
-import * as inputs from "../types/input";
-import * as outputs from "../types/output";
 import * as utilities from "../utilities";
 
 /**
@@ -37,13 +35,20 @@ export class Project extends pulumi.CustomResource {
     }
 
     /**
-     * Project BGP status.
+     * Whether BGP should be enabled for the project.
      */
-    declare public readonly bgp: pulumi.Output<outputs.provider.ProjectBGPState>;
+    declare public readonly bgp: pulumi.Output<boolean | undefined>;
+    /**
+     * LocalASN assigned to the project.
+     */
+    declare public /*out*/ readonly localASN: pulumi.Output<number | undefined>;
     /**
      * Project name.
      */
-    declare public readonly name: pulumi.Output<string>;
+    declare public readonly name: pulumi.Output<string | undefined>;
+    /**
+     * ID of the team the project belongs to.
+     */
     declare public readonly team: pulumi.Output<number>;
 
     /**
@@ -63,8 +68,10 @@ export class Project extends pulumi.CustomResource {
             resourceInputs["bgp"] = args?.bgp;
             resourceInputs["name"] = args?.name;
             resourceInputs["team"] = args?.team;
+            resourceInputs["localASN"] = undefined /*out*/;
         } else {
             resourceInputs["bgp"] = undefined /*out*/;
+            resourceInputs["localASN"] = undefined /*out*/;
             resourceInputs["name"] = undefined /*out*/;
             resourceInputs["team"] = undefined /*out*/;
         }

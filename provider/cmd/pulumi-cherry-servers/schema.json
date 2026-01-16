@@ -36,25 +36,6 @@
       "token"
     ]
   },
-  "types": {
-    "pulumi-cherry-servers:provider:ProjectBGPState": {
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Whether BGP is enabled."
-        },
-        "localASN": {
-          "type": "integer",
-          "description": "LocalASN assigned to the project."
-        }
-      },
-      "type": "object",
-      "required": [
-        "enabled",
-        "localASN"
-      ]
-    }
-  },
   "provider": {
     "properties": {
       "token": {
@@ -83,21 +64,24 @@
       "description": "A Cherry Servers project.",
       "properties": {
         "bgp": {
-          "$ref": "#/types/pulumi-cherry-servers:provider:ProjectBGPState",
-          "description": "Project BGP status."
+          "type": "boolean",
+          "description": "Whether BGP should be enabled for the project."
+        },
+        "localASN": {
+          "type": "integer",
+          "description": "LocalASN assigned to the project."
         },
         "name": {
           "type": "string",
           "description": "Project name."
         },
         "team": {
-          "type": "integer"
+          "type": "integer",
+          "description": "ID of the team the project belongs to."
         }
       },
       "type": "object",
       "required": [
-        "bgp",
-        "name",
         "team"
       ],
       "inputProperties": {
@@ -116,6 +100,39 @@
       },
       "requiredInputs": [
         "team"
+      ]
+    },
+    "pulumi-cherry-servers:provider:RandomSalt": {
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "salt": {
+          "type": "string"
+        },
+        "saltedLength": {
+          "type": "integer"
+        },
+        "saltedPassword": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "password",
+        "salt",
+        "saltedPassword"
+      ],
+      "inputProperties": {
+        "password": {
+          "type": "string"
+        },
+        "saltedLength": {
+          "type": "integer"
+        }
+      },
+      "requiredInputs": [
+        "password"
       ]
     }
   }

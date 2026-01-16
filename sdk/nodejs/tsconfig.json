@@ -19,9 +19,7 @@
         "provider.ts",
         "provider/index.ts",
         "provider/project.ts",
-        "types/index.ts",
-        "types/input.ts",
-        "types/output.ts",
+        "provider/randomSalt.ts",
         "utilities.ts"
     ]
 }

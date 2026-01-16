@@ -16,11 +16,14 @@ import (
 type Project struct {
 	pulumi.CustomResourceState
 
-	// Project BGP status.
-	Bgp ProjectBGPStateOutput `pulumi:"bgp"`
+	// Whether BGP should be enabled for the project.
+	Bgp pulumi.BoolPtrOutput `pulumi:"bgp"`
+	// LocalASN assigned to the project.
+	LocalASN pulumi.IntPtrOutput `pulumi:"localASN"`
 	// Project name.
-	Name pulumi.StringOutput `pulumi:"name"`
-	Team pulumi.IntOutput    `pulumi:"team"`
+	Name pulumi.StringPtrOutput `pulumi:"name"`
+	// ID of the team the project belongs to.
+	Team pulumi.IntOutput `pulumi:"team"`
 }
 
 // NewProject registers a new resource with the given unique name, arguments, and options.
@@ -171,16 +174,22 @@ func (o ProjectOutput) ToProjectOutputWithContext(ctx context.Context) ProjectOu
 	return o
 }
 
-// Project BGP status.
-func (o ProjectOutput) Bgp() ProjectBGPStateOutput {
-	return o.ApplyT(func(v *Project) ProjectBGPStateOutput { return v.Bgp }).(ProjectBGPStateOutput)
+// Whether BGP should be enabled for the project.
+func (o ProjectOutput) Bgp() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *Project) pulumi.BoolPtrOutput { return v.Bgp }).(pulumi.BoolPtrOutput)
+}
+
+// LocalASN assigned to the project.
+func (o ProjectOutput) LocalASN() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *Project) pulumi.IntPtrOutput { return v.LocalASN }).(pulumi.IntPtrOutput)
 }
 
 // Project name.
-func (o ProjectOutput) Name() pulumi.StringOutput {
-	return o.ApplyT(func(v *Project) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
+func (o ProjectOutput) Name() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *Project) pulumi.StringPtrOutput { return v.Name }).(pulumi.StringPtrOutput)
 }
 
+// ID of the team the project belongs to.
 func (o ProjectOutput) Team() pulumi.IntOutput {
 	return o.ApplyT(func(v *Project) pulumi.IntOutput { return v.Team }).(pulumi.IntOutput)
 }

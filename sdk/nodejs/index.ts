@@ -14,12 +14,10 @@ utilities.lazyLoad(exports, ["Provider"], () => require("./provider"));
 // Export sub-modules:
 import * as config from "./config";
 import * as provider from "./provider";
-import * as types from "./types";
 
 export {
     config,
     provider,
-    types,
 };
 pulumi.runtime.registerResourcePackage("pulumi-cherry-servers", {
     version: utilities.getVersion(),

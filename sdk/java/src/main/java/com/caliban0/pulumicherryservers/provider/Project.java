@@ -5,13 +5,14 @@ package com.caliban0.pulumicherryservers.provider;
 
 import com.caliban0.pulumicherryservers.Utilities;
 import com.caliban0.pulumicherryservers.provider.ProjectArgs;
-import com.caliban0.pulumicherryservers.provider.outputs.ProjectBGPState;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
 import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
+import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
@@ -21,36 +22,58 @@ import javax.annotation.Nullable;
 @ResourceType(type="pulumi-cherry-servers:provider:Project")
 public class Project extends com.pulumi.resources.CustomResource {
     /**
-     * Project BGP status.
+     * Whether BGP should be enabled for the project.
      * 
      */
-    @Export(name="bgp", refs={ProjectBGPState.class}, tree="[0]")
-    private Output<ProjectBGPState> bgp;
+    @Export(name="bgp", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> bgp;
 
     /**
-     * @return Project BGP status.
+     * @return Whether BGP should be enabled for the project.
      * 
      */
-    public Output<ProjectBGPState> bgp() {
-        return this.bgp;
+    public Output<Optional<Boolean>> bgp() {
+        return Codegen.optional(this.bgp);
+    }
+    /**
+     * LocalASN assigned to the project.
+     * 
+     */
+    @Export(name="localASN", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> localASN;
+
+    /**
+     * @return LocalASN assigned to the project.
+     * 
+     */
+    public Output<Optional<Integer>> localASN() {
+        return Codegen.optional(this.localASN);
     }
     /**
      * Project name.
      * 
      */
     @Export(name="name", refs={String.class}, tree="[0]")
-    private Output<String> name;
+    private Output</* @Nullable */ String> name;
 
     /**
      * @return Project name.
      * 
      */
-    public Output<String> name() {
-        return this.name;
+    public Output<Optional<String>> name() {
+        return Codegen.optional(this.name);
     }
+    /**
+     * ID of the team the project belongs to.
+     * 
+     */
     @Export(name="team", refs={Integer.class}, tree="[0]")
     private Output<Integer> team;
 
+    /**
+     * @return ID of the team the project belongs to.
+     * 
+     */
     public Output<Integer> team() {
         return this.team;
     }

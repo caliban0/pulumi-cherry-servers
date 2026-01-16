@@ -23,6 +23,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 	switch typ {
 	case "pulumi-cherry-servers:provider:Project":
 		r = &Project{}
+	case "pulumi-cherry-servers:provider:RandomSalt":
+		r = &RandomSalt{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}

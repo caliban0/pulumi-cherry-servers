@@ -17,17 +17,26 @@ namespace Caliban0.PulumiCherryServers.Provider
     public partial class Project : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// Project BGP status.
+        /// Whether BGP should be enabled for the project.
         /// </summary>
         [Output("bgp")]
-        public Output<Outputs.ProjectBGPState> Bgp { get; private set; } = null!;
+        public Output<bool?> Bgp { get; private set; } = null!;
+
+        /// <summary>
+        /// LocalASN assigned to the project.
+        /// </summary>
+        [Output("localASN")]
+        public Output<int?> LocalASN { get; private set; } = null!;
 
         /// <summary>
         /// Project name.
         /// </summary>
         [Output("name")]
-        public Output<string> Name { get; private set; } = null!;
+        public Output<string?> Name { get; private set; } = null!;
 
+        /// <summary>
+        /// ID of the team the project belongs to.
+        /// </summary>
         [Output("team")]
         public Output<int> Team { get; private set; } = null!;
 

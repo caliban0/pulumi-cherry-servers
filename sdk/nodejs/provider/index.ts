@@ -10,6 +10,11 @@ export type Project = import("./project").Project;
 export const Project: typeof import("./project").Project = null as any;
 utilities.lazyLoad(exports, ["Project"], () => require("./project"));
 
+export { RandomSaltArgs } from "./randomSalt";
+export type RandomSalt = import("./randomSalt").RandomSalt;
+export const RandomSalt: typeof import("./randomSalt").RandomSalt = null as any;
+utilities.lazyLoad(exports, ["RandomSalt"], () => require("./randomSalt"));
+
 
 const _module = {
     version: utilities.getVersion(),
@@ -17,6 +22,8 @@ const _module = {
         switch (type) {
             case "pulumi-cherry-servers:provider:Project":
                 return new Project(name, <any>undefined, { urn })
+            case "pulumi-cherry-servers:provider:RandomSalt":
+                return new RandomSalt(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
