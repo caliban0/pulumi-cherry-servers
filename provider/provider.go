@@ -38,12 +38,26 @@ func getProjectClient(cfg Config) (ProjectClient, error) {
 	return client.Projects, nil
 }
 
+func getIPClient(cfg Config) (IPClient, error) {
+	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
+		cfg.Token = token
+	}
+
+	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
+	if err != nil {
+		return nil, err
+	}
+
+	return client.IPAddresses, nil
+}
+
 var _ ProjectClientFactory = getProjectClient
 
 func Provider() (p.Provider, error) {
 	return infer.NewProviderBuilder().
 		WithResources(
 			infer.Resource(&Project{getProjectClient}),
+			infer.Resource(&IP{getIPClient}),
 		).
 		WithDisplayName(Name).
 		WithNamespace("caliban0").

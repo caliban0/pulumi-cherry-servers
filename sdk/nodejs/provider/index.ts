@@ -5,25 +5,25 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../utilities";
 
 // Export members:
+export { IPArgs } from "./ip";
+export type IP = import("./ip").IP;
+export const IP: typeof import("./ip").IP = null as any;
+utilities.lazyLoad(exports, ["IP"], () => require("./ip"));
+
 export { ProjectArgs } from "./project";
 export type Project = import("./project").Project;
 export const Project: typeof import("./project").Project = null as any;
 utilities.lazyLoad(exports, ["Project"], () => require("./project"));
-
-export { RandomSaltArgs } from "./randomSalt";
-export type RandomSalt = import("./randomSalt").RandomSalt;
-export const RandomSalt: typeof import("./randomSalt").RandomSalt = null as any;
-utilities.lazyLoad(exports, ["RandomSalt"], () => require("./randomSalt"));
 
 
 const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
         switch (type) {
+            case "pulumi-cherry-servers:provider:IP":
+                return new IP(name, <any>undefined, { urn })
             case "pulumi-cherry-servers:provider:Project":
                 return new Project(name, <any>undefined, { urn })
-            case "pulumi-cherry-servers:provider:RandomSalt":
-                return new RandomSalt(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

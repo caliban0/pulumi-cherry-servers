@@ -26,8 +26,8 @@ _utilities.register(
   "mod": "provider",
   "fqn": "caliban0_pulumi_cherry_servers.provider",
   "classes": {
-   "pulumi-cherry-servers:provider:Project": "Project",
-   "pulumi-cherry-servers:provider:RandomSalt": "RandomSalt"
+   "pulumi-cherry-servers:provider:IP": "IP",
+   "pulumi-cherry-servers:provider:Project": "Project"
   }
  }
 ]

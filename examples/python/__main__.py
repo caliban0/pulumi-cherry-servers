@@ -1,7 +1,7 @@
 import pulumi
 import caliban0_pulumi_cherry_servers as cherry
 
-project = cherry.Project("myProject", team=148226, bgp=True)
+project = cherry.Project("myProject", team=148226, bgp=False)
 pulumi.export(
     "output",
     {

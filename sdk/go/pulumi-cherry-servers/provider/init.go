@@ -21,10 +21,10 @@ func (m *module) Version() semver.Version {
 
 func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi.Resource, err error) {
 	switch typ {
+	case "pulumi-cherry-servers:provider:IP":
+		r = &IP{}
 	case "pulumi-cherry-servers:provider:Project":
 		r = &Project{}
-	case "pulumi-cherry-servers:provider:RandomSalt":
-		r = &RandomSalt{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}

@@ -18,8 +18,8 @@
         "index.ts",
         "provider.ts",
         "provider/index.ts",
+        "provider/ip.ts",
         "provider/project.ts",
-        "provider/randomSalt.ts",
         "utilities.ts"
     ]
 }

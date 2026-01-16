@@ -60,6 +60,102 @@
     ]
   },
   "resources": {
+    "pulumi-cherry-servers:provider:IP": {
+      "description": "Cherry Servers IP address.",
+      "properties": {
+        "aRecord": {
+          "type": "string",
+          "description": "IP address A record."
+        },
+        "address": {
+          "type": "string",
+          "description": "Actual address."
+        },
+        "addressFamily": {
+          "type": "integer",
+          "description": "IP address family."
+        },
+        "cidr": {
+          "type": "string",
+          "description": "IP address CIDR."
+        },
+        "project": {
+          "type": "integer"
+        },
+        "ptrRecord": {
+          "type": "string",
+          "description": "IP address PTR record."
+        },
+        "region": {
+          "type": "string",
+          "description": "IP address project ID."
+        },
+        "routedTo": {
+          "type": "string",
+          "description": "IP address that this address is routed to."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "IP address tags."
+        },
+        "targetedTo": {
+          "type": "integer",
+          "description": "Server that this address is targeted to."
+        },
+        "type": {
+          "type": "string",
+          "description": "IP address type."
+        }
+      },
+      "type": "object",
+      "required": [
+        "address",
+        "addressFamily",
+        "cidr",
+        "project",
+        "region",
+        "type"
+      ],
+      "inputProperties": {
+        "aRecord": {
+          "type": "string",
+          "description": "IP address A record."
+        },
+        "project": {
+          "type": "integer"
+        },
+        "ptrRecord": {
+          "type": "string",
+          "description": "IP address PTR record."
+        },
+        "region": {
+          "type": "string",
+          "description": "IP address project ID."
+        },
+        "routedTo": {
+          "type": "string",
+          "description": "IP address that this address is routed to."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "IP address tags."
+        },
+        "targetedTo": {
+          "type": "integer",
+          "description": "Server that this address is targeted to."
+        }
+      },
+      "requiredInputs": [
+        "project",
+        "region"
+      ]
+    },
     "pulumi-cherry-servers:provider:Project": {
       "description": "A Cherry Servers project.",
       "properties": {
@@ -100,39 +196,6 @@
       },
       "requiredInputs": [
         "team"
-      ]
-    },
-    "pulumi-cherry-servers:provider:RandomSalt": {
-      "properties": {
-        "password": {
-          "type": "string"
-        },
-        "salt": {
-          "type": "string"
-        },
-        "saltedLength": {
-          "type": "integer"
-        },
-        "saltedPassword": {
-          "type": "string"
-        }
-      },
-      "type": "object",
-      "required": [
-        "password",
-        "salt",
-        "saltedPassword"
-      ],
-      "inputProperties": {
-        "password": {
-          "type": "string"
-        },
-        "saltedLength": {
-          "type": "integer"
-        }
-      },
-      "requiredInputs": [
-        "password"
       ]
     }
   }
