@@ -51,6 +51,7 @@ var (
 	_ infer.Annotated                                       = (*Project)(nil)
 	_ infer.Annotated                                       = (*ProjectArgs)(nil)
 	_ infer.Annotated                                       = (*ProjectState)(nil)
+	_ infer.CustomCreate[ProjectArgs, ProjectState]         = (*Project)(nil)
 	_ infer.CustomDelete[ProjectState]                      = (*Project)(nil)
 	_ infer.CustomCheck[ProjectArgs]                        = (*Project)(nil)
 	_ infer.CustomUpdate[ProjectArgs, ProjectState]         = (*Project)(nil)
