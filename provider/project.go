@@ -201,11 +201,7 @@ func (p *Project) Read(
 
 	return infer.ReadResponse[ProjectArgs, ProjectState]{
 		ID: req.ID,
-		Inputs: ProjectArgs{
-			Name: req.Inputs.Name,
-			BGP:  req.Inputs.BGP,
-			Team: req.Inputs.Team,
-		},
+		Inputs: req.Inputs,
 		State: projectStateFromClientResp(project, req.Inputs.Team),
 	}, err
 }
