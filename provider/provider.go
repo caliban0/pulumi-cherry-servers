@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"os"
 
 	"github.com/cherryservers/cherrygo/v3"
@@ -25,7 +26,9 @@ func (c *Config) Annotate(a infer.Annotator) {
 
 var _ infer.Annotated = (*Config)(nil)
 
-func getProjectClient(cfg Config) (ProjectClient, error) {
+func getProjectClient(ctx context.Context) (ProjectClient, error) {
+	cfg := infer.GetConfig[Config](ctx)
+
 	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
 		cfg.Token = token
 	}
@@ -56,7 +59,7 @@ var _ ProjectClientFactory = getProjectClient
 func Provider() (p.Provider, error) {
 	return infer.NewProviderBuilder().
 		WithResources(
-			infer.Resource(&Project{getProjectClient}),
+			infer.Resource(&Project{GetClient: getProjectClient, GetLogger: GetLogger}),
 			infer.Resource(&IP{getIPClient}),
 		).
 		WithDisplayName(Name).

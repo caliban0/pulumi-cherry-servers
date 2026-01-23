@@ -15,10 +15,11 @@ type ProjectClient interface {
 	cherrygo.ProjectsService
 }
 
-type ProjectClientFactory func(cfg Config) (ProjectClient, error)
+type ProjectClientFactory func(ctx context.Context) (ProjectClient, error)
 
 type Project struct {
 	GetClient ProjectClientFactory
+	GetLogger GetLoggerFunc
 }
 
 func (p *Project) Annotate(a infer.Annotator) {
@@ -63,7 +64,6 @@ var (
 func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArgs]) (
 	infer.CreateResponse[ProjectState], error) {
 	if req.DryRun {
-
 		return infer.CreateResponse[ProjectState]{
 			Output: ProjectState{
 				ProjectArgs: req.Inputs,
@@ -71,7 +71,7 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 		}, nil
 	}
 
-	client, err := p.GetClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(ctx)
 	if err != nil {
 		return infer.CreateResponse[ProjectState]{}, err
 	}
@@ -91,7 +91,7 @@ func (p *Project) Create(ctx context.Context, req infer.CreateRequest[ProjectArg
 }
 
 func (p *Project) Delete(ctx context.Context, req infer.DeleteRequest[ProjectState]) (infer.DeleteResponse, error) {
-	client, err := p.GetClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(ctx)
 	if err != nil {
 		return infer.DeleteResponse{}, err
 	}
@@ -103,7 +103,7 @@ func (p *Project) Delete(ctx context.Context, req infer.DeleteRequest[ProjectSta
 
 	r, err := client.Delete(id)
 	if err != nil && r.StatusCode == http.StatusNotFound {
-		prov.GetLogger(ctx).Warningf("project %s already deleted", req.ID)
+		p.GetLogger(ctx).Warningf("project %s already deleted", req.ID)
 		err = nil
 	}
 	return infer.DeleteResponse{}, err
@@ -137,7 +137,7 @@ func (p *Project) Update(
 		}, nil
 	}
 
-	client, err := p.GetClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(ctx)
 	if err != nil {
 		return infer.UpdateResponse[ProjectState]{}, err
 	}
@@ -184,7 +184,7 @@ func (p *Project) Diff(
 func (p *Project) Read(
 	ctx context.Context, req infer.ReadRequest[ProjectArgs, ProjectState]) (
 	infer.ReadResponse[ProjectArgs, ProjectState], error) {
-	client, err := p.GetClient(infer.GetConfig[Config](ctx))
+	client, err := p.GetClient(ctx)
 	if err != nil {
 		return infer.ReadResponse[ProjectArgs, ProjectState]{}, err
 	}
@@ -196,13 +196,14 @@ func (p *Project) Read(
 
 	project, r, err := client.Get(id, nil)
 	if err != nil && r.StatusCode == http.StatusNotFound {
+		p.GetLogger(ctx).Warningf("project %s not found", req.ID)
 		return infer.ReadResponse[ProjectArgs, ProjectState]{}, nil
 	}
 
 	return infer.ReadResponse[ProjectArgs, ProjectState]{
-		ID: req.ID,
+		ID:     req.ID,
 		Inputs: req.Inputs,
-		State: projectStateFromClientResp(project, req.Inputs.Team),
+		State:  projectStateFromClientResp(project, req.Inputs.Team),
 	}, err
 }
 
@@ -219,5 +220,5 @@ func projectStateFromClientResp(p cherrygo.Project, teamID int) ProjectState {
 
 func (*Project) WireDependencies(
 	f infer.FieldSelector, args *ProjectArgs, state *ProjectState) {
-	f.OutputField(&state.LocalASN).DependsOn(f.InputField(&args.BGP).Computed())
+	f.OutputField(&state.LocalASN).DependsOn(f.InputField(&args.BGP))
 }
