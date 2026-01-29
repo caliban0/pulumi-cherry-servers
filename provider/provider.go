@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"os"
+	"time"
 
 	"github.com/cherryservers/cherrygo/v3"
 	p "github.com/pulumi/pulumi-go-provider"
@@ -41,6 +42,21 @@ func getProjectClient(ctx context.Context) (ProjectClient, error) {
 	return client.Projects, nil
 }
 
+func getServerClient(ctx context.Context) (ServerClient, error) {
+	cfg := infer.GetConfig[Config](ctx)
+
+	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
+		cfg.Token = token
+	}
+
+	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
+	if err != nil {
+		return nil, err
+	}
+
+	return client.Servers, nil
+}
+
 func getIPClient(cfg Config) (IPClient, error) {
 	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
 		cfg.Token = token
@@ -57,10 +73,16 @@ func getIPClient(cfg Config) (IPClient, error) {
 var _ ProjectClientFactory = getProjectClient
 
 func Provider() (p.Provider, error) {
+	const deployTimeout = time.Minute * 20
+
 	return infer.NewProviderBuilder().
 		WithResources(
 			infer.Resource(&Project{GetClient: getProjectClient, GetLogger: GetLogger}),
 			infer.Resource(&IP{getIPClient}),
+			infer.Resource(&Server{
+				GetClient:         getServerClient,
+				GetLogger:         GetLogger,
+				DeploymentTimeout: deployTimeout}),
 		).
 		WithDisplayName(Name).
 		WithNamespace("caliban0").

@@ -19,14 +19,14 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
     public static final IPArgs Empty = new IPArgs();
 
     /**
-     * IP address A record.
+     * Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
      * 
      */
     @Import(name="aRecord")
     private @Nullable Output<String> aRecord;
 
     /**
-     * @return IP address A record.
+     * @return Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
      * 
      */
     public Optional<Output<String>> aRecord() {
@@ -41,14 +41,14 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * IP address PTR record.
+     * Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      * 
      */
     @Import(name="ptrRecord")
     private @Nullable Output<String> ptrRecord;
 
     /**
-     * @return IP address PTR record.
+     * @return Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      * 
      */
     public Optional<Output<String>> ptrRecord() {
@@ -146,7 +146,7 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param aRecord IP address A record.
+         * @param aRecord Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
          * 
          * @return builder
          * 
@@ -157,7 +157,7 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param aRecord IP address A record.
+         * @param aRecord Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
          * 
          * @return builder
          * 
@@ -176,7 +176,7 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param ptrRecord IP address PTR record.
+         * @param ptrRecord Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
          * 
          * @return builder
          * 
@@ -187,7 +187,7 @@ public final class IPArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param ptrRecord IP address PTR record.
+         * @param ptrRecord Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
          * 
          * @return builder
          * 

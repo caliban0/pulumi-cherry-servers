@@ -22,18 +22,32 @@ import javax.annotation.Nullable;
 @ResourceType(type="pulumi-cherry-servers:provider:IP")
 public class IP extends com.pulumi.resources.CustomResource {
     /**
-     * IP address A record.
+     * Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
      * 
      */
     @Export(name="aRecord", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> aRecord;
 
     /**
-     * @return IP address A record.
+     * @return Relative DNS name for the IP address.Resulting FQDN will be &#39;&lt;relative-dns-name&gt;.cloud.cherryservers.net&#39; and must be globally unique. The value will be stored in `aRecordEffective`
      * 
      */
     public Output<Optional<String>> aRecord() {
         return Codegen.optional(this.aRecord);
+    }
+    /**
+     * Relative DNS name for the IP address.
+     * 
+     */
+    @Export(name="aRecordEffective", refs={String.class}, tree="[0]")
+    private Output<String> aRecordEffective;
+
+    /**
+     * @return Relative DNS name for the IP address.
+     * 
+     */
+    public Output<String> aRecordEffective() {
+        return this.aRecordEffective;
     }
     /**
      * Actual address.
@@ -84,18 +98,32 @@ public class IP extends com.pulumi.resources.CustomResource {
         return this.project;
     }
     /**
-     * IP address PTR record.
+     * Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      * 
      */
     @Export(name="ptrRecord", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> ptrRecord;
 
     /**
-     * @return IP address PTR record.
+     * @return Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      * 
      */
     public Output<Optional<String>> ptrRecord() {
         return Codegen.optional(this.ptrRecord);
+    }
+    /**
+     * Reverse DNS name for the IP address.
+     * 
+     */
+    @Export(name="ptrRecordEffective", refs={String.class}, tree="[0]")
+    private Output<String> ptrRecordEffective;
+
+    /**
+     * @return Reverse DNS name for the IP address.
+     * 
+     */
+    public Output<String> ptrRecordEffective() {
+        return this.ptrRecordEffective;
     }
     /**
      * IP address project ID.

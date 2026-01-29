@@ -2,9 +2,6 @@
   "name": "pulumi-cherry-servers",
   "displayName": "pulumi-cherry-servers",
   "namespace": "caliban0",
-  "meta": {
-    "moduleFormat": "(.*)"
-  },
   "language": {
     "csharp": {
       "respectSchemaVersion": true
@@ -36,6 +33,46 @@
       "token"
     ]
   },
+  "types": {
+    "pulumi-cherry-servers:provider:ServerIPState": {
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "address"
+      ]
+    },
+    "pulumi-cherry-servers:provider:ServerPricingState": {
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": [
+        "price",
+        "currency",
+        "unit"
+      ]
+    }
+  },
   "provider": {
     "properties": {
       "token": {
@@ -44,7 +81,6 @@
         "secret": true
       }
     },
-    "type": "object",
     "required": [
       "token"
     ],
@@ -65,7 +101,11 @@
       "properties": {
         "aRecord": {
           "type": "string",
-          "description": "IP address A record."
+          "description": "Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`"
+        },
+        "aRecordEffective": {
+          "type": "string",
+          "description": "Relative DNS name for the IP address."
         },
         "address": {
           "type": "string",
@@ -84,7 +124,11 @@
         },
         "ptrRecord": {
           "type": "string",
-          "description": "IP address PTR record."
+          "description": "Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`"
+        },
+        "ptrRecordEffective": {
+          "type": "string",
+          "description": "Reverse DNS name for the IP address."
         },
         "region": {
           "type": "string",
@@ -110,26 +154,27 @@
           "description": "IP address type."
         }
       },
-      "type": "object",
       "required": [
+        "region",
+        "project",
         "address",
         "addressFamily",
         "cidr",
-        "project",
-        "region",
-        "type"
+        "type",
+        "aRecordEffective",
+        "ptrRecordEffective"
       ],
       "inputProperties": {
         "aRecord": {
           "type": "string",
-          "description": "IP address A record."
+          "description": "Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`"
         },
         "project": {
           "type": "integer"
         },
         "ptrRecord": {
           "type": "string",
-          "description": "IP address PTR record."
+          "description": "Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`"
         },
         "region": {
           "type": "string",
@@ -152,8 +197,8 @@
         }
       },
       "requiredInputs": [
-        "project",
-        "region"
+        "region",
+        "project"
       ]
     },
     "pulumi-cherry-servers:provider:Project": {
@@ -176,7 +221,6 @@
           "description": "ID of the team the project belongs to."
         }
       },
-      "type": "object",
       "required": [
         "team"
       ],
@@ -196,6 +240,193 @@
       },
       "requiredInputs": [
         "team"
+      ]
+    },
+    "pulumi-cherry-servers:provider:Server": {
+      "description": "Cherry Servers server instance.",
+      "properties": {
+        "allowReinstall": {
+          "type": "boolean",
+          "description": "Whether re-installation is permitted for this server."
+        },
+        "bgp": {
+          "type": "boolean",
+          "description": "Whether BGP is enabled for the server."
+        },
+        "cycle": {
+          "type": "string",
+          "description": "Server billing cycle."
+        },
+        "discountCode": {
+          "type": "string",
+          "description": "Server discount code."
+        },
+        "extraIPs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of extra IP addresses assigned to the server."
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Server hostname."
+        },
+        "image": {
+          "type": "string",
+          "description": "Server image slug. Updating requires re-installation."
+        },
+        "ips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/pulumi-cherry-servers:provider:ServerIPState"
+          },
+          "description": "Server IP addresses."
+        },
+        "name": {
+          "type": "string",
+          "description": "Server name."
+        },
+        "osPartitionSize": {
+          "type": "integer",
+          "description": "Server OS partition size. Updating requires re-installation."
+        },
+        "plan": {
+          "type": "string",
+          "description": "Server plan slug."
+        },
+        "pricing": {
+          "$ref": "#/types/pulumi-cherry-servers:provider:ServerPricingState",
+          "description": "Server pricing."
+        },
+        "project": {
+          "type": "integer",
+          "description": "ID of the server the project belongs to."
+        },
+        "region": {
+          "type": "string",
+          "description": "Server region slug."
+        },
+        "spot": {
+          "type": "boolean",
+          "description": "Whether the server is a spot instance."
+        },
+        "sshKeys": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Server SSH key IDs. Updating requires re-installation."
+        },
+        "status": {
+          "type": "string",
+          "description": "Server status, such as 'deploying' or 'deployed'."
+        },
+        "storageID": {
+          "type": "integer"
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Server tags."
+        },
+        "userData": {
+          "type": "string",
+          "description": "Server user data. Bash or cloud-config script. Updating requires re-installation."
+        }
+      },
+      "required": [
+        "plan",
+        "project",
+        "region",
+        "ips",
+        "status",
+        "pricing"
+      ],
+      "inputProperties": {
+        "allowReinstall": {
+          "type": "boolean",
+          "description": "Whether re-installation is permitted for this server."
+        },
+        "bgp": {
+          "type": "boolean",
+          "description": "Whether BGP is enabled for the server."
+        },
+        "cycle": {
+          "type": "string",
+          "description": "Server billing cycle."
+        },
+        "discountCode": {
+          "type": "string",
+          "description": "Server discount code."
+        },
+        "extraIPs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of extra IP addresses assigned to the server."
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Server hostname."
+        },
+        "image": {
+          "type": "string",
+          "description": "Server image slug. Updating requires re-installation."
+        },
+        "name": {
+          "type": "string",
+          "description": "Server name."
+        },
+        "osPartitionSize": {
+          "type": "integer",
+          "description": "Server OS partition size. Updating requires re-installation."
+        },
+        "plan": {
+          "type": "string",
+          "description": "Server plan slug."
+        },
+        "project": {
+          "type": "integer",
+          "description": "ID of the server the project belongs to."
+        },
+        "region": {
+          "type": "string",
+          "description": "Server region slug."
+        },
+        "spot": {
+          "type": "boolean",
+          "description": "Whether the server is a spot instance."
+        },
+        "sshKeys": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Server SSH key IDs. Updating requires re-installation."
+        },
+        "storageID": {
+          "type": "integer"
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Server tags."
+        },
+        "userData": {
+          "type": "string",
+          "description": "Server user data. Bash or cloud-config script. Updating requires re-installation."
+        }
+      },
+      "requiredInputs": [
+        "plan",
+        "project",
+        "region"
       ]
     }
   }

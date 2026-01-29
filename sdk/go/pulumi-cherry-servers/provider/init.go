@@ -25,6 +25,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &IP{}
 	case "pulumi-cherry-servers:provider:Project":
 		r = &Project{}
+	case "pulumi-cherry-servers:provider:Server":
+		r = &Server{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}

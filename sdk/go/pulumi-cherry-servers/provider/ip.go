@@ -16,8 +16,10 @@ import (
 type IP struct {
 	pulumi.CustomResourceState
 
-	// IP address A record.
+	// Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
 	ARecord pulumi.StringPtrOutput `pulumi:"aRecord"`
+	// Relative DNS name for the IP address.
+	ARecordEffective pulumi.StringOutput `pulumi:"aRecordEffective"`
 	// Actual address.
 	Address pulumi.StringOutput `pulumi:"address"`
 	// IP address family.
@@ -25,8 +27,10 @@ type IP struct {
 	// IP address CIDR.
 	Cidr    pulumi.StringOutput `pulumi:"cidr"`
 	Project pulumi.IntOutput    `pulumi:"project"`
-	// IP address PTR record.
+	// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
 	PtrRecord pulumi.StringPtrOutput `pulumi:"ptrRecord"`
+	// Reverse DNS name for the IP address.
+	PtrRecordEffective pulumi.StringOutput `pulumi:"ptrRecordEffective"`
 	// IP address project ID.
 	Region pulumi.StringOutput `pulumi:"region"`
 	// IP address that this address is routed to.
@@ -85,10 +89,10 @@ func (IPState) ElementType() reflect.Type {
 }
 
 type ipArgs struct {
-	// IP address A record.
+	// Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
 	ARecord *string `pulumi:"aRecord"`
 	Project int     `pulumi:"project"`
-	// IP address PTR record.
+	// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
 	PtrRecord *string `pulumi:"ptrRecord"`
 	// IP address project ID.
 	Region string `pulumi:"region"`
@@ -102,10 +106,10 @@ type ipArgs struct {
 
 // The set of arguments for constructing a IP resource.
 type IPArgs struct {
-	// IP address A record.
+	// Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
 	ARecord pulumi.StringPtrInput
 	Project pulumi.IntInput
-	// IP address PTR record.
+	// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
 	PtrRecord pulumi.StringPtrInput
 	// IP address project ID.
 	Region pulumi.StringInput
@@ -204,9 +208,14 @@ func (o IPOutput) ToIPOutputWithContext(ctx context.Context) IPOutput {
 	return o
 }
 
-// IP address A record.
+// Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
 func (o IPOutput) ARecord() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *IP) pulumi.StringPtrOutput { return v.ARecord }).(pulumi.StringPtrOutput)
+}
+
+// Relative DNS name for the IP address.
+func (o IPOutput) ARecordEffective() pulumi.StringOutput {
+	return o.ApplyT(func(v *IP) pulumi.StringOutput { return v.ARecordEffective }).(pulumi.StringOutput)
 }
 
 // Actual address.
@@ -228,9 +237,14 @@ func (o IPOutput) Project() pulumi.IntOutput {
 	return o.ApplyT(func(v *IP) pulumi.IntOutput { return v.Project }).(pulumi.IntOutput)
 }
 
-// IP address PTR record.
+// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
 func (o IPOutput) PtrRecord() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *IP) pulumi.StringPtrOutput { return v.PtrRecord }).(pulumi.StringPtrOutput)
+}
+
+// Reverse DNS name for the IP address.
+func (o IPOutput) PtrRecordEffective() pulumi.StringOutput {
+	return o.ApplyT(func(v *IP) pulumi.StringOutput { return v.PtrRecordEffective }).(pulumi.StringOutput)
 }
 
 // IP address project ID.

@@ -20,6 +20,10 @@
         "provider/index.ts",
         "provider/ip.ts",
         "provider/project.ts",
+        "provider/server.ts",
+        "types/index.ts",
+        "types/input.ts",
+        "types/output.ts",
         "utilities.ts"
     ]
 }

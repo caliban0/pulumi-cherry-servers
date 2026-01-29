@@ -29,8 +29,8 @@ class IPArgs:
         """
         The set of arguments for constructing a IP resource.
         :param pulumi.Input[_builtins.str] region: IP address project ID.
-        :param pulumi.Input[_builtins.str] a_record: IP address A record.
-        :param pulumi.Input[_builtins.str] ptr_record: IP address PTR record.
+        :param pulumi.Input[_builtins.str] a_record: Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
+        :param pulumi.Input[_builtins.str] ptr_record: Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         :param pulumi.Input[_builtins.str] routed_to: IP address that this address is routed to.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: IP address tags.
         :param pulumi.Input[_builtins.int] targeted_to: Server that this address is targeted to.
@@ -73,7 +73,7 @@ class IPArgs:
     @pulumi.getter(name="aRecord")
     def a_record(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
-        IP address A record.
+        Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
         """
         return pulumi.get(self, "a_record")
 
@@ -85,7 +85,7 @@ class IPArgs:
     @pulumi.getter(name="ptrRecord")
     def ptr_record(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
-        IP address PTR record.
+        Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         """
         return pulumi.get(self, "ptr_record")
 
@@ -149,8 +149,8 @@ class IP(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[_builtins.str] a_record: IP address A record.
-        :param pulumi.Input[_builtins.str] ptr_record: IP address PTR record.
+        :param pulumi.Input[_builtins.str] a_record: Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
+        :param pulumi.Input[_builtins.str] ptr_record: Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         :param pulumi.Input[_builtins.str] region: IP address project ID.
         :param pulumi.Input[_builtins.str] routed_to: IP address that this address is routed to.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: IP address tags.
@@ -207,9 +207,11 @@ class IP(pulumi.CustomResource):
             __props__.__dict__["routed_to"] = routed_to
             __props__.__dict__["tags"] = tags
             __props__.__dict__["targeted_to"] = targeted_to
+            __props__.__dict__["a_record_effective"] = None
             __props__.__dict__["address"] = None
             __props__.__dict__["address_family"] = None
             __props__.__dict__["cidr"] = None
+            __props__.__dict__["ptr_record_effective"] = None
             __props__.__dict__["type"] = None
         super(IP, __self__).__init__(
             'pulumi-cherry-servers:provider:IP',
@@ -234,11 +236,13 @@ class IP(pulumi.CustomResource):
         __props__ = IPArgs.__new__(IPArgs)
 
         __props__.__dict__["a_record"] = None
+        __props__.__dict__["a_record_effective"] = None
         __props__.__dict__["address"] = None
         __props__.__dict__["address_family"] = None
         __props__.__dict__["cidr"] = None
         __props__.__dict__["project"] = None
         __props__.__dict__["ptr_record"] = None
+        __props__.__dict__["ptr_record_effective"] = None
         __props__.__dict__["region"] = None
         __props__.__dict__["routed_to"] = None
         __props__.__dict__["tags"] = None
@@ -250,9 +254,17 @@ class IP(pulumi.CustomResource):
     @pulumi.getter(name="aRecord")
     def a_record(self) -> pulumi.Output[Optional[_builtins.str]]:
         """
-        IP address A record.
+        Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
         """
         return pulumi.get(self, "a_record")
+
+    @_builtins.property
+    @pulumi.getter(name="aRecordEffective")
+    def a_record_effective(self) -> pulumi.Output[_builtins.str]:
+        """
+        Relative DNS name for the IP address.
+        """
+        return pulumi.get(self, "a_record_effective")
 
     @_builtins.property
     @pulumi.getter
@@ -287,9 +299,17 @@ class IP(pulumi.CustomResource):
     @pulumi.getter(name="ptrRecord")
     def ptr_record(self) -> pulumi.Output[Optional[_builtins.str]]:
         """
-        IP address PTR record.
+        Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         """
         return pulumi.get(self, "ptr_record")
+
+    @_builtins.property
+    @pulumi.getter(name="ptrRecordEffective")
+    def ptr_record_effective(self) -> pulumi.Output[_builtins.str]:
+        """
+        Reverse DNS name for the IP address.
+        """
+        return pulumi.get(self, "ptr_record_effective")
 
     @_builtins.property
     @pulumi.getter

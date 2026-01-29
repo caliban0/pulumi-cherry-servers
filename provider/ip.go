@@ -38,8 +38,11 @@ type IPArgs struct {
 func (i *IPArgs) Annotate(a infer.Annotator) {
 	a.Describe(&i.Region, "IP address region slug.")
 	a.Describe(&i.Region, "IP address project ID.")
-	a.Describe(&i.PTRRecord, "IP address PTR record.")
-	a.Describe(&i.ARecord, "IP address A record.")
+	a.Describe(&i.PTRRecord, "Reverse DNS name for the IP address."+
+		"The value will be stored in `ptrRecordEffective`")
+	a.Describe(&i.ARecord, "Relative DNS name for the IP address."+
+		"Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net'"+
+		" and must be globally unique. The value will be stored in `aRecordEffective`")
 	a.Describe(&i.RoutedTo, "IP address that this address is routed to.")
 	a.Describe(&i.TargetedTo, "Server that this address is targeted to.")
 	a.Describe(&i.Tags, "IP address tags.")
@@ -47,10 +50,12 @@ func (i *IPArgs) Annotate(a infer.Annotator) {
 
 type IPState struct {
 	IPArgs
-	Address       string `pulumi:"address"`
-	AddressFamily int    `pulumi:"addressFamily"`
-	CIDR          string `pulumi:"cidr"`
-	Type          string `pulumi:"type"`
+	Address            string `pulumi:"address"`
+	AddressFamily      int    `pulumi:"addressFamily"`
+	CIDR               string `pulumi:"cidr"`
+	Type               string `pulumi:"type"`
+	ARecordEffective   string `pulumi:"aRecordEffective"`
+	PTRRecordEffective string `pulumi:"ptrRecordEffective"`
 }
 
 func (i *IPState) Annotate(a infer.Annotator) {
@@ -59,6 +64,8 @@ func (i *IPState) Annotate(a infer.Annotator) {
 	a.Describe(&i.AddressFamily, "IP address family.")
 	a.Describe(&i.CIDR, "IP address CIDR.")
 	a.Describe(&i.Type, "IP address type.")
+	a.Describe(&i.ARecordEffective, "Relative DNS name for the IP address.")
+	a.Describe(&i.PTRRecordEffective, "Reverse DNS name for the IP address.")
 }
 
 var (
@@ -67,6 +74,7 @@ var (
 	_ infer.Annotated                             = (*IPState)(nil)
 	_ infer.CustomCreate[IPArgs, IPState]         = (*IP)(nil)
 	_ infer.CustomDelete[IPState]                 = (*IP)(nil)
+	_ infer.CustomCheck[IPArgs]                   = (*IP)(nil)
 	_ infer.CustomUpdate[IPArgs, IPState]         = (*IP)(nil)
 	_ infer.CustomDiff[IPArgs, IPState]           = (*IP)(nil)
 	_ infer.CustomRead[IPArgs, IPState]           = (*IP)(nil)
@@ -102,7 +110,7 @@ func (i *IP) Create(ctx context.Context, req infer.CreateRequest[IPArgs]) (
 
 	return infer.CreateResponse[IPState]{
 		ID:     ip.ID,
-		Output: ipStateFromClientResp(ip, req.Inputs.Project),
+		Output: ipStateFromClientResp(ip, req.Inputs.Project, req.Inputs.ARecord, req.Inputs.PTRRecord),
 	}, nil
 }
 
@@ -118,6 +126,30 @@ func (i *IP) Delete(ctx context.Context, req infer.DeleteRequest[IPState]) (infe
 		err = nil
 	}
 	return infer.DeleteResponse{}, err
+}
+
+func (i *IP) Check(ctx context.Context, req infer.CheckRequest) (infer.CheckResponse[IPArgs], error) {
+	args, failures, err := infer.DefaultCheck[IPArgs](ctx, req.NewInputs)
+	if err != nil {
+		return infer.CheckResponse[IPArgs]{
+			Inputs:   args,
+			Failures: failures,
+		}, err
+	}
+
+	// RoutedTo and TargetedTo are mutually exclusive.
+	if args.RoutedTo != "" && args.TargetedTo != 0 {
+		failures = append(failures,
+			prov.CheckFailure{
+				Property: "routedTo", Reason: "'routedTo' is mutually exclusive with 'targetedTo'"},
+			prov.CheckFailure{
+				Property: "targetedTo", Reason: "'targetedTo' is mutually exclusive with 'routedTo'"})
+	}
+
+	return infer.CheckResponse[IPArgs]{
+		Inputs:   args,
+		Failures: failures,
+	}, err
 }
 
 func (i *IP) Update(
@@ -138,14 +170,14 @@ func (i *IP) Update(
 
 	ip, _, err := client.Update(req.ID, &cherrygo.UpdateIPAddress{
 		PtrRecord:  req.Inputs.PTRRecord,
-		ARecord:    req.State.ARecord,
+		ARecord:    req.Inputs.ARecord,
 		RoutedTo:   req.Inputs.RoutedTo,
 		TargetedTo: strconv.Itoa(req.Inputs.TargetedTo),
 		Tags:       &req.Inputs.Tags,
 	})
 
 	return infer.UpdateResponse[IPState]{
-		Output: ipStateFromClientResp(ip, req.Inputs.Project),
+		Output: ipStateFromClientResp(ip, req.Inputs.Project, req.Inputs.ARecord, req.Inputs.PTRRecord),
 	}, err
 }
 
@@ -205,25 +237,32 @@ func (i *IP) Read(
 	return infer.ReadResponse[IPArgs, IPState]{
 		ID:     req.ID,
 		Inputs: req.Inputs,
-		State:  ipStateFromClientResp(ip, req.Inputs.Project),
+		State:  ipStateFromClientResp(ip, req.Inputs.Project, req.Inputs.ARecord, req.Inputs.ARecord),
 	}, err
 }
 
-func ipStateFromClientResp(ip cherrygo.IPAddress, projectID int) IPState {
+func ipStateFromClientResp(ip cherrygo.IPAddress, projectID int, aRecordInput, ptrRecordInput string) IPState {
+	tags := &map[string]string{}
+	if ip.Tags != nil {
+		tags = ip.Tags
+	}
+
 	return IPState{
 		IPArgs: IPArgs{
 			Region:     ip.Region.Slug,
 			Project:    projectID,
-			PTRRecord:  ip.PtrRecord,
-			ARecord:    ip.ARecord,
+			PTRRecord:  ptrRecordInput,
+			ARecord:    aRecordInput,
 			RoutedTo:   ip.RoutedTo.ID,
 			TargetedTo: ip.TargetedTo.ID,
-			Tags:       *ip.Tags,
+			Tags:       *tags,
 		},
-		Address:       ip.Address,
-		AddressFamily: ip.AddressFamily,
-		CIDR:          ip.Cidr,
-		Type:          ip.Type,
+		Address:            ip.Address,
+		AddressFamily:      ip.AddressFamily,
+		CIDR:               ip.Cidr,
+		Type:               ip.Type,
+		ARecordEffective:   ip.ARecord,
+		PTRRecordEffective: ip.PtrRecord,
 	}
 }
 
@@ -239,4 +278,6 @@ func (*IP) WireDependencies(
 	f.OutputField(&state.Address).DependsOn(f.InputField(&args.Region), f.InputField(&args.Project))
 	f.OutputField(&state.AddressFamily).DependsOn(f.InputField(&args.Region), f.InputField(&args.Project))
 	f.OutputField(&state.CIDR).DependsOn(f.InputField(&args.Region), f.InputField(&args.Project))
+	f.OutputField(&state.ARecordEffective).DependsOn(f.InputField(&args.ARecord))
+	f.OutputField(&state.PTRRecordEffective).DependsOn(f.InputField(&args.PTRRecord))
 }

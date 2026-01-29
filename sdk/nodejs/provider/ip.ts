@@ -35,9 +35,13 @@ export class IP extends pulumi.CustomResource {
     }
 
     /**
-     * IP address A record.
+     * Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
      */
     declare public readonly aRecord: pulumi.Output<string | undefined>;
+    /**
+     * Relative DNS name for the IP address.
+     */
+    declare public /*out*/ readonly aRecordEffective: pulumi.Output<string>;
     /**
      * Actual address.
      */
@@ -52,9 +56,13 @@ export class IP extends pulumi.CustomResource {
     declare public /*out*/ readonly cidr: pulumi.Output<string>;
     declare public readonly project: pulumi.Output<number>;
     /**
-     * IP address PTR record.
+     * Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      */
     declare public readonly ptrRecord: pulumi.Output<string | undefined>;
+    /**
+     * Reverse DNS name for the IP address.
+     */
+    declare public /*out*/ readonly ptrRecordEffective: pulumi.Output<string>;
     /**
      * IP address project ID.
      */
@@ -100,17 +108,21 @@ export class IP extends pulumi.CustomResource {
             resourceInputs["routedTo"] = args?.routedTo;
             resourceInputs["tags"] = args?.tags;
             resourceInputs["targetedTo"] = args?.targetedTo;
+            resourceInputs["aRecordEffective"] = undefined /*out*/;
             resourceInputs["address"] = undefined /*out*/;
             resourceInputs["addressFamily"] = undefined /*out*/;
             resourceInputs["cidr"] = undefined /*out*/;
+            resourceInputs["ptrRecordEffective"] = undefined /*out*/;
             resourceInputs["type"] = undefined /*out*/;
         } else {
             resourceInputs["aRecord"] = undefined /*out*/;
+            resourceInputs["aRecordEffective"] = undefined /*out*/;
             resourceInputs["address"] = undefined /*out*/;
             resourceInputs["addressFamily"] = undefined /*out*/;
             resourceInputs["cidr"] = undefined /*out*/;
             resourceInputs["project"] = undefined /*out*/;
             resourceInputs["ptrRecord"] = undefined /*out*/;
+            resourceInputs["ptrRecordEffective"] = undefined /*out*/;
             resourceInputs["region"] = undefined /*out*/;
             resourceInputs["routedTo"] = undefined /*out*/;
             resourceInputs["tags"] = undefined /*out*/;
@@ -127,12 +139,12 @@ export class IP extends pulumi.CustomResource {
  */
 export interface IPArgs {
     /**
-     * IP address A record.
+     * Relative DNS name for the IP address.Resulting FQDN will be '<relative-dns-name>.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
      */
     aRecord?: pulumi.Input<string>;
     project: pulumi.Input<number>;
     /**
-     * IP address PTR record.
+     * Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
      */
     ptrRecord?: pulumi.Input<string>;
     /**

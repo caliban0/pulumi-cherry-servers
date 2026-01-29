@@ -17,10 +17,16 @@ namespace Caliban0.PulumiCherryServers.Provider
     public partial class IP : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// IP address A record.
+        /// Relative DNS name for the IP address.Resulting FQDN will be '&lt;relative-dns-name&gt;.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
         /// </summary>
         [Output("aRecord")]
         public Output<string?> ARecord { get; private set; } = null!;
+
+        /// <summary>
+        /// Relative DNS name for the IP address.
+        /// </summary>
+        [Output("aRecordEffective")]
+        public Output<string> ARecordEffective { get; private set; } = null!;
 
         /// <summary>
         /// Actual address.
@@ -44,10 +50,16 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Output<int> Project { get; private set; } = null!;
 
         /// <summary>
-        /// IP address PTR record.
+        /// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         /// </summary>
         [Output("ptrRecord")]
         public Output<string?> PtrRecord { get; private set; } = null!;
+
+        /// <summary>
+        /// Reverse DNS name for the IP address.
+        /// </summary>
+        [Output("ptrRecordEffective")]
+        public Output<string> PtrRecordEffective { get; private set; } = null!;
 
         /// <summary>
         /// IP address project ID.
@@ -125,7 +137,7 @@ namespace Caliban0.PulumiCherryServers.Provider
     public sealed class IPArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
-        /// IP address A record.
+        /// Relative DNS name for the IP address.Resulting FQDN will be '&lt;relative-dns-name&gt;.cloud.cherryservers.net' and must be globally unique. The value will be stored in `aRecordEffective`
         /// </summary>
         [Input("aRecord")]
         public Input<string>? ARecord { get; set; }
@@ -134,7 +146,7 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Input<int> Project { get; set; } = null!;
 
         /// <summary>
-        /// IP address PTR record.
+        /// Reverse DNS name for the IP address.The value will be stored in `ptrRecordEffective`
         /// </summary>
         [Input("ptrRecord")]
         public Input<string>? PtrRecord { get; set; }
