@@ -12,36 +12,35 @@ import (
 type fakeIPClient struct {
 }
 
-func (fakeIPClient) List(projectID int, opts *cherrygo.GetOptions) (_ []cherrygo.IPAddress, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) List(_ int, _ *cherrygo.GetOptions) ([]cherrygo.IPAddress, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Get(ipID string, opts *cherrygo.GetOptions) (_ cherrygo.IPAddress, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Get(_ string, _ *cherrygo.GetOptions) (cherrygo.IPAddress, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Create(projectID int, request *cherrygo.CreateIPAddress) (_ cherrygo.IPAddress, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Create(_ int, _ *cherrygo.CreateIPAddress) (cherrygo.IPAddress, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Remove(ipID string) (_ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Remove(_ string) (_ *cherrygo.Response, _ error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Update(ipID string, request *cherrygo.UpdateIPAddress) (_ cherrygo.IPAddress, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Update(_ string, _ *cherrygo.UpdateIPAddress) (cherrygo.IPAddress, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Assign(ipID string, request *cherrygo.AssignIPAddress) (_ cherrygo.IPAddress, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Assign(_ string, _ *cherrygo.AssignIPAddress) (cherrygo.IPAddress, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (fakeIPClient) Unassign(ipID string) (_ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (fakeIPClient) Unassign(_ string) (*cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-
-func fakeIPClientFactory (cfg provider.Config) (provider.IPClient, error) {
+func fakeIPClientFactory(_ provider.Config) (provider.IPClient, error) {
 	return fakeIPClient{}, nil
 }
 
@@ -50,12 +49,12 @@ func TestCreateIP(t *testing.T) {
 
 	cases := []struct {
 		name string
-		req infer.CreateRequest[provider.IPArgs]
+		req  infer.CreateRequest[provider.IPArgs]
 		resp infer.CreateResponse[provider.IPState]
-	} {
+	}{
 		{
 			name: "dry-run",
-			req: infer.CreateRequest[provider.IPArgs]{DryRun: true},
+			req:  infer.CreateRequest[provider.IPArgs]{DryRun: true},
 			resp: infer.CreateResponse[provider.IPState]{},
 		},
 	}
@@ -63,9 +62,8 @@ func TestCreateIP(t *testing.T) {
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, err := p.Create(t.Context(), tt.req)
-			assert.NoError(t, err)
 			assert.Equal(t, tt.resp, resp)
+			assert.NoError(t, err)
 		})
 	}
-
 }

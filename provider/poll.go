@@ -10,16 +10,17 @@ import (
 type jitterFunc func() time.Duration
 
 // jitterFromInterval returns a pseudo-random duration, from the half-open
-// interval [min,max).
-func jitterFromInterval(min, max time.Duration) (jitterFunc, error) {
-	if min < 0 || max < 0 || min > max {
+// interval [least,most).
+func jitterFromInterval(least, most time.Duration) (jitterFunc, error) {
+	if least < 0 || most < 0 || least > most {
 		return nil, fmt.Errorf(
-			"min %v can't be bigger than max %v and neither can be negative", min, max)
+			"least %v can't be bigger than most %v and neither can be negative", least, most)
 	}
-	diff := max.Nanoseconds() - min.Nanoseconds()
+	diff := most.Nanoseconds() - least.Nanoseconds()
 
 	return func() time.Duration {
-		return min + time.Duration(rand.Int64N(diff))
+		return least + time.Duration(rand.Int64N(diff)) //nolint:gosec // Safe to use
+		// pseudo-random here.
 	}, nil
 }
 
@@ -65,22 +66,9 @@ func (p poller) until(ctx context.Context, f func(ctx context.Context) (bool, er
 				"context cancelled prior to condition being fulfilled: %w", ctx.Err())
 		}
 	}
-
 }
 
 type pollerOption func(p *poller)
-
-func withJitter(f jitterFunc) pollerOption {
-	return func(p *poller) {
-		p.jitter = f
-	}
-}
-
-func withDelay(d delayFunc) pollerOption {
-	return func(p *poller) {
-		p.delay = d
-	}
-}
 
 func newPoller(opts ...pollerOption) poller {
 	const (

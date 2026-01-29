@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"maps"
 	"net/http"
@@ -103,6 +104,7 @@ type ServerIPState struct {
 
 type ServerState struct {
 	ServerArgs
+
 	IPs     []ServerIPState    `pulumi:"ips"`
 	Status  string             `pulumi:"status"`
 	Pricing ServerPricingState `pulumi:"pricing"`
@@ -246,48 +248,41 @@ func (s *Server) Update(
 		return infer.UpdateResponse[ServerState]{}, err
 	}
 
-	server, err := s.reinstall(ctx, req, client)
+	state, err := s.reinstall(ctx, req, client)
 	if err != nil {
 		return infer.UpdateResponse[ServerState]{},
-			fmt.Errorf("failed to re-install server %d: %w", server.ID, err)
+			fmt.Errorf("failed to re-install server %q: %w", req.ID, err)
+	}
+	req.State = state
+
+	state, err = updateServer(req, client)
+	if err != nil {
+		return infer.UpdateResponse[ServerState]{},
+			fmt.Errorf("failed to re-update server %q: %w", req.ID, err)
 	}
 
-	serverUpdated, err := updateServer(req, client)
-	if serverUpdated != nil {
-		server = serverUpdated
-	}
-
-	if server != nil {
-		return infer.UpdateResponse[ServerState]{
-			Output: serverStateFromClientResp(*server, req.Inputs),
-		}, err
-	}
-
-	// Return regurgitated inputs, when no API resource update happens
-	// (only internal helpers are updated).
 	return infer.UpdateResponse[ServerState]{
-		Output: ServerState{
-			ServerArgs: req.Inputs,
-		},
+		Output: state,
 	}, nil
 }
 
-// Returns nil server when no re-install is required.
+// reinstall check if a reinstall is actually required and does nothing,
+// if it isn't.
 func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerArgs, ServerState], client ServerClient) (
-	*cherrygo.Server, error) {
+	ServerState, error) {
 	if !reinstallNeeded(req.Inputs, req.State.ServerArgs) {
-		return nil, nil
+		return req.State, nil
 	}
 
 	if !req.Inputs.AllowReinstall {
-		return nil, fmt.Errorf(
+		return ServerState{}, errors.New(
 			"`AllowReinstall` needs to be allowed to update " +
-				"`Image`, `SSHKeys`, `UserData` or `OSPartitionSize`.")
+				"`Image`, `SSHKeys`, `UserData` or `OSPartitionSize`")
 	}
 
 	id, err := strconv.Atoi(req.ID)
 	if err != nil {
-		return nil, fmt.Errorf("Server ID %q not parsable to int: %w", req.ID, err)
+		return ServerState{}, fmt.Errorf("server ID %q not parsable to int: %w", req.ID, err)
 	}
 
 	sshKeyIDs := make([]string, len(req.Inputs.SSHKeys))
@@ -302,12 +297,16 @@ func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerAr
 		OSPartitionSize: req.Inputs.OSPartitionSize,
 	})
 
-	server, err = s.untilDeployed(ctx, server, client)
 	if err != nil {
-		return nil, fmt.Errorf("server %d didn't deploy: %w", server.ID, err)
+		return ServerState{}, err
 	}
 
-	return &server, err
+	server, err = s.untilDeployed(ctx, server, client)
+	if err != nil {
+		return ServerState{}, fmt.Errorf("server %d didn't deploy: %w", server.ID, err)
+	}
+
+	return serverStateFromClientResp(server, req.Inputs), nil
 }
 
 func reinstallNeeded(inputs, state ServerArgs) bool {
@@ -321,16 +320,16 @@ func reinstallNeeded(inputs, state ServerArgs) bool {
 	return false
 }
 
-// Returns nil server when no update is required.
+// updateServer checks if an update is actually needed and does nothing, if it isn't.
 func updateServer(req infer.UpdateRequest[ServerArgs, ServerState], client ServerClient) (
-	*cherrygo.Server, error) {
+	ServerState, error) {
 	if !serverUpdateNeeded(req.Inputs, req.State.ServerArgs) {
-		return nil, nil
+		return req.State, nil
 	}
 
 	id, err := strconv.Atoi(req.ID)
 	if err != nil {
-		return nil, fmt.Errorf("Server ID %q not parsable to int: %w", req.ID, err)
+		return ServerState{}, fmt.Errorf("server ID %q not parsable to int: %w", req.ID, err)
 	}
 
 	server, _, err := client.Update(id, &cherrygo.UpdateServer{
@@ -340,7 +339,11 @@ func updateServer(req infer.UpdateRequest[ServerArgs, ServerState], client Serve
 		Bgp:      req.Inputs.BGP,
 	})
 
-	return &server, err
+	if err != nil {
+		return ServerState{}, err
+	}
+
+	return serverStateFromClientResp(server, req.Inputs), nil
 }
 
 func serverUpdateNeeded(inputs, state ServerArgs) bool {
@@ -537,14 +540,17 @@ func (s *Server) WireDependencies(
 	f.OutputField(&state.AllowReinstall).DependsOn(f.InputField(&args.AllowReinstall))
 }
 
-func (s *Server) untilDeployed(ctx context.Context, server cherrygo.Server, client ServerClient) (cherrygo.Server, error) {
-	poller := newPoller()
+func (s *Server) untilDeployed(
+	ctx context.Context,
+	server cherrygo.Server,
+	client ServerClient) (cherrygo.Server, error) {
+	p := newPoller()
 
 	ctx, cancel := context.WithTimeout(ctx, s.DeploymentTimeout)
 	defer cancel()
 
 	var err error
-	err = poller.until(ctx, func(_ context.Context) (bool, error) {
+	err = p.until(ctx, func(_ context.Context) (bool, error) {
 		server, _, err = client.Get(server.ID, nil)
 		return server.State == "deployed", err
 	})

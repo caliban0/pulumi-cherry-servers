@@ -9,7 +9,7 @@ import (
 type FakeLogger struct {
 }
 
-func (l FakeLogger) Warningf(msg string, a ...any) {
+func (l FakeLogger) Warningf(_ string, _ ...any) {
 	// do nothing
 }
 

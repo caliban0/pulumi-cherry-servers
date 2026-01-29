@@ -19,7 +19,7 @@ type projectCreateFunc func(teamID int, request *cherrygo.CreateProject) (cherry
 type projectDeleteFunc func(projectID int) (*cherrygo.Response, error)
 type projectGetFunc func(projectID int, opts *cherrygo.GetOptions) (_ cherrygo.Project, _ *cherrygo.Response, _ error)
 
-var projectCreateOK projectCreateFunc = func(teamID int, request *cherrygo.CreateProject) (cherrygo.Project, *cherrygo.Response, error) {
+func projectCreateOK(_ int, request *cherrygo.CreateProject) (cherrygo.Project, *cherrygo.Response, error) {
 	return cherrygo.Project{
 		ID:   0,
 		Name: request.Name,
@@ -32,13 +32,13 @@ type fakeProjectsClient struct {
 	getFunc    projectGetFunc
 }
 
-func (c fakeProjectsClient) List(teamID int, opts *cherrygo.GetOptions) (
+func (c fakeProjectsClient) List(_ int, _ *cherrygo.GetOptions) (
 	_ []cherrygo.Project, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+	panic("not implemented")
 }
 
 func (c fakeProjectsClient) Get(projectID int, opts *cherrygo.GetOptions) (
-	_ cherrygo.Project, _ *cherrygo.Response, _ error) {
+	cherrygo.Project, *cherrygo.Response, error) {
 	if c.getFunc == nil {
 		panic("no Get callback for fakeProjectsClient")
 	}
@@ -46,21 +46,21 @@ func (c fakeProjectsClient) Get(projectID int, opts *cherrygo.GetOptions) (
 }
 
 func (c fakeProjectsClient) Create(teamID int, request *cherrygo.CreateProject) (
-	_ cherrygo.Project, _ *cherrygo.Response, _ error) {
+	cherrygo.Project, *cherrygo.Response, error) {
 	if c.createFunc == nil {
 		panic("no Create callback for fakeProjectsClient")
 	}
 	return c.createFunc(teamID, request)
 }
 
-func (c fakeProjectsClient) Update(projectID int, request *cherrygo.UpdateProject) (
-	_ cherrygo.Project, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (c fakeProjectsClient) Update(_ int, _ *cherrygo.UpdateProject) (
+	cherrygo.Project, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
-func (c fakeProjectsClient) ListSSHKeys(projectID int, opts *cherrygo.GetOptions) (
-	_ []cherrygo.SSHKey, _ *cherrygo.Response, _ error) {
-	panic("not implemented") // TODO: Implement
+func (c fakeProjectsClient) ListSSHKeys(_ int, _ *cherrygo.GetOptions) (
+	[]cherrygo.SSHKey, *cherrygo.Response, error) {
+	panic("not implemented")
 }
 
 func (c fakeProjectsClient) Delete(projectID int) (_ *cherrygo.Response, _ error) {
@@ -102,7 +102,7 @@ func newFakeProjectsClientFactory(opts ...fakeProjectsClientOption) provider.Pro
 
 func TestDeleteProjectNotFound(t *testing.T) {
 	clientFactory := newFakeProjectsClientFactory(withDeleteProject(
-		func(projectID int) (*cherrygo.Response, error) {
+		func(_ int) (*cherrygo.Response, error) {
 			return &cherrygo.Response{
 				Response: &http.Response{StatusCode: http.StatusNotFound},
 			}, errors.New("")
@@ -118,7 +118,7 @@ func TestDeleteProjectNotFound(t *testing.T) {
 
 func TestReadProjectNotFound(t *testing.T) {
 	clientFactory := newFakeProjectsClientFactory(withGetProject(
-		func(projectID int, opts *cherrygo.GetOptions) (cherrygo.Project, *cherrygo.Response, error) {
+		func(_ int, _ *cherrygo.GetOptions) (cherrygo.Project, *cherrygo.Response, error) {
 			return cherrygo.Project{},
 				&cherrygo.Response{Response: &http.Response{StatusCode: http.StatusNotFound}},
 				errors.New("")
@@ -194,9 +194,8 @@ func TestCreateProject(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := provider.Project{GetClient: tt.clientFactory, GetLogger: GetFakeLogger}
 			resp, err := p.Create(t.Context(), tt.req)
-			assert.NoError(t, err)
 			assert.Equal(t, tt.resp, resp)
+			assert.NoError(t, err)
 		})
 	}
-
 }

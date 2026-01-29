@@ -50,6 +50,7 @@ func (i *IPArgs) Annotate(a infer.Annotator) {
 
 type IPState struct {
 	IPArgs
+
 	Address            string `pulumi:"address"`
 	AddressFamily      int    `pulumi:"addressFamily"`
 	CIDR               string `pulumi:"cidr"`

@@ -40,6 +40,7 @@ func (p *ProjectArgs) Annotate(a infer.Annotator) {
 
 type ProjectState struct {
 	ProjectArgs
+
 	LocalASN int `pulumi:"localASN,optional"`
 }
 
