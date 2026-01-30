@@ -69,3 +69,6 @@ python_sdk: sdk/python
 # Install provider plugin from the locally built binary.
 install-plugin: codegen
 	${PULUMI} plugin install resource ${PROVIDER} ${VERSION_GENERIC} --reinstall -f bin/${PROVIDER}
+
+lint:
+	golangci-lint run
