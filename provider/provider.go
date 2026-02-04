@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -72,17 +73,29 @@ func getIPClient(cfg Config) (IPClient, error) {
 
 var _ ProjectClientFactory = getProjectClient
 
+func deploymentContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	// Set a 30 minute timeout for server deployment.
+	const timeout = time.Minute * 30
+	return context.WithTimeout(ctx, timeout)
+}
+
 func Provider() (p.Provider, error) {
-	const deployTimeout = time.Minute * 20
+	const pollInterval = time.Second * 10
+	durationFunc, err := DurationWithJitter(pollInterval)
+	if err != nil {
+		return p.Provider{}, fmt.Errorf("failed to create polling interval duration: %w", err)
+	}
 
 	return infer.NewProviderBuilder().
 		WithResources(
 			infer.Resource(&Project{GetClient: getProjectClient, GetLogger: GetLogger}),
 			infer.Resource(&IP{getIPClient}),
 			infer.Resource(&Server{
-				GetClient:         getServerClient,
-				GetLogger:         GetLogger,
-				DeploymentTimeout: deployTimeout}),
+				GetClient:              getServerClient,
+				GetLogger:              GetLogger,
+				DeploymentContext:      deploymentContext,
+				DeploymentPollInterval: durationFunc,
+			}),
 		).
 		WithDisplayName(Name).
 		WithNamespace("caliban0").

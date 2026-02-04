@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
-	"time"
 
 	"github.com/cherryservers/cherrygo/v3"
 	prov "github.com/pulumi/pulumi-go-provider"
@@ -23,9 +22,14 @@ type ServerClient interface {
 type ServerClientFactory func(ctx context.Context) (ServerClient, error)
 
 type Server struct {
-	GetClient         ServerClientFactory
-	DeploymentTimeout time.Duration
-	GetLogger         GetLoggerFunc
+	GetClient ServerClientFactory
+
+	// DeploymentContext builds the context for server deployment polling.
+	DeploymentContext func(context.Context) (context.Context, context.CancelFunc)
+
+	DeploymentPollInterval DurationFunc
+
+	GetLogger GetLoggerFunc
 }
 
 func (s *Server) Annotate(a infer.Annotator) {
@@ -544,13 +548,11 @@ func (s *Server) untilDeployed(
 	ctx context.Context,
 	server cherrygo.Server,
 	client ServerClient) (cherrygo.Server, error) {
-	p := newPoller()
-
-	ctx, cancel := context.WithTimeout(ctx, s.DeploymentTimeout)
+	ctx, cancel := s.DeploymentContext(ctx)
 	defer cancel()
 
 	var err error
-	err = p.until(ctx, func(_ context.Context) (bool, error) {
+	err = Until(ctx, NewTickSource(s.DeploymentPollInterval), func() (bool, error) {
 		server, _, err = client.Get(server.ID, nil)
 		return server.State == "deployed", err
 	})
