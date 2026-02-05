@@ -65,12 +65,6 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Output<ImmutableArray<Outputs.ServerIPState>> Ips { get; private set; } = null!;
 
         /// <summary>
-        /// Server name.
-        /// </summary>
-        [Output("name")]
-        public Output<string?> Name { get; private set; } = null!;
-
-        /// <summary>
         /// Server OS partition size. Updating requires re-installation.
         /// </summary>
         [Output("osPartitionSize")]
@@ -228,12 +222,6 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// </summary>
         [Input("image")]
         public Input<string>? Image { get; set; }
-
-        /// <summary>
-        /// Server name.
-        /// </summary>
-        [Input("name")]
-        public Input<string>? Name { get; set; }
 
         /// <summary>
         /// Server OS partition size. Updating requires re-installation.

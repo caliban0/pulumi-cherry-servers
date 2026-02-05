@@ -225,6 +225,23 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 		}, err
 	}
 
+	// Default to hourly cycle.
+	if args.Cycle == "" {
+		args.Cycle = "hourly"
+	}
+
+	if args.Tags == nil {
+		args.Tags = make(map[string]string)
+	}
+
+	if args.ExtraIPs == nil {
+		args.ExtraIPs = make([]string, 0)
+	}
+
+	if args.SSHKeys == nil {
+		args.SSHKeys = make([]int, 0)
+	}
+
 	args.Hostname, err = autoname(args.Hostname, req.Name, req.OldInputs.Get("hostname"))
 	return infer.CheckResponse[ServerArgs]{
 		Inputs:   args,

@@ -283,10 +283,6 @@
           },
           "description": "Server IP addresses."
         },
-        "name": {
-          "type": "string",
-          "description": "Server name."
-        },
         "osPartitionSize": {
           "type": "integer",
           "description": "Server OS partition size. Updating requires re-installation."
@@ -377,10 +373,6 @@
         "image": {
           "type": "string",
           "description": "Server image slug. Updating requires re-installation."
-        },
-        "name": {
-          "type": "string",
-          "description": "Server name."
         },
         "osPartitionSize": {
           "type": "integer",

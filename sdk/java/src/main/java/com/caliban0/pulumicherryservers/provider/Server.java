@@ -138,20 +138,6 @@ public class Server extends com.pulumi.resources.CustomResource {
         return this.ips;
     }
     /**
-     * Server name.
-     * 
-     */
-    @Export(name="name", refs={String.class}, tree="[0]")
-    private Output</* @Nullable */ String> name;
-
-    /**
-     * @return Server name.
-     * 
-     */
-    public Output<Optional<String>> name() {
-        return Codegen.optional(this.name);
-    }
-    /**
      * Server OS partition size. Updating requires re-installation.
      * 
      */

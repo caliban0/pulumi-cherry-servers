@@ -30,7 +30,6 @@ class ServerArgs:
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
                  os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
@@ -49,7 +48,6 @@ class ServerArgs:
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
         :param pulumi.Input[_builtins.str] hostname: Server hostname.
         :param pulumi.Input[_builtins.str] image: Server image slug. Updating requires re-installation.
-        :param pulumi.Input[_builtins.str] name: Server name.
         :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
@@ -74,8 +72,6 @@ class ServerArgs:
             pulumi.set(__self__, "hostname", hostname)
         if image is not None:
             pulumi.set(__self__, "image", image)
-        if name is not None:
-            pulumi.set(__self__, "name", name)
         if os_partition_size is not None:
             pulumi.set(__self__, "os_partition_size", os_partition_size)
         if spot is not None:
@@ -210,18 +206,6 @@ class ServerArgs:
         pulumi.set(self, "image", value)
 
     @_builtins.property
-    @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
-        """
-        Server name.
-        """
-        return pulumi.get(self, "name")
-
-    @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
-        pulumi.set(self, "name", value)
-
-    @_builtins.property
     @pulumi.getter(name="osPartitionSize")
     def os_partition_size(self) -> Optional[pulumi.Input[_builtins.int]]:
         """
@@ -307,7 +291,6 @@ class Server(pulumi.CustomResource):
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
                  os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  plan: Optional[pulumi.Input[_builtins.str]] = None,
                  project: Optional[pulumi.Input[_builtins.int]] = None,
@@ -330,7 +313,6 @@ class Server(pulumi.CustomResource):
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
         :param pulumi.Input[_builtins.str] hostname: Server hostname.
         :param pulumi.Input[_builtins.str] image: Server image slug. Updating requires re-installation.
-        :param pulumi.Input[_builtins.str] name: Server name.
         :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.str] plan: Server plan slug.
         :param pulumi.Input[_builtins.int] project: ID of the server the project belongs to.
@@ -372,7 +354,6 @@ class Server(pulumi.CustomResource):
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
                  os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  plan: Optional[pulumi.Input[_builtins.str]] = None,
                  project: Optional[pulumi.Input[_builtins.int]] = None,
@@ -398,7 +379,6 @@ class Server(pulumi.CustomResource):
             __props__.__dict__["extra_ips"] = extra_ips
             __props__.__dict__["hostname"] = hostname
             __props__.__dict__["image"] = image
-            __props__.__dict__["name"] = name
             __props__.__dict__["os_partition_size"] = os_partition_size
             if plan is None and not opts.urn:
                 raise TypeError("Missing required property 'plan'")
@@ -447,7 +427,6 @@ class Server(pulumi.CustomResource):
         __props__.__dict__["hostname"] = None
         __props__.__dict__["image"] = None
         __props__.__dict__["ips"] = None
-        __props__.__dict__["name"] = None
         __props__.__dict__["os_partition_size"] = None
         __props__.__dict__["plan"] = None
         __props__.__dict__["pricing"] = None
@@ -524,14 +503,6 @@ class Server(pulumi.CustomResource):
         Server IP addresses.
         """
         return pulumi.get(self, "ips")
-
-    @_builtins.property
-    @pulumi.getter
-    def name(self) -> pulumi.Output[Optional[_builtins.str]]:
-        """
-        Server name.
-        """
-        return pulumi.get(self, "name")
 
     @_builtins.property
     @pulumi.getter(name="osPartitionSize")

@@ -32,8 +32,6 @@ type Server struct {
 	Image pulumi.StringPtrOutput `pulumi:"image"`
 	// Server IP addresses.
 	Ips ServerIPStateArrayOutput `pulumi:"ips"`
-	// Server name.
-	Name pulumi.StringPtrOutput `pulumi:"name"`
 	// Server OS partition size. Updating requires re-installation.
 	OsPartitionSize pulumi.IntPtrOutput `pulumi:"osPartitionSize"`
 	// Server plan slug.
@@ -121,8 +119,6 @@ type serverArgs struct {
 	Hostname *string `pulumi:"hostname"`
 	// Server image slug. Updating requires re-installation.
 	Image *string `pulumi:"image"`
-	// Server name.
-	Name *string `pulumi:"name"`
 	// Server OS partition size. Updating requires re-installation.
 	OsPartitionSize *int `pulumi:"osPartitionSize"`
 	// Server plan slug.
@@ -159,8 +155,6 @@ type ServerArgs struct {
 	Hostname pulumi.StringPtrInput
 	// Server image slug. Updating requires re-installation.
 	Image pulumi.StringPtrInput
-	// Server name.
-	Name pulumi.StringPtrInput
 	// Server OS partition size. Updating requires re-installation.
 	OsPartitionSize pulumi.IntPtrInput
 	// Server plan slug.
@@ -306,11 +300,6 @@ func (o ServerOutput) Image() pulumi.StringPtrOutput {
 // Server IP addresses.
 func (o ServerOutput) Ips() ServerIPStateArrayOutput {
 	return o.ApplyT(func(v *Server) ServerIPStateArrayOutput { return v.Ips }).(ServerIPStateArrayOutput)
-}
-
-// Server name.
-func (o ServerOutput) Name() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Server) pulumi.StringPtrOutput { return v.Name }).(pulumi.StringPtrOutput)
 }
 
 // Server OS partition size. Updating requires re-installation.

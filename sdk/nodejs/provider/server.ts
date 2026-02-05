@@ -69,10 +69,6 @@ export class Server extends pulumi.CustomResource {
      */
     declare public /*out*/ readonly ips: pulumi.Output<outputs.provider.ServerIPState[]>;
     /**
-     * Server name.
-     */
-    declare public readonly name: pulumi.Output<string | undefined>;
-    /**
      * Server OS partition size. Updating requires re-installation.
      */
     declare public readonly osPartitionSize: pulumi.Output<number | undefined>;
@@ -144,7 +140,6 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["extraIPs"] = args?.extraIPs;
             resourceInputs["hostname"] = args?.hostname;
             resourceInputs["image"] = args?.image;
-            resourceInputs["name"] = args?.name;
             resourceInputs["osPartitionSize"] = args?.osPartitionSize;
             resourceInputs["plan"] = args?.plan;
             resourceInputs["project"] = args?.project;
@@ -166,7 +161,6 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["hostname"] = undefined /*out*/;
             resourceInputs["image"] = undefined /*out*/;
             resourceInputs["ips"] = undefined /*out*/;
-            resourceInputs["name"] = undefined /*out*/;
             resourceInputs["osPartitionSize"] = undefined /*out*/;
             resourceInputs["plan"] = undefined /*out*/;
             resourceInputs["pricing"] = undefined /*out*/;
@@ -216,10 +210,6 @@ export interface ServerArgs {
      * Server image slug. Updating requires re-installation.
      */
     image?: pulumi.Input<string>;
-    /**
-     * Server name.
-     */
-    name?: pulumi.Input<string>;
     /**
      * Server OS partition size. Updating requires re-installation.
      */

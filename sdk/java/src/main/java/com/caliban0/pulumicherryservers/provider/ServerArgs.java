@@ -126,21 +126,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Server name.
-     * 
-     */
-    @Import(name="name")
-    private @Nullable Output<String> name;
-
-    /**
-     * @return Server name.
-     * 
-     */
-    public Optional<Output<String>> name() {
-        return Optional.ofNullable(this.name);
-    }
-
-    /**
      * Server OS partition size. Updating requires re-installation.
      * 
      */
@@ -285,7 +270,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         this.extraIPs = $.extraIPs;
         this.hostname = $.hostname;
         this.image = $.image;
-        this.name = $.name;
         this.osPartitionSize = $.osPartitionSize;
         this.plan = $.plan;
         this.project = $.project;
@@ -470,27 +454,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder image(String image) {
             return image(Output.of(image));
-        }
-
-        /**
-         * @param name Server name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder name(@Nullable Output<String> name) {
-            $.name = name;
-            return this;
-        }
-
-        /**
-         * @param name Server name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder name(String name) {
-            return name(Output.of(name));
         }
 
         /**
