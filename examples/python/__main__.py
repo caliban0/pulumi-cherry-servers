@@ -65,3 +65,35 @@ project = cherry.Project("myProject", team=148226, bgp=True, name="testt")
 #         }
 #     ),
 # )
+
+server = cherry.Server(
+    "myServer",
+    region="LT-Siauliai",
+    project=project.id.apply(int),
+    plan="B1-1-1gb-20s-shared",
+)
+pulumi.export(
+    "server_output",
+    {
+        "id": server.id,
+        "plan": server.plan,
+        "project": server.project,
+        "region": server.region,
+        "hostname": server.hostname,
+        "image": server.image,
+        "ssh": server.ssh_keys,
+        "extra_ips": server.extra_ips,
+        "user_data": server.user_data,
+        "tags": server.tags,
+        "spot": server.spot,
+        "os_partition_size": server.os_partition_size,
+        "cycle": server.cycle,
+        "discount_code": server.discount_code,
+        "storage": server.storage,
+        "bgp": server.bgp,
+        "allow_reinstall": server.allow_reinstall,
+        "ips": server.ips,
+        "status": server.status,
+        "pricing": server.pricing,
+    },
+)

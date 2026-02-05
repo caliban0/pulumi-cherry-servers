@@ -40,7 +40,6 @@ type ServerArgs struct {
 	Plan            string            `pulumi:"plan"`
 	Project         int               `pulumi:"project"`
 	Region          string            `pulumi:"region"`
-	Name            string            `pulumi:"name,optional"`
 	Hostname        string            `pulumi:"hostname,optional"`
 	Image           string            `pulumi:"image,optional"`
 	SSHKeys         []int             `pulumi:"sshKeys,optional"`
@@ -60,7 +59,6 @@ func (s *ServerArgs) Annotate(a infer.Annotator) {
 	a.Describe(&s.Plan, "Server plan slug.")
 	a.Describe(&s.Project, "ID of the server the project belongs to.")
 	a.Describe(&s.Region, "Server region slug.")
-	a.Describe(&s.Name, "Server name.")
 	a.Describe(&s.Hostname, "Server hostname.")
 	a.Describe(&s.Image, "Server image slug. Updating requires re-installation.")
 	a.Describe(&s.SSHKeys, "Server SSH key IDs. Updating requires re-installation.")
@@ -181,14 +179,14 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 	}
 
 	// Unfortunately, the create request doesn't have a field for BGP,
-	// so we may need another request, if BGP should be enabled.
-	if req.Inputs.BGP {
+	// so we may need another request, if BGP needs to be set.
+	if req.Inputs.BGP != server.BGP.Enabled {
 		server, _, err = client.Update(server.ID, &cherrygo.UpdateServer{
-			Bgp: true,
+			Bgp: req.Inputs.BGP,
 		})
 		if err != nil {
 			return infer.CreateResponse[ServerState]{},
-				fmt.Errorf("failed to enabled server %d BGP: %w", server.ID, err)
+				fmt.Errorf("failed to enable server %d BGP: %w", server.ID, err)
 		}
 	}
 
@@ -338,7 +336,6 @@ func updateServer(req infer.UpdateRequest[ServerArgs, ServerState], client Serve
 	}
 
 	server, _, err := client.Update(id, &cherrygo.UpdateServer{
-		Name:     req.State.Name,
 		Hostname: req.Inputs.Hostname,
 		Tags:     &req.Inputs.Tags,
 		Bgp:      req.Inputs.BGP,
@@ -352,8 +349,7 @@ func updateServer(req infer.UpdateRequest[ServerArgs, ServerState], client Serve
 }
 
 func serverUpdateNeeded(inputs, state ServerArgs) bool {
-	if inputs.Name != state.Name ||
-		inputs.Hostname != state.Hostname ||
+	if inputs.Hostname != state.Hostname ||
 		!maps.Equal(inputs.Tags, state.Tags) ||
 		inputs.BGP != state.BGP {
 		return true
@@ -378,10 +374,6 @@ func (s *Server) Diff(
 
 	if req.Inputs.Region != req.State.Region {
 		diff["region"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
-	}
-
-	if req.Inputs.Name != req.State.Name {
-		diff["name"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
 	if req.Inputs.Hostname != req.State.Hostname {
@@ -491,7 +483,6 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 			Plan:            s.Plan.Slug,
 			Project:         s.Project.ID,
 			Region:          s.Region.Slug,
-			Name:            s.Name,
 			Hostname:        s.Hostname,
 			Image:           s.DeployedImage.Slug,
 			SSHKeys:         sshKeyIDs,
@@ -529,7 +520,6 @@ func (s *Server) WireDependencies(
 	f.OutputField(&state.Plan).DependsOn(f.InputField(&args.Plan))
 	f.OutputField(&state.Project).DependsOn(f.InputField(&args.Project))
 	f.OutputField(&state.Region).DependsOn(f.InputField(&args.Region))
-	f.OutputField(&state.Name).DependsOn(f.InputField(&args.Name))
 	f.OutputField(&state.Hostname).DependsOn(f.InputField(&args.Hostname))
 	f.OutputField(&state.Image).DependsOn(f.InputField(&args.Image))
 	f.OutputField(&state.SSHKeys).DependsOn(f.InputField(&args.SSHKeys))
