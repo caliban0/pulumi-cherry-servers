@@ -118,8 +118,11 @@ namespace Caliban0.PulumiCherryServers.Provider
         [Output("status")]
         public Output<string> Status { get; private set; } = null!;
 
-        [Output("storageID")]
-        public Output<int?> StorageID { get; private set; } = null!;
+        /// <summary>
+        /// Server elastic block storage ID.
+        /// </summary>
+        [Output("storage")]
+        public Output<int?> Storage { get; private set; } = null!;
 
         /// <summary>
         /// Server tags.
@@ -274,8 +277,11 @@ namespace Caliban0.PulumiCherryServers.Provider
             set => _sshKeys = value;
         }
 
-        [Input("storageID")]
-        public Input<int>? StorageID { get; set; }
+        /// <summary>
+        /// Server elastic block storage ID.
+        /// </summary>
+        [Input("storage")]
+        public Input<int>? Storage { get; set; }
 
         [Input("tags")]
         private InputMap<string>? _tags;

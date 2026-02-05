@@ -104,7 +104,10 @@ export class Server extends pulumi.CustomResource {
      * Server status, such as 'deploying' or 'deployed'.
      */
     declare public /*out*/ readonly status: pulumi.Output<string>;
-    declare public readonly storageID: pulumi.Output<number | undefined>;
+    /**
+     * Server elastic block storage ID.
+     */
+    declare public readonly storage: pulumi.Output<number | undefined>;
     /**
      * Server tags.
      */
@@ -148,7 +151,7 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["region"] = args?.region;
             resourceInputs["spot"] = args?.spot;
             resourceInputs["sshKeys"] = args?.sshKeys;
-            resourceInputs["storageID"] = args?.storageID;
+            resourceInputs["storage"] = args?.storage;
             resourceInputs["tags"] = args?.tags;
             resourceInputs["userData"] = args?.userData;
             resourceInputs["ips"] = undefined /*out*/;
@@ -172,7 +175,7 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["spot"] = undefined /*out*/;
             resourceInputs["sshKeys"] = undefined /*out*/;
             resourceInputs["status"] = undefined /*out*/;
-            resourceInputs["storageID"] = undefined /*out*/;
+            resourceInputs["storage"] = undefined /*out*/;
             resourceInputs["tags"] = undefined /*out*/;
             resourceInputs["userData"] = undefined /*out*/;
         }
@@ -241,7 +244,10 @@ export interface ServerArgs {
      * Server SSH key IDs. Updating requires re-installation.
      */
     sshKeys?: pulumi.Input<pulumi.Input<number>[]>;
-    storageID?: pulumi.Input<number>;
+    /**
+     * Server elastic block storage ID.
+     */
+    storage?: pulumi.Input<number>;
     /**
      * Server tags.
      */

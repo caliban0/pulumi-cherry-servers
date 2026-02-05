@@ -34,7 +34,7 @@ class ServerArgs:
                  os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage_id: Optional[pulumi.Input[_builtins.int]] = None,
+                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None):
         """
@@ -53,6 +53,7 @@ class ServerArgs:
         :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
+        :param pulumi.Input[_builtins.int] storage: Server elastic block storage ID.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
@@ -81,8 +82,8 @@ class ServerArgs:
             pulumi.set(__self__, "spot", spot)
         if ssh_keys is not None:
             pulumi.set(__self__, "ssh_keys", ssh_keys)
-        if storage_id is not None:
-            pulumi.set(__self__, "storage_id", storage_id)
+        if storage is not None:
+            pulumi.set(__self__, "storage", storage)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
         if user_data is not None:
@@ -257,13 +258,16 @@ class ServerArgs:
         pulumi.set(self, "ssh_keys", value)
 
     @_builtins.property
-    @pulumi.getter(name="storageID")
-    def storage_id(self) -> Optional[pulumi.Input[_builtins.int]]:
-        return pulumi.get(self, "storage_id")
+    @pulumi.getter
+    def storage(self) -> Optional[pulumi.Input[_builtins.int]]:
+        """
+        Server elastic block storage ID.
+        """
+        return pulumi.get(self, "storage")
 
-    @storage_id.setter
-    def storage_id(self, value: Optional[pulumi.Input[_builtins.int]]):
-        pulumi.set(self, "storage_id", value)
+    @storage.setter
+    def storage(self, value: Optional[pulumi.Input[_builtins.int]]):
+        pulumi.set(self, "storage", value)
 
     @_builtins.property
     @pulumi.getter
@@ -310,7 +314,7 @@ class Server(pulumi.CustomResource):
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage_id: Optional[pulumi.Input[_builtins.int]] = None,
+                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -333,6 +337,7 @@ class Server(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] region: Server region slug.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
+        :param pulumi.Input[_builtins.int] storage: Server elastic block storage ID.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
@@ -374,7 +379,7 @@ class Server(pulumi.CustomResource):
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage_id: Optional[pulumi.Input[_builtins.int]] = None,
+                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -406,7 +411,7 @@ class Server(pulumi.CustomResource):
             __props__.__dict__["region"] = region
             __props__.__dict__["spot"] = spot
             __props__.__dict__["ssh_keys"] = ssh_keys
-            __props__.__dict__["storage_id"] = storage_id
+            __props__.__dict__["storage"] = storage
             __props__.__dict__["tags"] = tags
             __props__.__dict__["user_data"] = user_data
             __props__.__dict__["ips"] = None
@@ -451,7 +456,7 @@ class Server(pulumi.CustomResource):
         __props__.__dict__["spot"] = None
         __props__.__dict__["ssh_keys"] = None
         __props__.__dict__["status"] = None
-        __props__.__dict__["storage_id"] = None
+        __props__.__dict__["storage"] = None
         __props__.__dict__["tags"] = None
         __props__.__dict__["user_data"] = None
         return Server(resource_name, opts=opts, __props__=__props__)
@@ -593,9 +598,12 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "status")
 
     @_builtins.property
-    @pulumi.getter(name="storageID")
-    def storage_id(self) -> pulumi.Output[Optional[_builtins.int]]:
-        return pulumi.get(self, "storage_id")
+    @pulumi.getter
+    def storage(self) -> pulumi.Output[Optional[_builtins.int]]:
+        """
+        Server elastic block storage ID.
+        """
+        return pulumi.get(self, "storage")
 
     @_builtins.property
     @pulumi.getter

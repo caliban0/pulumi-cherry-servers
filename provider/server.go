@@ -51,7 +51,7 @@ type ServerArgs struct {
 	OSPartitionSize int               `pulumi:"osPartitionSize,optional"`
 	Cycle           string            `pulumi:"cycle,optional"`
 	DiscountCode    string            `pulumi:"discountCode,optional"`
-	StorageID       int               `pulumi:"storageID,optional"`
+	Storage         int               `pulumi:"storage,optional"`
 	BGP             bool              `pulumi:"bgp,optional"`
 	AllowReinstall  bool              `pulumi:"allowReinstall,optional"`
 }
@@ -71,6 +71,7 @@ func (s *ServerArgs) Annotate(a infer.Annotator) {
 	a.Describe(&s.OSPartitionSize, "Server OS partition size. Updating requires re-installation.")
 	a.Describe(&s.Cycle, "Server billing cycle.")
 	a.Describe(&s.DiscountCode, "Server discount code.")
+	a.Describe(&s.Storage, "Server elastic block storage ID.")
 	a.Describe(&s.BGP, "Whether BGP is enabled for the server.")
 	a.Describe(&s.AllowReinstall, "Whether re-installation is permitted for this server.")
 }
@@ -166,7 +167,7 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 		Tags:            &req.Inputs.Tags,
 		SpotInstance:    req.Inputs.Spot,
 		OSPartitionSize: req.Inputs.OSPartitionSize,
-		StorageID:       req.Inputs.StorageID,
+		StorageID:       req.Inputs.Storage,
 		Cycle:           req.Inputs.Cycle,
 	})
 	if err != nil {
@@ -226,7 +227,7 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 		}, err
 	}
 
-	args.Hostname, err = autoname(args.Name, req.Name, req.OldInputs.Get("hostname"))
+	args.Hostname, err = autoname(args.Hostname, req.Name, req.OldInputs.Get("hostname"))
 	return infer.CheckResponse[ServerArgs]{
 		Inputs:   args,
 		Failures: failures,
@@ -423,8 +424,8 @@ func (s *Server) Diff(
 		diff["discountCode"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.StorageID != req.State.StorageID {
-		diff["storageID"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
+	if req.Inputs.Storage != req.State.Storage {
+		diff["storage"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
 	if req.Inputs.BGP != req.State.BGP {
@@ -501,7 +502,7 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 			OSPartitionSize: inputs.OSPartitionSize,
 			Cycle:           inputs.Cycle,
 			DiscountCode:    inputs.DiscountCode,
-			StorageID:       s.Storage.ID,
+			Storage:         s.Storage.ID,
 			BGP:             s.BGP.Enabled,
 			AllowReinstall:  inputs.AllowReinstall,
 		},
@@ -534,12 +535,12 @@ func (s *Server) WireDependencies(
 	f.OutputField(&state.SSHKeys).DependsOn(f.InputField(&args.SSHKeys))
 	f.OutputField(&state.ExtraIPs).DependsOn(f.InputField(&args.ExtraIPs))
 	f.OutputField(&state.UserData).DependsOn(f.InputField(&args.UserData))
-	f.OutputField(&state.Tags).DependsOn(f.InputField(f.InputField(&args.Tags)))
+	f.OutputField(&state.Tags).DependsOn(f.InputField(&args.Tags))
 	f.OutputField(&state.Spot).DependsOn(f.InputField(&args.Spot))
 	f.OutputField(&state.OSPartitionSize).DependsOn(f.InputField(&args.OSPartitionSize))
 	f.OutputField(&state.Cycle).DependsOn(f.InputField(&args.Cycle))
 	f.OutputField(&state.DiscountCode).DependsOn(f.InputField(&args.DiscountCode))
-	f.OutputField(&state.StorageID).DependsOn(f.InputField(&args.StorageID))
+	f.OutputField(&state.Storage).DependsOn(f.InputField(&args.Storage))
 	f.OutputField(&state.BGP).DependsOn(f.InputField(&args.BGP))
 	f.OutputField(&state.AllowReinstall).DependsOn(f.InputField(&args.AllowReinstall))
 }
@@ -554,7 +555,7 @@ func (s *Server) untilDeployed(
 	var err error
 	err = Until(ctx, NewTickSource(s.DeploymentPollInterval), func() (bool, error) {
 		server, _, err = client.Get(server.ID, nil)
-		return server.State == "deployed", err
+		return server.Status == "deployed", err
 	})
 	return server, err
 }

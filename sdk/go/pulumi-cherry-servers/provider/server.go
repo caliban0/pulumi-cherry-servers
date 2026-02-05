@@ -49,8 +49,9 @@ type Server struct {
 	// Server SSH key IDs. Updating requires re-installation.
 	SshKeys pulumi.IntArrayOutput `pulumi:"sshKeys"`
 	// Server status, such as 'deploying' or 'deployed'.
-	Status    pulumi.StringOutput `pulumi:"status"`
-	StorageID pulumi.IntPtrOutput `pulumi:"storageID"`
+	Status pulumi.StringOutput `pulumi:"status"`
+	// Server elastic block storage ID.
+	Storage pulumi.IntPtrOutput `pulumi:"storage"`
 	// Server tags.
 	Tags pulumi.StringMapOutput `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -133,8 +134,9 @@ type serverArgs struct {
 	// Whether the server is a spot instance.
 	Spot *bool `pulumi:"spot"`
 	// Server SSH key IDs. Updating requires re-installation.
-	SshKeys   []int `pulumi:"sshKeys"`
-	StorageID *int  `pulumi:"storageID"`
+	SshKeys []int `pulumi:"sshKeys"`
+	// Server elastic block storage ID.
+	Storage *int `pulumi:"storage"`
 	// Server tags.
 	Tags map[string]string `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -170,8 +172,9 @@ type ServerArgs struct {
 	// Whether the server is a spot instance.
 	Spot pulumi.BoolPtrInput
 	// Server SSH key IDs. Updating requires re-installation.
-	SshKeys   pulumi.IntArrayInput
-	StorageID pulumi.IntPtrInput
+	SshKeys pulumi.IntArrayInput
+	// Server elastic block storage ID.
+	Storage pulumi.IntPtrInput
 	// Server tags.
 	Tags pulumi.StringMapInput
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -350,8 +353,9 @@ func (o ServerOutput) Status() pulumi.StringOutput {
 	return o.ApplyT(func(v *Server) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
 }
 
-func (o ServerOutput) StorageID() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.StorageID }).(pulumi.IntPtrOutput)
+// Server elastic block storage ID.
+func (o ServerOutput) Storage() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.Storage }).(pulumi.IntPtrOutput)
 }
 
 // Server tags.

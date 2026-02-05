@@ -322,8 +322,9 @@
           "type": "string",
           "description": "Server status, such as 'deploying' or 'deployed'."
         },
-        "storageID": {
-          "type": "integer"
+        "storage": {
+          "type": "integer",
+          "description": "Server elastic block storage ID."
         },
         "tags": {
           "type": "object",
@@ -408,8 +409,9 @@
           },
           "description": "Server SSH key IDs. Updating requires re-installation."
         },
-        "storageID": {
-          "type": "integer"
+        "storage": {
+          "type": "integer",
+          "description": "Server elastic block storage ID."
         },
         "tags": {
           "type": "object",

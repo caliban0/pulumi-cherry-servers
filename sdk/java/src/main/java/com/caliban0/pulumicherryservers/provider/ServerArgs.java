@@ -230,11 +230,19 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.sshKeys);
     }
 
-    @Import(name="storageID")
-    private @Nullable Output<Integer> storageID;
+    /**
+     * Server elastic block storage ID.
+     * 
+     */
+    @Import(name="storage")
+    private @Nullable Output<Integer> storage;
 
-    public Optional<Output<Integer>> storageID() {
-        return Optional.ofNullable(this.storageID);
+    /**
+     * @return Server elastic block storage ID.
+     * 
+     */
+    public Optional<Output<Integer>> storage() {
+        return Optional.ofNullable(this.storage);
     }
 
     /**
@@ -284,7 +292,7 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         this.region = $.region;
         this.spot = $.spot;
         this.sshKeys = $.sshKeys;
-        this.storageID = $.storageID;
+        this.storage = $.storage;
         this.tags = $.tags;
         this.userData = $.userData;
     }
@@ -621,13 +629,25 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
             return sshKeys(List.of(sshKeys));
         }
 
-        public Builder storageID(@Nullable Output<Integer> storageID) {
-            $.storageID = storageID;
+        /**
+         * @param storage Server elastic block storage ID.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder storage(@Nullable Output<Integer> storage) {
+            $.storage = storage;
             return this;
         }
 
-        public Builder storageID(Integer storageID) {
-            return storageID(Output.of(storageID));
+        /**
+         * @param storage Server elastic block storage ID.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder storage(Integer storage) {
+            return storage(Output.of(storage));
         }
 
         /**

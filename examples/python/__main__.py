@@ -37,31 +37,31 @@ project = cherry.Project("myProject", team=148226, bgp=True, name="testt")
 # )
 
 
-ip = cherry.IP(
-    "myIP",
-    region="LT-Siauliai",
-    project=project.id.apply(int),
-    ptr_record="test-a",
-    a_record="test-a",
-    tags={"env": "dev"},
-)
-pulumi.export(
-    "ip_json",
-    pulumi.Output.json_dumps(
-        {
-            "region": ip.region,
-            "project": ip.project,
-            "ptrRecord": ip.ptr_record,
-            "aRecord": ip.a_record,
-            "routedTo": ip.routed_to,
-            "targetedTo": ip.targeted_to,
-            "tags": ip.tags,
-            "address": ip.address,
-            "address_family": ip.address_family,
-            "cidr": ip.cidr,
-            "type": ip.type,
-            "ptrRecordEffective": ip.ptr_record_effective,
-            "aRecordEffective": ip.a_record_effective,
-        }
-    ),
-)
+# ip = cherry.IP(
+#     "myIP",
+#     region="LT-Siauliai",
+#     project=project.id.apply(int),
+#     ptr_record="test-a",
+#     a_record="test-a",
+#     tags={"env": "dev"},
+# )
+# pulumi.export(
+#     "ip_json",
+#     pulumi.Output.json_dumps(
+#         {
+#             "region": ip.region,
+#             "project": ip.project,
+#             "ptrRecord": ip.ptr_record,
+#             "aRecord": ip.a_record,
+#             "routedTo": ip.routed_to,
+#             "targetedTo": ip.targeted_to,
+#             "tags": ip.tags,
+#             "address": ip.address,
+#             "address_family": ip.address_family,
+#             "cidr": ip.cidr,
+#             "type": ip.type,
+#             "ptrRecordEffective": ip.ptr_record_effective,
+#             "aRecordEffective": ip.a_record_effective,
+#         }
+#     ),
+# )

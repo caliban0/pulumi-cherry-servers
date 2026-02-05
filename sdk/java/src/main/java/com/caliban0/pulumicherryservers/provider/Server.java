@@ -263,11 +263,19 @@ public class Server extends com.pulumi.resources.CustomResource {
     public Output<String> status() {
         return this.status;
     }
-    @Export(name="storageID", refs={Integer.class}, tree="[0]")
-    private Output</* @Nullable */ Integer> storageID;
+    /**
+     * Server elastic block storage ID.
+     * 
+     */
+    @Export(name="storage", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> storage;
 
-    public Output<Optional<Integer>> storageID() {
-        return Codegen.optional(this.storageID);
+    /**
+     * @return Server elastic block storage ID.
+     * 
+     */
+    public Output<Optional<Integer>> storage() {
+        return Codegen.optional(this.storage);
     }
     /**
      * Server tags.
