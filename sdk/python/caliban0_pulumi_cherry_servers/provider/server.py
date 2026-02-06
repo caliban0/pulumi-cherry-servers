@@ -25,6 +25,7 @@ class ServerArgs:
                  region: pulumi.Input[_builtins.str],
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
+                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -33,7 +34,6 @@ class ServerArgs:
                  os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None):
         """
@@ -43,6 +43,7 @@ class ServerArgs:
         :param pulumi.Input[_builtins.str] region: Server region slug.
         :param pulumi.Input[_builtins.bool] allow_reinstall: Whether re-installation is permitted for this server.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP is enabled for the server.
+        :param pulumi.Input[_builtins.int] block_storage: Server elastic block storage ID.
         :param pulumi.Input[_builtins.str] cycle: Server billing cycle.
         :param pulumi.Input[_builtins.str] discount_code: Server discount code.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
@@ -51,7 +52,6 @@ class ServerArgs:
         :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
-        :param pulumi.Input[_builtins.int] storage: Server elastic block storage ID.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
@@ -62,6 +62,8 @@ class ServerArgs:
             pulumi.set(__self__, "allow_reinstall", allow_reinstall)
         if bgp is not None:
             pulumi.set(__self__, "bgp", bgp)
+        if block_storage is not None:
+            pulumi.set(__self__, "block_storage", block_storage)
         if cycle is not None:
             pulumi.set(__self__, "cycle", cycle)
         if discount_code is not None:
@@ -78,8 +80,6 @@ class ServerArgs:
             pulumi.set(__self__, "spot", spot)
         if ssh_keys is not None:
             pulumi.set(__self__, "ssh_keys", ssh_keys)
-        if storage is not None:
-            pulumi.set(__self__, "storage", storage)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
         if user_data is not None:
@@ -144,6 +144,18 @@ class ServerArgs:
     @bgp.setter
     def bgp(self, value: Optional[pulumi.Input[_builtins.bool]]):
         pulumi.set(self, "bgp", value)
+
+    @_builtins.property
+    @pulumi.getter(name="blockStorage")
+    def block_storage(self) -> Optional[pulumi.Input[_builtins.int]]:
+        """
+        Server elastic block storage ID.
+        """
+        return pulumi.get(self, "block_storage")
+
+    @block_storage.setter
+    def block_storage(self, value: Optional[pulumi.Input[_builtins.int]]):
+        pulumi.set(self, "block_storage", value)
 
     @_builtins.property
     @pulumi.getter
@@ -243,18 +255,6 @@ class ServerArgs:
 
     @_builtins.property
     @pulumi.getter
-    def storage(self) -> Optional[pulumi.Input[_builtins.int]]:
-        """
-        Server elastic block storage ID.
-        """
-        return pulumi.get(self, "storage")
-
-    @storage.setter
-    def storage(self, value: Optional[pulumi.Input[_builtins.int]]):
-        pulumi.set(self, "storage", value)
-
-    @_builtins.property
-    @pulumi.getter
     def tags(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         Server tags.
@@ -286,6 +286,7 @@ class Server(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
+                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -297,7 +298,6 @@ class Server(pulumi.CustomResource):
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -308,6 +308,7 @@ class Server(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.bool] allow_reinstall: Whether re-installation is permitted for this server.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP is enabled for the server.
+        :param pulumi.Input[_builtins.int] block_storage: Server elastic block storage ID.
         :param pulumi.Input[_builtins.str] cycle: Server billing cycle.
         :param pulumi.Input[_builtins.str] discount_code: Server discount code.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
@@ -319,7 +320,6 @@ class Server(pulumi.CustomResource):
         :param pulumi.Input[_builtins.str] region: Server region slug.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
-        :param pulumi.Input[_builtins.int] storage: Server elastic block storage ID.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
@@ -349,6 +349,7 @@ class Server(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
+                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
                  extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -360,7 +361,6 @@ class Server(pulumi.CustomResource):
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
                  ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
-                 storage: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -374,6 +374,7 @@ class Server(pulumi.CustomResource):
 
             __props__.__dict__["allow_reinstall"] = allow_reinstall
             __props__.__dict__["bgp"] = bgp
+            __props__.__dict__["block_storage"] = block_storage
             __props__.__dict__["cycle"] = cycle
             __props__.__dict__["discount_code"] = discount_code
             __props__.__dict__["extra_ips"] = extra_ips
@@ -391,12 +392,10 @@ class Server(pulumi.CustomResource):
             __props__.__dict__["region"] = region
             __props__.__dict__["spot"] = spot
             __props__.__dict__["ssh_keys"] = ssh_keys
-            __props__.__dict__["storage"] = storage
             __props__.__dict__["tags"] = tags
             __props__.__dict__["user_data"] = user_data
             __props__.__dict__["ips"] = None
             __props__.__dict__["pricing"] = None
-            __props__.__dict__["status"] = None
         super(Server, __self__).__init__(
             'pulumi-cherry-servers:provider:Server',
             resource_name,
@@ -421,6 +420,7 @@ class Server(pulumi.CustomResource):
 
         __props__.__dict__["allow_reinstall"] = None
         __props__.__dict__["bgp"] = None
+        __props__.__dict__["block_storage"] = None
         __props__.__dict__["cycle"] = None
         __props__.__dict__["discount_code"] = None
         __props__.__dict__["extra_ips"] = None
@@ -434,8 +434,6 @@ class Server(pulumi.CustomResource):
         __props__.__dict__["region"] = None
         __props__.__dict__["spot"] = None
         __props__.__dict__["ssh_keys"] = None
-        __props__.__dict__["status"] = None
-        __props__.__dict__["storage"] = None
         __props__.__dict__["tags"] = None
         __props__.__dict__["user_data"] = None
         return Server(resource_name, opts=opts, __props__=__props__)
@@ -455,6 +453,14 @@ class Server(pulumi.CustomResource):
         Whether BGP is enabled for the server.
         """
         return pulumi.get(self, "bgp")
+
+    @_builtins.property
+    @pulumi.getter(name="blockStorage")
+    def block_storage(self) -> pulumi.Output[Optional[_builtins.int]]:
+        """
+        Server elastic block storage ID.
+        """
+        return pulumi.get(self, "block_storage")
 
     @_builtins.property
     @pulumi.getter
@@ -559,22 +565,6 @@ class Server(pulumi.CustomResource):
         Server SSH key IDs. Updating requires re-installation.
         """
         return pulumi.get(self, "ssh_keys")
-
-    @_builtins.property
-    @pulumi.getter
-    def status(self) -> pulumi.Output[_builtins.str]:
-        """
-        Server status, such as 'deploying' or 'deployed'.
-        """
-        return pulumi.get(self, "status")
-
-    @_builtins.property
-    @pulumi.getter
-    def storage(self) -> pulumi.Output[Optional[_builtins.int]]:
-        """
-        Server elastic block storage ID.
-        """
-        return pulumi.get(self, "storage")
 
     @_builtins.property
     @pulumi.getter

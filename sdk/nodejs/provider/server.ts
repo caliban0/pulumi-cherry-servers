@@ -45,6 +45,10 @@ export class Server extends pulumi.CustomResource {
      */
     declare public readonly bgp: pulumi.Output<boolean | undefined>;
     /**
+     * Server elastic block storage ID.
+     */
+    declare public readonly blockStorage: pulumi.Output<number | undefined>;
+    /**
      * Server billing cycle.
      */
     declare public readonly cycle: pulumi.Output<string | undefined>;
@@ -97,14 +101,6 @@ export class Server extends pulumi.CustomResource {
      */
     declare public readonly sshKeys: pulumi.Output<number[] | undefined>;
     /**
-     * Server status, such as 'deploying' or 'deployed'.
-     */
-    declare public /*out*/ readonly status: pulumi.Output<string>;
-    /**
-     * Server elastic block storage ID.
-     */
-    declare public readonly storage: pulumi.Output<number | undefined>;
-    /**
      * Server tags.
      */
     declare public readonly tags: pulumi.Output<{[key: string]: string} | undefined>;
@@ -135,6 +131,7 @@ export class Server extends pulumi.CustomResource {
             }
             resourceInputs["allowReinstall"] = args?.allowReinstall;
             resourceInputs["bgp"] = args?.bgp;
+            resourceInputs["blockStorage"] = args?.blockStorage;
             resourceInputs["cycle"] = args?.cycle;
             resourceInputs["discountCode"] = args?.discountCode;
             resourceInputs["extraIPs"] = args?.extraIPs;
@@ -146,15 +143,14 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["region"] = args?.region;
             resourceInputs["spot"] = args?.spot;
             resourceInputs["sshKeys"] = args?.sshKeys;
-            resourceInputs["storage"] = args?.storage;
             resourceInputs["tags"] = args?.tags;
             resourceInputs["userData"] = args?.userData;
             resourceInputs["ips"] = undefined /*out*/;
             resourceInputs["pricing"] = undefined /*out*/;
-            resourceInputs["status"] = undefined /*out*/;
         } else {
             resourceInputs["allowReinstall"] = undefined /*out*/;
             resourceInputs["bgp"] = undefined /*out*/;
+            resourceInputs["blockStorage"] = undefined /*out*/;
             resourceInputs["cycle"] = undefined /*out*/;
             resourceInputs["discountCode"] = undefined /*out*/;
             resourceInputs["extraIPs"] = undefined /*out*/;
@@ -168,8 +164,6 @@ export class Server extends pulumi.CustomResource {
             resourceInputs["region"] = undefined /*out*/;
             resourceInputs["spot"] = undefined /*out*/;
             resourceInputs["sshKeys"] = undefined /*out*/;
-            resourceInputs["status"] = undefined /*out*/;
-            resourceInputs["storage"] = undefined /*out*/;
             resourceInputs["tags"] = undefined /*out*/;
             resourceInputs["userData"] = undefined /*out*/;
         }
@@ -190,6 +184,10 @@ export interface ServerArgs {
      * Whether BGP is enabled for the server.
      */
     bgp?: pulumi.Input<boolean>;
+    /**
+     * Server elastic block storage ID.
+     */
+    blockStorage?: pulumi.Input<number>;
     /**
      * Server billing cycle.
      */
@@ -234,10 +232,6 @@ export interface ServerArgs {
      * Server SSH key IDs. Updating requires re-installation.
      */
     sshKeys?: pulumi.Input<pulumi.Input<number>[]>;
-    /**
-     * Server elastic block storage ID.
-     */
-    storage?: pulumi.Input<number>;
     /**
      * Server tags.
      */

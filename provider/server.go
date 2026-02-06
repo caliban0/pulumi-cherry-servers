@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/cherryservers/cherrygo/v3"
 	prov "github.com/pulumi/pulumi-go-provider"
@@ -41,16 +42,16 @@ type ServerArgs struct {
 	Project         int               `pulumi:"project"`
 	Region          string            `pulumi:"region"`
 	Hostname        string            `pulumi:"hostname,optional"`
-	Image           string            `pulumi:"image,optional"`
+	Image           *string           `pulumi:"image,optional"`
 	SSHKeys         []int             `pulumi:"sshKeys,optional"`
 	ExtraIPs        []string          `pulumi:"extraIPs,optional"`
 	UserData        string            `pulumi:"userData,optional"`
 	Tags            map[string]string `pulumi:"tags,optional"`
 	Spot            bool              `pulumi:"spot,optional"`
-	OSPartitionSize int               `pulumi:"osPartitionSize,optional"`
+	OSPartitionSize *int              `pulumi:"osPartitionSize,optional"`
 	Cycle           string            `pulumi:"cycle,optional"`
 	DiscountCode    string            `pulumi:"discountCode,optional"`
-	Storage         int               `pulumi:"storage,optional"`
+	BlockStorage    int               `pulumi:"blockStorage,optional"`
 	BGP             bool              `pulumi:"bgp,optional"`
 	AllowReinstall  bool              `pulumi:"allowReinstall,optional"`
 }
@@ -69,7 +70,7 @@ func (s *ServerArgs) Annotate(a infer.Annotator) {
 	a.Describe(&s.OSPartitionSize, "Server OS partition size. Updating requires re-installation.")
 	a.Describe(&s.Cycle, "Server billing cycle.")
 	a.Describe(&s.DiscountCode, "Server discount code.")
-	a.Describe(&s.Storage, "Server elastic block storage ID.")
+	a.Describe(&s.BlockStorage, "Server elastic block storage ID.")
 	a.Describe(&s.BGP, "Whether BGP is enabled for the server.")
 	a.Describe(&s.AllowReinstall, "Whether re-installation is permitted for this server.")
 }
@@ -109,14 +110,12 @@ type ServerState struct {
 	ServerArgs
 
 	IPs     []ServerIPState    `pulumi:"ips"`
-	Status  string             `pulumi:"status"`
 	Pricing ServerPricingState `pulumi:"pricing"`
 }
 
 func (s *ServerState) Annotate(a infer.Annotator) {
 	s.ServerArgs.Annotate(a)
 	a.Describe(&s.IPs, "Server IP addresses.")
-	a.Describe(&s.Status, "Server status, such as 'deploying' or 'deployed'.")
 	a.Describe(&s.Pricing, "Server pricing.")
 }
 
@@ -153,21 +152,29 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 		sshKeyIDs[i] = strconv.Itoa(v)
 	}
 
-	server, _, err := client.Create(&cherrygo.CreateServer{
-		ProjectID:       req.Inputs.Project,
-		Plan:            req.Inputs.Plan,
-		Hostname:        req.Inputs.Hostname,
-		Image:           req.Inputs.Image,
-		Region:          req.Inputs.Region,
-		SSHKeys:         sshKeyIDs,
-		IPAddresses:     req.Inputs.ExtraIPs,
-		UserData:        base64.StdEncoding.EncodeToString([]byte(req.Inputs.UserData)),
-		Tags:            &req.Inputs.Tags,
-		SpotInstance:    req.Inputs.Spot,
-		OSPartitionSize: req.Inputs.OSPartitionSize,
-		StorageID:       req.Inputs.Storage,
-		Cycle:           req.Inputs.Cycle,
-	})
+	creationReq := cherrygo.CreateServer{
+		ProjectID:    req.Inputs.Project,
+		Plan:         req.Inputs.Plan,
+		Hostname:     req.Inputs.Hostname,
+		Region:       req.Inputs.Region,
+		SSHKeys:      sshKeyIDs,
+		IPAddresses:  req.Inputs.ExtraIPs,
+		UserData:     base64.StdEncoding.EncodeToString([]byte(req.Inputs.UserData)),
+		Tags:         &req.Inputs.Tags,
+		SpotInstance: req.Inputs.Spot,
+		Cycle:        req.Inputs.Cycle,
+		DiscountCode: req.Inputs.DiscountCode,
+	}
+
+	if req.Inputs.Image != nil {
+		creationReq.Image = *req.Inputs.Image
+	}
+
+	if req.Inputs.OSPartitionSize != nil {
+		creationReq.OSPartitionSize = *req.Inputs.OSPartitionSize
+	}
+
+	server, _, err := client.Create(&creationReq)
 	if err != nil {
 		return infer.CreateResponse[ServerState]{}, err
 	}
@@ -187,6 +194,14 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 		if err != nil {
 			return infer.CreateResponse[ServerState]{},
 				fmt.Errorf("failed to enable server %d BGP: %w", server.ID, err)
+		}
+
+		// Need to do an extra request, because not all required fields
+		// are returned on update.
+		server, _, err = client.Get(server.ID, nil)
+		if err != nil {
+			return infer.CreateResponse[ServerState]{},
+				fmt.Errorf("failed to get server %d: %w", server.ID, err)
 		}
 	}
 
@@ -242,7 +257,16 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 		args.SSHKeys = make([]int, 0)
 	}
 
+	s.GetLogger(ctx).Warningf("old in isnull: %v", req.OldInputs.Get("image").IsNull())
+	//s.GetLogger(ctx).Warningf("old in hostname: %v", req.OldInputs.Get("hostname").AsString())
+
+	//s.GetLogger(ctx).Warningf("old in str: %v", req.OldInputs.Get("image").AsString())
+
 	args.Hostname, err = autoname(args.Hostname, req.Name, req.OldInputs.Get("hostname"))
+
+	// Cherry Servers API silently converts hostnames to lowercase, so convert here, to
+	// avoid state mismatch.
+	args.Hostname = strings.ToLower(args.Hostname)
 	return infer.CheckResponse[ServerArgs]{
 		Inputs:   args,
 		Failures: failures,
@@ -253,10 +277,18 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 func (s *Server) Update(
 	ctx context.Context, req infer.UpdateRequest[ServerArgs, ServerState]) (
 	infer.UpdateResponse[ServerState], error) {
+	var ips []ServerIPState
+	if !reinstallNeeded(req.Inputs, req.State.ServerArgs) {
+		ips = req.State.IPs
+	}
+
 	if req.DryRun {
 		return infer.UpdateResponse[ServerState]{
 			Output: ServerState{
+				// Pricing can only change on replacement.
+				Pricing:    req.State.Pricing,
 				ServerArgs: req.Inputs,
+				IPs:        ips,
 			},
 		}, nil
 	}
@@ -311,10 +343,10 @@ func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerAr
 	}
 
 	server, _, err := client.Reinstall(id, &cherrygo.ReinstallServerFields{
-		Image:           req.Inputs.Image,
+		Image:           *req.Inputs.Image,
 		SSHKeys:         sshKeyIDs,
 		UserData:        req.Inputs.UserData,
-		OSPartitionSize: req.Inputs.OSPartitionSize,
+		OSPartitionSize: *req.Inputs.OSPartitionSize,
 	})
 
 	if err != nil {
@@ -375,7 +407,7 @@ func serverUpdateNeeded(inputs, state ServerArgs) bool {
 }
 
 func (s *Server) Diff(
-	_ context.Context, req infer.DiffRequest[ServerArgs, ServerState]) (
+	ctx context.Context, req infer.DiffRequest[ServerArgs, ServerState]) (
 	infer.DiffResponse, error) {
 	diff := map[string]prov.PropertyDiff{}
 	req.Inputs.ensureSorted()
@@ -397,7 +429,7 @@ func (s *Server) Diff(
 		diff["hostname"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if req.Inputs.Image != req.State.Image {
+	if req.Inputs.Image != req.State.Image && req.Inputs.Image != nil {
 		diff["image"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
@@ -413,7 +445,7 @@ func (s *Server) Diff(
 		diff["userData"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if maps.Equal(req.Inputs.Tags, req.State.Tags) {
+	if !maps.Equal(req.Inputs.Tags, req.State.Tags) {
 		diff["tags"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
@@ -421,7 +453,8 @@ func (s *Server) Diff(
 		diff["spot"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.OSPartitionSize != req.State.OSPartitionSize {
+	if req.Inputs.OSPartitionSize != req.State.OSPartitionSize &&
+		req.Inputs.OSPartitionSize != nil {
 		diff["osPartitionSize"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
@@ -433,8 +466,8 @@ func (s *Server) Diff(
 		diff["discountCode"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.Storage != req.State.Storage {
-		diff["storage"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
+	if req.Inputs.BlockStorage != req.State.BlockStorage {
+		diff["blockStorage"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
 	if req.Inputs.BGP != req.State.BGP {
@@ -495,45 +528,50 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 		}
 	}
 
-	return ServerState{
+	state := ServerState{
 		ServerArgs: ServerArgs{
 			Plan:            s.Plan.Slug,
 			Project:         s.Project.ID,
 			Region:          s.Region.Slug,
 			Hostname:        s.Hostname,
-			Image:           s.DeployedImage.Slug,
 			SSHKeys:         sshKeyIDs,
 			ExtraIPs:        inputs.ExtraIPs,
 			UserData:        inputs.UserData,
 			Tags:            s.Tags,
 			Spot:            s.SpotInstance,
 			OSPartitionSize: inputs.OSPartitionSize,
-			Cycle:           inputs.Cycle,
-			DiscountCode:    inputs.DiscountCode,
-			Storage:         s.Storage.ID,
-			BGP:             s.BGP.Enabled,
-			AllowReinstall:  inputs.AllowReinstall,
+			// Don't use 'cycle' from the response, because it doesn't
+			// use the same form (it's capitalized).
+			Cycle:          inputs.Cycle,
+			DiscountCode:   inputs.DiscountCode,
+			BGP:            s.BGP.Enabled,
+			AllowReinstall: inputs.AllowReinstall,
+			BlockStorage:   s.Storage.ID,
 		},
-		IPs:    ips,
-		Status: s.State,
+		IPs: ips,
 		Pricing: ServerPricingState{
-			Price:    float64(s.Pricing.Price),
+			Price:    float64(s.Pricing.UnitPrice),
 			Currency: s.Pricing.Currency,
 			Unit:     s.Pricing.Unit,
 		},
 	}
+
+	if s.Image != "" {
+		state.ServerArgs.Image = &s.DeployedImage.Slug
+	}
+
+	return state
 }
 
 func (s *Server) WireDependencies(
 	f infer.FieldSelector, args *ServerArgs, state *ServerState) {
-	f.OutputField(&state.IPs).DependsOn(
-		append(
-			args.replacementInducing(f),
-			f.InputField(&args.ExtraIPs))...)
+	f.OutputField(&state.IPs).DependsOn(args.replacementInducing(f)...)
 	f.OutputField(&state.Pricing).DependsOn(
 		f.InputField(&args.Plan),
 		f.InputField(&args.Region),
-		f.InputField(&args.DiscountCode))
+		f.InputField(&args.DiscountCode),
+		f.InputField(&args.Cycle),
+	)
 	f.OutputField(&state.Plan).DependsOn(f.InputField(&args.Plan))
 	f.OutputField(&state.Project).DependsOn(f.InputField(&args.Project))
 	f.OutputField(&state.Region).DependsOn(f.InputField(&args.Region))
@@ -547,7 +585,7 @@ func (s *Server) WireDependencies(
 	f.OutputField(&state.OSPartitionSize).DependsOn(f.InputField(&args.OSPartitionSize))
 	f.OutputField(&state.Cycle).DependsOn(f.InputField(&args.Cycle))
 	f.OutputField(&state.DiscountCode).DependsOn(f.InputField(&args.DiscountCode))
-	f.OutputField(&state.Storage).DependsOn(f.InputField(&args.Storage))
+	f.OutputField(&state.BlockStorage).DependsOn(f.InputField(&args.BlockStorage))
 	f.OutputField(&state.BGP).DependsOn(f.InputField(&args.BGP))
 	f.OutputField(&state.AllowReinstall).DependsOn(f.InputField(&args.AllowReinstall))
 }

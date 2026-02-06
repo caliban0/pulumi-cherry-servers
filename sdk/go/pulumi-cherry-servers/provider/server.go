@@ -20,6 +20,8 @@ type Server struct {
 	AllowReinstall pulumi.BoolPtrOutput `pulumi:"allowReinstall"`
 	// Whether BGP is enabled for the server.
 	Bgp pulumi.BoolPtrOutput `pulumi:"bgp"`
+	// Server elastic block storage ID.
+	BlockStorage pulumi.IntPtrOutput `pulumi:"blockStorage"`
 	// Server billing cycle.
 	Cycle pulumi.StringPtrOutput `pulumi:"cycle"`
 	// Server discount code.
@@ -46,10 +48,6 @@ type Server struct {
 	Spot pulumi.BoolPtrOutput `pulumi:"spot"`
 	// Server SSH key IDs. Updating requires re-installation.
 	SshKeys pulumi.IntArrayOutput `pulumi:"sshKeys"`
-	// Server status, such as 'deploying' or 'deployed'.
-	Status pulumi.StringOutput `pulumi:"status"`
-	// Server elastic block storage ID.
-	Storage pulumi.IntPtrOutput `pulumi:"storage"`
 	// Server tags.
 	Tags pulumi.StringMapOutput `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -109,6 +107,8 @@ type serverArgs struct {
 	AllowReinstall *bool `pulumi:"allowReinstall"`
 	// Whether BGP is enabled for the server.
 	Bgp *bool `pulumi:"bgp"`
+	// Server elastic block storage ID.
+	BlockStorage *int `pulumi:"blockStorage"`
 	// Server billing cycle.
 	Cycle *string `pulumi:"cycle"`
 	// Server discount code.
@@ -131,8 +131,6 @@ type serverArgs struct {
 	Spot *bool `pulumi:"spot"`
 	// Server SSH key IDs. Updating requires re-installation.
 	SshKeys []int `pulumi:"sshKeys"`
-	// Server elastic block storage ID.
-	Storage *int `pulumi:"storage"`
 	// Server tags.
 	Tags map[string]string `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -145,6 +143,8 @@ type ServerArgs struct {
 	AllowReinstall pulumi.BoolPtrInput
 	// Whether BGP is enabled for the server.
 	Bgp pulumi.BoolPtrInput
+	// Server elastic block storage ID.
+	BlockStorage pulumi.IntPtrInput
 	// Server billing cycle.
 	Cycle pulumi.StringPtrInput
 	// Server discount code.
@@ -167,8 +167,6 @@ type ServerArgs struct {
 	Spot pulumi.BoolPtrInput
 	// Server SSH key IDs. Updating requires re-installation.
 	SshKeys pulumi.IntArrayInput
-	// Server elastic block storage ID.
-	Storage pulumi.IntPtrInput
 	// Server tags.
 	Tags pulumi.StringMapInput
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -272,6 +270,11 @@ func (o ServerOutput) Bgp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *Server) pulumi.BoolPtrOutput { return v.Bgp }).(pulumi.BoolPtrOutput)
 }
 
+// Server elastic block storage ID.
+func (o ServerOutput) BlockStorage() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.BlockStorage }).(pulumi.IntPtrOutput)
+}
+
 // Server billing cycle.
 func (o ServerOutput) Cycle() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Server) pulumi.StringPtrOutput { return v.Cycle }).(pulumi.StringPtrOutput)
@@ -335,16 +338,6 @@ func (o ServerOutput) Spot() pulumi.BoolPtrOutput {
 // Server SSH key IDs. Updating requires re-installation.
 func (o ServerOutput) SshKeys() pulumi.IntArrayOutput {
 	return o.ApplyT(func(v *Server) pulumi.IntArrayOutput { return v.SshKeys }).(pulumi.IntArrayOutput)
-}
-
-// Server status, such as 'deploying' or 'deployed'.
-func (o ServerOutput) Status() pulumi.StringOutput {
-	return o.ApplyT(func(v *Server) pulumi.StringOutput { return v.Status }).(pulumi.StringOutput)
-}
-
-// Server elastic block storage ID.
-func (o ServerOutput) Storage() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.Storage }).(pulumi.IntPtrOutput)
 }
 
 // Server tags.

@@ -54,6 +54,20 @@ public class Server extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.bgp);
     }
     /**
+     * Server elastic block storage ID.
+     * 
+     */
+    @Export(name="blockStorage", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> blockStorage;
+
+    /**
+     * @return Server elastic block storage ID.
+     * 
+     */
+    public Output<Optional<Integer>> blockStorage() {
+        return Codegen.optional(this.blockStorage);
+    }
+    /**
      * Server billing cycle.
      * 
      */
@@ -234,34 +248,6 @@ public class Server extends com.pulumi.resources.CustomResource {
      */
     public Output<Optional<List<Integer>>> sshKeys() {
         return Codegen.optional(this.sshKeys);
-    }
-    /**
-     * Server status, such as &#39;deploying&#39; or &#39;deployed&#39;.
-     * 
-     */
-    @Export(name="status", refs={String.class}, tree="[0]")
-    private Output<String> status;
-
-    /**
-     * @return Server status, such as &#39;deploying&#39; or &#39;deployed&#39;.
-     * 
-     */
-    public Output<String> status() {
-        return this.status;
-    }
-    /**
-     * Server elastic block storage ID.
-     * 
-     */
-    @Export(name="storage", refs={Integer.class}, tree="[0]")
-    private Output</* @Nullable */ Integer> storage;
-
-    /**
-     * @return Server elastic block storage ID.
-     * 
-     */
-    public Output<Optional<Integer>> storage() {
-        return Codegen.optional(this.storage);
     }
     /**
      * Server tags.

@@ -29,6 +29,12 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Output<bool?> Bgp { get; private set; } = null!;
 
         /// <summary>
+        /// Server elastic block storage ID.
+        /// </summary>
+        [Output("blockStorage")]
+        public Output<int?> BlockStorage { get; private set; } = null!;
+
+        /// <summary>
         /// Server billing cycle.
         /// </summary>
         [Output("cycle")]
@@ -107,18 +113,6 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Output<ImmutableArray<int>> SshKeys { get; private set; } = null!;
 
         /// <summary>
-        /// Server status, such as 'deploying' or 'deployed'.
-        /// </summary>
-        [Output("status")]
-        public Output<string> Status { get; private set; } = null!;
-
-        /// <summary>
-        /// Server elastic block storage ID.
-        /// </summary>
-        [Output("storage")]
-        public Output<int?> Storage { get; private set; } = null!;
-
-        /// <summary>
         /// Server tags.
         /// </summary>
         [Output("tags")]
@@ -186,6 +180,12 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// </summary>
         [Input("bgp")]
         public Input<bool>? Bgp { get; set; }
+
+        /// <summary>
+        /// Server elastic block storage ID.
+        /// </summary>
+        [Input("blockStorage")]
+        public Input<int>? BlockStorage { get; set; }
 
         /// <summary>
         /// Server billing cycle.
@@ -264,12 +264,6 @@ namespace Caliban0.PulumiCherryServers.Provider
             get => _sshKeys ?? (_sshKeys = new InputList<int>());
             set => _sshKeys = value;
         }
-
-        /// <summary>
-        /// Server elastic block storage ID.
-        /// </summary>
-        [Input("storage")]
-        public Input<int>? Storage { get; set; }
 
         [Input("tags")]
         private InputMap<string>? _tags;

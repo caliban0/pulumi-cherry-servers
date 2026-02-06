@@ -71,6 +71,7 @@ server = cherry.Server(
     region="LT-Siauliai",
     project=project.id.apply(int),
     plan="B1-1-1gb-20s-shared",
+    hostname="hello"
 )
 pulumi.export(
     "server_output",
@@ -89,11 +90,30 @@ pulumi.export(
         "os_partition_size": server.os_partition_size,
         "cycle": server.cycle,
         "discount_code": server.discount_code,
-        "storage": server.storage,
+        "block_storage": server.block_storage,
         "bgp": server.bgp,
         "allow_reinstall": server.allow_reinstall,
         "ips": server.ips,
-        "status": server.status,
         "pricing": server.pricing,
     },
 )
+
+server.id.apply(lambda id: print('Server ID:', id))
+server.plan.apply(lambda plan: print('Server plan:', plan))
+server.project.apply(lambda project: print('Server project:', project))
+server.region.apply(lambda region: print('Server region:', region))
+server.hostname.apply(lambda hostname: print('Server hostname:', hostname))
+server.image.apply(lambda image: print('Server image:', image))
+server.ssh_keys.apply(lambda ssh: print('Server ssh:', ssh))
+server.extra_ips.apply(lambda extra_ips: print('Server extra IPs:', extra_ips))
+server.user_data.apply(lambda user_data: print('Server user data:', user_data))
+server.tags.apply(lambda tags: print('Server tags:', tags))
+server.spot.apply(lambda spot: print('Server spot:', spot))
+server.os_partition_size.apply(lambda os: print('Server OS partition size:', os))
+server.cycle.apply(lambda cycle: print('Server cycle:', cycle))
+server.discount_code.apply(lambda discount: print('Server discount code:', discount))
+server.block_storage.apply(lambda block: print('Server block storage:', block))
+server.bgp.apply(lambda bgp: print('Server BGP:', bgp))
+server.allow_reinstall.apply(lambda allow_reinstall: print('Server allow reinstall:', allow_reinstall))
+server.ips.apply(lambda ips: print('Server IPs:', ips))
+server.pricing.apply(lambda pricing: print('Server pricing:', pricing))

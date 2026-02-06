@@ -253,6 +253,10 @@
           "type": "boolean",
           "description": "Whether BGP is enabled for the server."
         },
+        "blockStorage": {
+          "type": "integer",
+          "description": "Server elastic block storage ID."
+        },
         "cycle": {
           "type": "string",
           "description": "Server billing cycle."
@@ -314,14 +318,6 @@
           },
           "description": "Server SSH key IDs. Updating requires re-installation."
         },
-        "status": {
-          "type": "string",
-          "description": "Server status, such as 'deploying' or 'deployed'."
-        },
-        "storage": {
-          "type": "integer",
-          "description": "Server elastic block storage ID."
-        },
         "tags": {
           "type": "object",
           "additionalProperties": {
@@ -339,7 +335,6 @@
         "project",
         "region",
         "ips",
-        "status",
         "pricing"
       ],
       "inputProperties": {
@@ -350,6 +345,10 @@
         "bgp": {
           "type": "boolean",
           "description": "Whether BGP is enabled for the server."
+        },
+        "blockStorage": {
+          "type": "integer",
+          "description": "Server elastic block storage ID."
         },
         "cycle": {
           "type": "string",
@@ -400,10 +399,6 @@
             "type": "integer"
           },
           "description": "Server SSH key IDs. Updating requires re-installation."
-        },
-        "storage": {
-          "type": "integer",
-          "description": "Server elastic block storage ID."
         },
         "tags": {
           "type": "object",

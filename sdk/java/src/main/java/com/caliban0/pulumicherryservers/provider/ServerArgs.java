@@ -51,6 +51,21 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Server elastic block storage ID.
+     * 
+     */
+    @Import(name="blockStorage")
+    private @Nullable Output<Integer> blockStorage;
+
+    /**
+     * @return Server elastic block storage ID.
+     * 
+     */
+    public Optional<Output<Integer>> blockStorage() {
+        return Optional.ofNullable(this.blockStorage);
+    }
+
+    /**
      * Server billing cycle.
      * 
      */
@@ -216,21 +231,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Server elastic block storage ID.
-     * 
-     */
-    @Import(name="storage")
-    private @Nullable Output<Integer> storage;
-
-    /**
-     * @return Server elastic block storage ID.
-     * 
-     */
-    public Optional<Output<Integer>> storage() {
-        return Optional.ofNullable(this.storage);
-    }
-
-    /**
      * Server tags.
      * 
      */
@@ -265,6 +265,7 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     private ServerArgs(ServerArgs $) {
         this.allowReinstall = $.allowReinstall;
         this.bgp = $.bgp;
+        this.blockStorage = $.blockStorage;
         this.cycle = $.cycle;
         this.discountCode = $.discountCode;
         this.extraIPs = $.extraIPs;
@@ -276,7 +277,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         this.region = $.region;
         this.spot = $.spot;
         this.sshKeys = $.sshKeys;
-        this.storage = $.storage;
         this.tags = $.tags;
         this.userData = $.userData;
     }
@@ -339,6 +339,27 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder bgp(Boolean bgp) {
             return bgp(Output.of(bgp));
+        }
+
+        /**
+         * @param blockStorage Server elastic block storage ID.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder blockStorage(@Nullable Output<Integer> blockStorage) {
+            $.blockStorage = blockStorage;
+            return this;
+        }
+
+        /**
+         * @param blockStorage Server elastic block storage ID.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder blockStorage(Integer blockStorage) {
+            return blockStorage(Output.of(blockStorage));
         }
 
         /**
@@ -590,27 +611,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder sshKeys(Integer... sshKeys) {
             return sshKeys(List.of(sshKeys));
-        }
-
-        /**
-         * @param storage Server elastic block storage ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder storage(@Nullable Output<Integer> storage) {
-            $.storage = storage;
-            return this;
-        }
-
-        /**
-         * @param storage Server elastic block storage ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder storage(Integer storage) {
-            return storage(Output.of(storage));
         }
 
         /**
