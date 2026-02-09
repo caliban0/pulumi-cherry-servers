@@ -14,6 +14,7 @@ import (
 	"github.com/cherryservers/cherrygo/v3"
 	prov "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi/sdk/v3/go/property"
 )
 
 type ServerClient interface {
@@ -21,6 +22,13 @@ type ServerClient interface {
 }
 
 type ServerClientFactory func(ctx context.Context) (ServerClient, error)
+
+type ImageClient interface {
+	// Get retrieves image slugs based on a plan slug.
+	Get(string) ([]string, error)
+}
+
+type ImageClientFactory func(ctx context.Context) (ImageClient, error)
 
 type Server struct {
 	GetClient ServerClientFactory
@@ -30,7 +38,8 @@ type Server struct {
 
 	DeploymentPollInterval DurationFunc
 
-	GetLogger GetLoggerFunc
+	GetLogger      GetLoggerFunc
+	GetImageClient ImageClientFactory
 }
 
 func (s *Server) Annotate(a infer.Annotator) {
@@ -42,7 +51,7 @@ type ServerArgs struct {
 	Project         int               `pulumi:"project"`
 	Region          string            `pulumi:"region"`
 	Hostname        string            `pulumi:"hostname,optional"`
-	Image           *string           `pulumi:"image,optional"`
+	Image           string            `pulumi:"image,optional"`
 	SSHKeys         []int             `pulumi:"sshKeys,optional"`
 	ExtraIPs        []string          `pulumi:"extraIPs,optional"`
 	UserData        string            `pulumi:"userData,optional"`
@@ -164,10 +173,7 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 		SpotInstance: req.Inputs.Spot,
 		Cycle:        req.Inputs.Cycle,
 		DiscountCode: req.Inputs.DiscountCode,
-	}
-
-	if req.Inputs.Image != nil {
-		creationReq.Image = *req.Inputs.Image
+		Image:        req.Inputs.Image,
 	}
 
 	if req.Inputs.OSPartitionSize != nil {
@@ -257,15 +263,18 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 		args.SSHKeys = make([]int, 0)
 	}
 
-	s.GetLogger(ctx).Warningf("old in isnull: %v", req.OldInputs.Get("image").IsNull())
-	//s.GetLogger(ctx).Warningf("old in hostname: %v", req.OldInputs.Get("hostname").AsString())
-
-	//s.GetLogger(ctx).Warningf("old in str: %v", req.OldInputs.Get("image").AsString())
+	args.Image, err = s.checkImage(ctx, args.Image, args.Plan, req.OldInputs.Get("image"))
+	if err != nil {
+		return infer.CheckResponse[ServerArgs]{
+			Inputs:   args,
+			Failures: failures,
+		}, err
+	}
 
 	args.Hostname, err = autoname(args.Hostname, req.Name, req.OldInputs.Get("hostname"))
 
 	// Cherry Servers API silently converts hostnames to lowercase, so convert here, to
-	// avoid state mismatch.
+	// avoid state drift.
 	args.Hostname = strings.ToLower(args.Hostname)
 	return infer.CheckResponse[ServerArgs]{
 		Inputs:   args,
@@ -343,7 +352,7 @@ func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerAr
 	}
 
 	server, _, err := client.Reinstall(id, &cherrygo.ReinstallServerFields{
-		Image:           *req.Inputs.Image,
+		Image:           req.Inputs.Image,
 		SSHKeys:         sshKeyIDs,
 		UserData:        req.Inputs.UserData,
 		OSPartitionSize: *req.Inputs.OSPartitionSize,
@@ -407,7 +416,7 @@ func serverUpdateNeeded(inputs, state ServerArgs) bool {
 }
 
 func (s *Server) Diff(
-	ctx context.Context, req infer.DiffRequest[ServerArgs, ServerState]) (
+	_ context.Context, req infer.DiffRequest[ServerArgs, ServerState]) (
 	infer.DiffResponse, error) {
 	diff := map[string]prov.PropertyDiff{}
 	req.Inputs.ensureSorted()
@@ -429,7 +438,7 @@ func (s *Server) Diff(
 		diff["hostname"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if req.Inputs.Image != req.State.Image && req.Inputs.Image != nil {
+	if req.Inputs.Image != req.State.Image {
 		diff["image"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
@@ -547,6 +556,7 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 			BGP:            s.BGP.Enabled,
 			AllowReinstall: inputs.AllowReinstall,
 			BlockStorage:   s.Storage.ID,
+			Image:          s.DeployedImage.Slug,
 		},
 		IPs: ips,
 		Pricing: ServerPricingState{
@@ -554,10 +564,6 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 			Currency: s.Pricing.Currency,
 			Unit:     s.Pricing.Unit,
 		},
-	}
-
-	if s.Image != "" {
-		state.ServerArgs.Image = &s.DeployedImage.Slug
 	}
 
 	return state
@@ -603,4 +609,48 @@ func (s *Server) untilDeployed(
 		return server.Status == "deployed", err
 	})
 	return server, err
+}
+
+func (s *Server) defaultImage(ctx context.Context, plan string) (string, error) {
+	// Prefer Ubuntu.
+	const defaultPrefix = "ubuntu"
+
+	client, err := s.GetImageClient(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get image client: %w", err)
+	}
+
+	images, err := client.Get(plan)
+	if err != nil {
+		return "", fmt.Errorf("failed to get plan %q images: %w", plan, err)
+	}
+
+	if len(images) == 0 {
+		return "", fmt.Errorf("no images for plan %q", plan)
+	}
+
+	image := images[0]
+
+	// Try to get the latest distribution.
+	for _, img := range images {
+		if strings.HasPrefix(img, defaultPrefix) {
+			if img > image || !strings.HasPrefix(image, defaultPrefix) {
+				image = img
+			}
+		}
+	}
+
+	return image, nil
+}
+
+func (s *Server) checkImage(ctx context.Context, arg, plan string, old property.Value) (string, error) {
+	if arg != "" {
+		return arg, nil
+	}
+
+	if old.IsString() && old.AsString() != "" {
+		return old.AsString(), nil
+	}
+
+	return s.defaultImage(ctx, plan)
 }

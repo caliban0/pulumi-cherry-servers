@@ -8,6 +8,7 @@ require (
 	github.com/pulumi/pulumi-go-provider v1.2.0
 	github.com/pulumi/pulumi/sdk/v3 v3.215.0
 	github.com/stretchr/testify v1.11.1
+	golang.org/x/sync v0.18.0
 )
 
 replace github.com/cherryservers/cherrygo/v3 => /home/martynasdeveikis/GolandProjects/cherrygo
@@ -91,7 +92,6 @@ require (
 	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792 // indirect
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/term v0.37.0 // indirect
 	golang.org/x/text v0.31.0 // indirect

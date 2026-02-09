@@ -58,6 +58,24 @@ func getServerClient(ctx context.Context) (ServerClient, error) {
 	return client.Servers, nil
 }
 
+func newGetImagesClientFunc() func(ctx context.Context) (ImageClient, error) {
+	m := NewSingleFlightMemoizer[[]string]()
+	return func(ctx context.Context) (ImageClient, error) {
+		cfg := infer.GetConfig[Config](ctx)
+
+		if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
+			cfg.Token = token
+		}
+
+		client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
+		if err != nil {
+			return nil, err
+		}
+
+		return newCachedImageClient(&m, client.Images), nil
+	}
+}
+
 func getIPClient(cfg Config) (IPClient, error) {
 	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
 		cfg.Token = token
@@ -92,6 +110,7 @@ func Provider() (p.Provider, error) {
 			infer.Resource(&IP{getIPClient}),
 			infer.Resource(&Server{
 				GetClient:              getServerClient,
+				GetImageClient:         newGetImagesClientFunc(),
 				GetLogger:              GetLogger,
 				DeploymentContext:      deploymentContext,
 				DeploymentPollInterval: durationFunc,

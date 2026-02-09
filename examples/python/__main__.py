@@ -71,7 +71,7 @@ server = cherry.Server(
     region="LT-Siauliai",
     project=project.id.apply(int),
     plan="B1-1-1gb-20s-shared",
-    hostname="hello"
+    hostname="test",
 )
 pulumi.export(
     "server_output",
