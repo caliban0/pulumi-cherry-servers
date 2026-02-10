@@ -253,7 +253,7 @@
           "type": "boolean",
           "description": "Whether BGP is enabled for the server."
         },
-        "blockStorage": {
+        "blockStorageID": {
           "type": "integer",
           "description": "Server elastic block storage ID."
         },
@@ -265,7 +265,7 @@
           "type": "string",
           "description": "Server discount code."
         },
-        "extraIPs": {
+        "extraIPIDs": {
           "type": "array",
           "items": {
             "type": "string"
@@ -287,10 +287,6 @@
           },
           "description": "Server IP addresses."
         },
-        "osPartitionSize": {
-          "type": "integer",
-          "description": "Server OS partition size. Updating requires re-installation."
-        },
         "plan": {
           "type": "string",
           "description": "Server plan slug."
@@ -299,7 +295,7 @@
           "$ref": "#/types/pulumi-cherry-servers:provider:ServerPricingState",
           "description": "Server pricing."
         },
-        "project": {
+        "projectID": {
           "type": "integer",
           "description": "ID of the server the project belongs to."
         },
@@ -311,7 +307,7 @@
           "type": "boolean",
           "description": "Whether the server is a spot instance."
         },
-        "sshKeys": {
+        "sshKeyIDs": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -332,7 +328,7 @@
       },
       "required": [
         "plan",
-        "project",
+        "projectID",
         "region",
         "ips",
         "pricing"
@@ -346,7 +342,7 @@
           "type": "boolean",
           "description": "Whether BGP is enabled for the server."
         },
-        "blockStorage": {
+        "blockStorageID": {
           "type": "integer",
           "description": "Server elastic block storage ID."
         },
@@ -358,7 +354,7 @@
           "type": "string",
           "description": "Server discount code."
         },
-        "extraIPs": {
+        "extraIPIDs": {
           "type": "array",
           "items": {
             "type": "string"
@@ -373,15 +369,11 @@
           "type": "string",
           "description": "Server image slug. Updating requires re-installation."
         },
-        "osPartitionSize": {
-          "type": "integer",
-          "description": "Server OS partition size. Updating requires re-installation."
-        },
         "plan": {
           "type": "string",
           "description": "Server plan slug."
         },
-        "project": {
+        "projectID": {
           "type": "integer",
           "description": "ID of the server the project belongs to."
         },
@@ -393,7 +385,7 @@
           "type": "boolean",
           "description": "Whether the server is a spot instance."
         },
-        "sshKeys": {
+        "sshKeyIDs": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -414,7 +406,7 @@
       },
       "requiredInputs": [
         "plan",
-        "project",
+        "projectID",
         "region"
       ]
     }

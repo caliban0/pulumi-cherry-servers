@@ -31,8 +31,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// Server elastic block storage ID.
         /// </summary>
-        [Output("blockStorage")]
-        public Output<int?> BlockStorage { get; private set; } = null!;
+        [Output("blockStorageID")]
+        public Output<int?> BlockStorageID { get; private set; } = null!;
 
         /// <summary>
         /// Server billing cycle.
@@ -49,8 +49,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// IDs of extra IP addresses assigned to the server.
         /// </summary>
-        [Output("extraIPs")]
-        public Output<ImmutableArray<string>> ExtraIPs { get; private set; } = null!;
+        [Output("extraIPIDs")]
+        public Output<ImmutableArray<string>> ExtraIPIDs { get; private set; } = null!;
 
         /// <summary>
         /// Server hostname.
@@ -71,12 +71,6 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Output<ImmutableArray<Outputs.ServerIPState>> Ips { get; private set; } = null!;
 
         /// <summary>
-        /// Server OS partition size. Updating requires re-installation.
-        /// </summary>
-        [Output("osPartitionSize")]
-        public Output<int?> OsPartitionSize { get; private set; } = null!;
-
-        /// <summary>
         /// Server plan slug.
         /// </summary>
         [Output("plan")]
@@ -91,8 +85,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// ID of the server the project belongs to.
         /// </summary>
-        [Output("project")]
-        public Output<int> Project { get; private set; } = null!;
+        [Output("projectID")]
+        public Output<int> ProjectID { get; private set; } = null!;
 
         /// <summary>
         /// Server region slug.
@@ -109,8 +103,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// Server SSH key IDs. Updating requires re-installation.
         /// </summary>
-        [Output("sshKeys")]
-        public Output<ImmutableArray<int>> SshKeys { get; private set; } = null!;
+        [Output("sshKeyIDs")]
+        public Output<ImmutableArray<int>> SshKeyIDs { get; private set; } = null!;
 
         /// <summary>
         /// Server tags.
@@ -184,8 +178,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// Server elastic block storage ID.
         /// </summary>
-        [Input("blockStorage")]
-        public Input<int>? BlockStorage { get; set; }
+        [Input("blockStorageID")]
+        public Input<int>? BlockStorageID { get; set; }
 
         /// <summary>
         /// Server billing cycle.
@@ -199,16 +193,16 @@ namespace Caliban0.PulumiCherryServers.Provider
         [Input("discountCode")]
         public Input<string>? DiscountCode { get; set; }
 
-        [Input("extraIPs")]
-        private InputList<string>? _extraIPs;
+        [Input("extraIPIDs")]
+        private InputList<string>? _extraIPIDs;
 
         /// <summary>
         /// IDs of extra IP addresses assigned to the server.
         /// </summary>
-        public InputList<string> ExtraIPs
+        public InputList<string> ExtraIPIDs
         {
-            get => _extraIPs ?? (_extraIPs = new InputList<string>());
-            set => _extraIPs = value;
+            get => _extraIPIDs ?? (_extraIPIDs = new InputList<string>());
+            set => _extraIPIDs = value;
         }
 
         /// <summary>
@@ -224,12 +218,6 @@ namespace Caliban0.PulumiCherryServers.Provider
         public Input<string>? Image { get; set; }
 
         /// <summary>
-        /// Server OS partition size. Updating requires re-installation.
-        /// </summary>
-        [Input("osPartitionSize")]
-        public Input<int>? OsPartitionSize { get; set; }
-
-        /// <summary>
         /// Server plan slug.
         /// </summary>
         [Input("plan", required: true)]
@@ -238,8 +226,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// ID of the server the project belongs to.
         /// </summary>
-        [Input("project", required: true)]
-        public Input<int> Project { get; set; } = null!;
+        [Input("projectID", required: true)]
+        public Input<int> ProjectID { get; set; } = null!;
 
         /// <summary>
         /// Server region slug.
@@ -253,16 +241,16 @@ namespace Caliban0.PulumiCherryServers.Provider
         [Input("spot")]
         public Input<bool>? Spot { get; set; }
 
-        [Input("sshKeys")]
-        private InputList<int>? _sshKeys;
+        [Input("sshKeyIDs")]
+        private InputList<int>? _sshKeyIDs;
 
         /// <summary>
         /// Server SSH key IDs. Updating requires re-installation.
         /// </summary>
-        public InputList<int> SshKeys
+        public InputList<int> SshKeyIDs
         {
-            get => _sshKeys ?? (_sshKeys = new InputList<int>());
-            set => _sshKeys = value;
+            get => _sshKeyIDs ?? (_sshKeyIDs = new InputList<int>());
+            set => _sshKeyIDs = value;
         }
 
         [Input("tags")]

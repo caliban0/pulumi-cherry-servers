@@ -54,15 +54,15 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
      * Server elastic block storage ID.
      * 
      */
-    @Import(name="blockStorage")
-    private @Nullable Output<Integer> blockStorage;
+    @Import(name="blockStorageID")
+    private @Nullable Output<Integer> blockStorageID;
 
     /**
      * @return Server elastic block storage ID.
      * 
      */
-    public Optional<Output<Integer>> blockStorage() {
-        return Optional.ofNullable(this.blockStorage);
+    public Optional<Output<Integer>> blockStorageID() {
+        return Optional.ofNullable(this.blockStorageID);
     }
 
     /**
@@ -99,15 +99,15 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
      * IDs of extra IP addresses assigned to the server.
      * 
      */
-    @Import(name="extraIPs")
-    private @Nullable Output<List<String>> extraIPs;
+    @Import(name="extraIPIDs")
+    private @Nullable Output<List<String>> extraIPIDs;
 
     /**
      * @return IDs of extra IP addresses assigned to the server.
      * 
      */
-    public Optional<Output<List<String>>> extraIPs() {
-        return Optional.ofNullable(this.extraIPs);
+    public Optional<Output<List<String>>> extraIPIDs() {
+        return Optional.ofNullable(this.extraIPIDs);
     }
 
     /**
@@ -141,21 +141,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Server OS partition size. Updating requires re-installation.
-     * 
-     */
-    @Import(name="osPartitionSize")
-    private @Nullable Output<Integer> osPartitionSize;
-
-    /**
-     * @return Server OS partition size. Updating requires re-installation.
-     * 
-     */
-    public Optional<Output<Integer>> osPartitionSize() {
-        return Optional.ofNullable(this.osPartitionSize);
-    }
-
-    /**
      * Server plan slug.
      * 
      */
@@ -174,15 +159,15 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
      * ID of the server the project belongs to.
      * 
      */
-    @Import(name="project", required=true)
-    private Output<Integer> project;
+    @Import(name="projectID", required=true)
+    private Output<Integer> projectID;
 
     /**
      * @return ID of the server the project belongs to.
      * 
      */
-    public Output<Integer> project() {
-        return this.project;
+    public Output<Integer> projectID() {
+        return this.projectID;
     }
 
     /**
@@ -219,15 +204,15 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
      * Server SSH key IDs. Updating requires re-installation.
      * 
      */
-    @Import(name="sshKeys")
-    private @Nullable Output<List<Integer>> sshKeys;
+    @Import(name="sshKeyIDs")
+    private @Nullable Output<List<Integer>> sshKeyIDs;
 
     /**
      * @return Server SSH key IDs. Updating requires re-installation.
      * 
      */
-    public Optional<Output<List<Integer>>> sshKeys() {
-        return Optional.ofNullable(this.sshKeys);
+    public Optional<Output<List<Integer>>> sshKeyIDs() {
+        return Optional.ofNullable(this.sshKeyIDs);
     }
 
     /**
@@ -265,18 +250,17 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
     private ServerArgs(ServerArgs $) {
         this.allowReinstall = $.allowReinstall;
         this.bgp = $.bgp;
-        this.blockStorage = $.blockStorage;
+        this.blockStorageID = $.blockStorageID;
         this.cycle = $.cycle;
         this.discountCode = $.discountCode;
-        this.extraIPs = $.extraIPs;
+        this.extraIPIDs = $.extraIPIDs;
         this.hostname = $.hostname;
         this.image = $.image;
-        this.osPartitionSize = $.osPartitionSize;
         this.plan = $.plan;
-        this.project = $.project;
+        this.projectID = $.projectID;
         this.region = $.region;
         this.spot = $.spot;
-        this.sshKeys = $.sshKeys;
+        this.sshKeyIDs = $.sshKeyIDs;
         this.tags = $.tags;
         this.userData = $.userData;
     }
@@ -342,24 +326,24 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param blockStorage Server elastic block storage ID.
+         * @param blockStorageID Server elastic block storage ID.
          * 
          * @return builder
          * 
          */
-        public Builder blockStorage(@Nullable Output<Integer> blockStorage) {
-            $.blockStorage = blockStorage;
+        public Builder blockStorageID(@Nullable Output<Integer> blockStorageID) {
+            $.blockStorageID = blockStorageID;
             return this;
         }
 
         /**
-         * @param blockStorage Server elastic block storage ID.
+         * @param blockStorageID Server elastic block storage ID.
          * 
          * @return builder
          * 
          */
-        public Builder blockStorage(Integer blockStorage) {
-            return blockStorage(Output.of(blockStorage));
+        public Builder blockStorageID(Integer blockStorageID) {
+            return blockStorageID(Output.of(blockStorageID));
         }
 
         /**
@@ -405,34 +389,34 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param extraIPs IDs of extra IP addresses assigned to the server.
+         * @param extraIPIDs IDs of extra IP addresses assigned to the server.
          * 
          * @return builder
          * 
          */
-        public Builder extraIPs(@Nullable Output<List<String>> extraIPs) {
-            $.extraIPs = extraIPs;
+        public Builder extraIPIDs(@Nullable Output<List<String>> extraIPIDs) {
+            $.extraIPIDs = extraIPIDs;
             return this;
         }
 
         /**
-         * @param extraIPs IDs of extra IP addresses assigned to the server.
+         * @param extraIPIDs IDs of extra IP addresses assigned to the server.
          * 
          * @return builder
          * 
          */
-        public Builder extraIPs(List<String> extraIPs) {
-            return extraIPs(Output.of(extraIPs));
+        public Builder extraIPIDs(List<String> extraIPIDs) {
+            return extraIPIDs(Output.of(extraIPIDs));
         }
 
         /**
-         * @param extraIPs IDs of extra IP addresses assigned to the server.
+         * @param extraIPIDs IDs of extra IP addresses assigned to the server.
          * 
          * @return builder
          * 
          */
-        public Builder extraIPs(String... extraIPs) {
-            return extraIPs(List.of(extraIPs));
+        public Builder extraIPIDs(String... extraIPIDs) {
+            return extraIPIDs(List.of(extraIPIDs));
         }
 
         /**
@@ -478,27 +462,6 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param osPartitionSize Server OS partition size. Updating requires re-installation.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder osPartitionSize(@Nullable Output<Integer> osPartitionSize) {
-            $.osPartitionSize = osPartitionSize;
-            return this;
-        }
-
-        /**
-         * @param osPartitionSize Server OS partition size. Updating requires re-installation.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder osPartitionSize(Integer osPartitionSize) {
-            return osPartitionSize(Output.of(osPartitionSize));
-        }
-
-        /**
          * @param plan Server plan slug.
          * 
          * @return builder
@@ -520,24 +483,24 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param project ID of the server the project belongs to.
+         * @param projectID ID of the server the project belongs to.
          * 
          * @return builder
          * 
          */
-        public Builder project(Output<Integer> project) {
-            $.project = project;
+        public Builder projectID(Output<Integer> projectID) {
+            $.projectID = projectID;
             return this;
         }
 
         /**
-         * @param project ID of the server the project belongs to.
+         * @param projectID ID of the server the project belongs to.
          * 
          * @return builder
          * 
          */
-        public Builder project(Integer project) {
-            return project(Output.of(project));
+        public Builder projectID(Integer projectID) {
+            return projectID(Output.of(projectID));
         }
 
         /**
@@ -583,34 +546,34 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param sshKeys Server SSH key IDs. Updating requires re-installation.
+         * @param sshKeyIDs Server SSH key IDs. Updating requires re-installation.
          * 
          * @return builder
          * 
          */
-        public Builder sshKeys(@Nullable Output<List<Integer>> sshKeys) {
-            $.sshKeys = sshKeys;
+        public Builder sshKeyIDs(@Nullable Output<List<Integer>> sshKeyIDs) {
+            $.sshKeyIDs = sshKeyIDs;
             return this;
         }
 
         /**
-         * @param sshKeys Server SSH key IDs. Updating requires re-installation.
+         * @param sshKeyIDs Server SSH key IDs. Updating requires re-installation.
          * 
          * @return builder
          * 
          */
-        public Builder sshKeys(List<Integer> sshKeys) {
-            return sshKeys(Output.of(sshKeys));
+        public Builder sshKeyIDs(List<Integer> sshKeyIDs) {
+            return sshKeyIDs(Output.of(sshKeyIDs));
         }
 
         /**
-         * @param sshKeys Server SSH key IDs. Updating requires re-installation.
+         * @param sshKeyIDs Server SSH key IDs. Updating requires re-installation.
          * 
          * @return builder
          * 
          */
-        public Builder sshKeys(Integer... sshKeys) {
-            return sshKeys(List.of(sshKeys));
+        public Builder sshKeyIDs(Integer... sshKeyIDs) {
+            return sshKeyIDs(List.of(sshKeyIDs));
         }
 
         /**
@@ -659,8 +622,8 @@ public final class ServerArgs extends com.pulumi.resources.ResourceArgs {
             if ($.plan == null) {
                 throw new MissingRequiredPropertyException("ServerArgs", "plan");
             }
-            if ($.project == null) {
-                throw new MissingRequiredPropertyException("ServerArgs", "project");
+            if ($.projectID == null) {
+                throw new MissingRequiredPropertyException("ServerArgs", "projectID");
             }
             if ($.region == null) {
                 throw new MissingRequiredPropertyException("ServerArgs", "region");

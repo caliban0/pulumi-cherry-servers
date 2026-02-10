@@ -69,28 +69,28 @@ project = cherry.Project("myProject", team=148226, bgp=True, name="testt")
 server = cherry.Server(
     "myServer",
     region="LT-Siauliai",
-    project=project.id.apply(int),
+    project_id=project.id.apply(int),
     plan="B1-1-1gb-20s-shared",
-    hostname="test",
+    extra_ipids=["76bc4e84-fc19-bdd1-0687-5882bcd2ccfb", "25d5cc20-8034-8092-d105-526dff9eaadf"],
+    hostname="Test"
 )
 pulumi.export(
     "server_output",
     {
         "id": server.id,
         "plan": server.plan,
-        "project": server.project,
+        "project": server.project_id,
         "region": server.region,
         "hostname": server.hostname,
         "image": server.image,
-        "ssh": server.ssh_keys,
-        "extra_ips": server.extra_ips,
+        "ssh": server.ssh_key_ids,
+        "extra_ips": server.extra_ipids,
         "user_data": server.user_data,
         "tags": server.tags,
         "spot": server.spot,
-        "os_partition_size": server.os_partition_size,
         "cycle": server.cycle,
         "discount_code": server.discount_code,
-        "block_storage": server.block_storage,
+        "block_storage": server.block_storage_id,
         "bgp": server.bgp,
         "allow_reinstall": server.allow_reinstall,
         "ips": server.ips,
@@ -98,22 +98,23 @@ pulumi.export(
     },
 )
 
-server.id.apply(lambda id: print('Server ID:', id))
-server.plan.apply(lambda plan: print('Server plan:', plan))
-server.project.apply(lambda project: print('Server project:', project))
-server.region.apply(lambda region: print('Server region:', region))
-server.hostname.apply(lambda hostname: print('Server hostname:', hostname))
-server.image.apply(lambda image: print('Server image:', image))
-server.ssh_keys.apply(lambda ssh: print('Server ssh:', ssh))
-server.extra_ips.apply(lambda extra_ips: print('Server extra IPs:', extra_ips))
-server.user_data.apply(lambda user_data: print('Server user data:', user_data))
-server.tags.apply(lambda tags: print('Server tags:', tags))
-server.spot.apply(lambda spot: print('Server spot:', spot))
-server.os_partition_size.apply(lambda os: print('Server OS partition size:', os))
-server.cycle.apply(lambda cycle: print('Server cycle:', cycle))
-server.discount_code.apply(lambda discount: print('Server discount code:', discount))
-server.block_storage.apply(lambda block: print('Server block storage:', block))
-server.bgp.apply(lambda bgp: print('Server BGP:', bgp))
-server.allow_reinstall.apply(lambda allow_reinstall: print('Server allow reinstall:', allow_reinstall))
-server.ips.apply(lambda ips: print('Server IPs:', ips))
-server.pricing.apply(lambda pricing: print('Server pricing:', pricing))
+server.id.apply(lambda id: print("Server ID:", id))
+server.plan.apply(lambda plan: print("Server plan:", plan))
+server.project_id.apply(lambda project: print("Server project:", project))
+server.region.apply(lambda region: print("Server region:", region))
+server.hostname.apply(lambda hostname: print("Server hostname:", hostname))
+server.image.apply(lambda image: print("Server image:", image))
+server.ssh_key_ids.apply(lambda ssh: print("Server ssh:", ssh))
+server.extra_ipids.apply(lambda extra_ips: print("Server extra IPs:", extra_ips))
+server.user_data.apply(lambda user_data: print("Server user data:", user_data))
+server.tags.apply(lambda tags: print("Server tags:", tags))
+server.spot.apply(lambda spot: print("Server spot:", spot))
+server.cycle.apply(lambda cycle: print("Server cycle:", cycle))
+server.discount_code.apply(lambda discount: print("Server discount code:", discount))
+server.block_storage_id.apply(lambda block: print("Server block storage:", block))
+server.bgp.apply(lambda bgp: print("Server BGP:", bgp))
+server.allow_reinstall.apply(
+    lambda allow_reinstall: print("Server allow reinstall:", allow_reinstall)
+)
+server.ips.apply(lambda ips: print("Server IPs:", ips))
+server.pricing.apply(lambda pricing: print("Server pricing:", pricing))

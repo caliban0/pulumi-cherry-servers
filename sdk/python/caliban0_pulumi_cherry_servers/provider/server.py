@@ -21,65 +21,61 @@ __all__ = ['ServerArgs', 'Server']
 class ServerArgs:
     def __init__(__self__, *,
                  plan: pulumi.Input[_builtins.str],
-                 project: pulumi.Input[_builtins.int],
+                 project_id: pulumi.Input[_builtins.int],
                  region: pulumi.Input[_builtins.str],
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
-                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
+                 block_storage_id: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
-                 extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 extra_ipids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
-                 ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
+                 ssh_key_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None):
         """
         The set of arguments for constructing a Server resource.
         :param pulumi.Input[_builtins.str] plan: Server plan slug.
-        :param pulumi.Input[_builtins.int] project: ID of the server the project belongs to.
+        :param pulumi.Input[_builtins.int] project_id: ID of the server the project belongs to.
         :param pulumi.Input[_builtins.str] region: Server region slug.
         :param pulumi.Input[_builtins.bool] allow_reinstall: Whether re-installation is permitted for this server.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP is enabled for the server.
-        :param pulumi.Input[_builtins.int] block_storage: Server elastic block storage ID.
+        :param pulumi.Input[_builtins.int] block_storage_id: Server elastic block storage ID.
         :param pulumi.Input[_builtins.str] cycle: Server billing cycle.
         :param pulumi.Input[_builtins.str] discount_code: Server discount code.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ipids: IDs of extra IP addresses assigned to the server.
         :param pulumi.Input[_builtins.str] hostname: Server hostname.
         :param pulumi.Input[_builtins.str] image: Server image slug. Updating requires re-installation.
-        :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_key_ids: Server SSH key IDs. Updating requires re-installation.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
         pulumi.set(__self__, "plan", plan)
-        pulumi.set(__self__, "project", project)
+        pulumi.set(__self__, "project_id", project_id)
         pulumi.set(__self__, "region", region)
         if allow_reinstall is not None:
             pulumi.set(__self__, "allow_reinstall", allow_reinstall)
         if bgp is not None:
             pulumi.set(__self__, "bgp", bgp)
-        if block_storage is not None:
-            pulumi.set(__self__, "block_storage", block_storage)
+        if block_storage_id is not None:
+            pulumi.set(__self__, "block_storage_id", block_storage_id)
         if cycle is not None:
             pulumi.set(__self__, "cycle", cycle)
         if discount_code is not None:
             pulumi.set(__self__, "discount_code", discount_code)
-        if extra_ips is not None:
-            pulumi.set(__self__, "extra_ips", extra_ips)
+        if extra_ipids is not None:
+            pulumi.set(__self__, "extra_ipids", extra_ipids)
         if hostname is not None:
             pulumi.set(__self__, "hostname", hostname)
         if image is not None:
             pulumi.set(__self__, "image", image)
-        if os_partition_size is not None:
-            pulumi.set(__self__, "os_partition_size", os_partition_size)
         if spot is not None:
             pulumi.set(__self__, "spot", spot)
-        if ssh_keys is not None:
-            pulumi.set(__self__, "ssh_keys", ssh_keys)
+        if ssh_key_ids is not None:
+            pulumi.set(__self__, "ssh_key_ids", ssh_key_ids)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
         if user_data is not None:
@@ -98,16 +94,16 @@ class ServerArgs:
         pulumi.set(self, "plan", value)
 
     @_builtins.property
-    @pulumi.getter
-    def project(self) -> pulumi.Input[_builtins.int]:
+    @pulumi.getter(name="projectID")
+    def project_id(self) -> pulumi.Input[_builtins.int]:
         """
         ID of the server the project belongs to.
         """
-        return pulumi.get(self, "project")
+        return pulumi.get(self, "project_id")
 
-    @project.setter
-    def project(self, value: pulumi.Input[_builtins.int]):
-        pulumi.set(self, "project", value)
+    @project_id.setter
+    def project_id(self, value: pulumi.Input[_builtins.int]):
+        pulumi.set(self, "project_id", value)
 
     @_builtins.property
     @pulumi.getter
@@ -146,16 +142,16 @@ class ServerArgs:
         pulumi.set(self, "bgp", value)
 
     @_builtins.property
-    @pulumi.getter(name="blockStorage")
-    def block_storage(self) -> Optional[pulumi.Input[_builtins.int]]:
+    @pulumi.getter(name="blockStorageID")
+    def block_storage_id(self) -> Optional[pulumi.Input[_builtins.int]]:
         """
         Server elastic block storage ID.
         """
-        return pulumi.get(self, "block_storage")
+        return pulumi.get(self, "block_storage_id")
 
-    @block_storage.setter
-    def block_storage(self, value: Optional[pulumi.Input[_builtins.int]]):
-        pulumi.set(self, "block_storage", value)
+    @block_storage_id.setter
+    def block_storage_id(self, value: Optional[pulumi.Input[_builtins.int]]):
+        pulumi.set(self, "block_storage_id", value)
 
     @_builtins.property
     @pulumi.getter
@@ -182,16 +178,16 @@ class ServerArgs:
         pulumi.set(self, "discount_code", value)
 
     @_builtins.property
-    @pulumi.getter(name="extraIPs")
-    def extra_ips(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    @pulumi.getter(name="extraIPIDs")
+    def extra_ipids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         IDs of extra IP addresses assigned to the server.
         """
-        return pulumi.get(self, "extra_ips")
+        return pulumi.get(self, "extra_ipids")
 
-    @extra_ips.setter
-    def extra_ips(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
-        pulumi.set(self, "extra_ips", value)
+    @extra_ipids.setter
+    def extra_ipids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "extra_ipids", value)
 
     @_builtins.property
     @pulumi.getter
@@ -218,18 +214,6 @@ class ServerArgs:
         pulumi.set(self, "image", value)
 
     @_builtins.property
-    @pulumi.getter(name="osPartitionSize")
-    def os_partition_size(self) -> Optional[pulumi.Input[_builtins.int]]:
-        """
-        Server OS partition size. Updating requires re-installation.
-        """
-        return pulumi.get(self, "os_partition_size")
-
-    @os_partition_size.setter
-    def os_partition_size(self, value: Optional[pulumi.Input[_builtins.int]]):
-        pulumi.set(self, "os_partition_size", value)
-
-    @_builtins.property
     @pulumi.getter
     def spot(self) -> Optional[pulumi.Input[_builtins.bool]]:
         """
@@ -242,16 +226,16 @@ class ServerArgs:
         pulumi.set(self, "spot", value)
 
     @_builtins.property
-    @pulumi.getter(name="sshKeys")
-    def ssh_keys(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]]:
+    @pulumi.getter(name="sshKeyIDs")
+    def ssh_key_ids(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]]:
         """
         Server SSH key IDs. Updating requires re-installation.
         """
-        return pulumi.get(self, "ssh_keys")
+        return pulumi.get(self, "ssh_key_ids")
 
-    @ssh_keys.setter
-    def ssh_keys(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]]):
-        pulumi.set(self, "ssh_keys", value)
+    @ssh_key_ids.setter
+    def ssh_key_ids(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]]):
+        pulumi.set(self, "ssh_key_ids", value)
 
     @_builtins.property
     @pulumi.getter
@@ -286,18 +270,17 @@ class Server(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
-                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
+                 block_storage_id: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
-                 extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 extra_ipids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  plan: Optional[pulumi.Input[_builtins.str]] = None,
-                 project: Optional[pulumi.Input[_builtins.int]] = None,
+                 project_id: Optional[pulumi.Input[_builtins.int]] = None,
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
-                 ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
+                 ssh_key_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -308,18 +291,17 @@ class Server(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.bool] allow_reinstall: Whether re-installation is permitted for this server.
         :param pulumi.Input[_builtins.bool] bgp: Whether BGP is enabled for the server.
-        :param pulumi.Input[_builtins.int] block_storage: Server elastic block storage ID.
+        :param pulumi.Input[_builtins.int] block_storage_id: Server elastic block storage ID.
         :param pulumi.Input[_builtins.str] cycle: Server billing cycle.
         :param pulumi.Input[_builtins.str] discount_code: Server discount code.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ips: IDs of extra IP addresses assigned to the server.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] extra_ipids: IDs of extra IP addresses assigned to the server.
         :param pulumi.Input[_builtins.str] hostname: Server hostname.
         :param pulumi.Input[_builtins.str] image: Server image slug. Updating requires re-installation.
-        :param pulumi.Input[_builtins.int] os_partition_size: Server OS partition size. Updating requires re-installation.
         :param pulumi.Input[_builtins.str] plan: Server plan slug.
-        :param pulumi.Input[_builtins.int] project: ID of the server the project belongs to.
+        :param pulumi.Input[_builtins.int] project_id: ID of the server the project belongs to.
         :param pulumi.Input[_builtins.str] region: Server region slug.
         :param pulumi.Input[_builtins.bool] spot: Whether the server is a spot instance.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_keys: Server SSH key IDs. Updating requires re-installation.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.int]]] ssh_key_ids: Server SSH key IDs. Updating requires re-installation.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Server tags.
         :param pulumi.Input[_builtins.str] user_data: Server user data. Bash or cloud-config script. Updating requires re-installation.
         """
@@ -349,18 +331,17 @@ class Server(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  allow_reinstall: Optional[pulumi.Input[_builtins.bool]] = None,
                  bgp: Optional[pulumi.Input[_builtins.bool]] = None,
-                 block_storage: Optional[pulumi.Input[_builtins.int]] = None,
+                 block_storage_id: Optional[pulumi.Input[_builtins.int]] = None,
                  cycle: Optional[pulumi.Input[_builtins.str]] = None,
                  discount_code: Optional[pulumi.Input[_builtins.str]] = None,
-                 extra_ips: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 extra_ipids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  hostname: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
-                 os_partition_size: Optional[pulumi.Input[_builtins.int]] = None,
                  plan: Optional[pulumi.Input[_builtins.str]] = None,
-                 project: Optional[pulumi.Input[_builtins.int]] = None,
+                 project_id: Optional[pulumi.Input[_builtins.int]] = None,
                  region: Optional[pulumi.Input[_builtins.str]] = None,
                  spot: Optional[pulumi.Input[_builtins.bool]] = None,
-                 ssh_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
+                 ssh_key_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.int]]]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
                  user_data: Optional[pulumi.Input[_builtins.str]] = None,
                  __props__=None):
@@ -374,24 +355,23 @@ class Server(pulumi.CustomResource):
 
             __props__.__dict__["allow_reinstall"] = allow_reinstall
             __props__.__dict__["bgp"] = bgp
-            __props__.__dict__["block_storage"] = block_storage
+            __props__.__dict__["block_storage_id"] = block_storage_id
             __props__.__dict__["cycle"] = cycle
             __props__.__dict__["discount_code"] = discount_code
-            __props__.__dict__["extra_ips"] = extra_ips
+            __props__.__dict__["extra_ipids"] = extra_ipids
             __props__.__dict__["hostname"] = hostname
             __props__.__dict__["image"] = image
-            __props__.__dict__["os_partition_size"] = os_partition_size
             if plan is None and not opts.urn:
                 raise TypeError("Missing required property 'plan'")
             __props__.__dict__["plan"] = plan
-            if project is None and not opts.urn:
-                raise TypeError("Missing required property 'project'")
-            __props__.__dict__["project"] = project
+            if project_id is None and not opts.urn:
+                raise TypeError("Missing required property 'project_id'")
+            __props__.__dict__["project_id"] = project_id
             if region is None and not opts.urn:
                 raise TypeError("Missing required property 'region'")
             __props__.__dict__["region"] = region
             __props__.__dict__["spot"] = spot
-            __props__.__dict__["ssh_keys"] = ssh_keys
+            __props__.__dict__["ssh_key_ids"] = ssh_key_ids
             __props__.__dict__["tags"] = tags
             __props__.__dict__["user_data"] = user_data
             __props__.__dict__["ips"] = None
@@ -420,20 +400,19 @@ class Server(pulumi.CustomResource):
 
         __props__.__dict__["allow_reinstall"] = None
         __props__.__dict__["bgp"] = None
-        __props__.__dict__["block_storage"] = None
+        __props__.__dict__["block_storage_id"] = None
         __props__.__dict__["cycle"] = None
         __props__.__dict__["discount_code"] = None
-        __props__.__dict__["extra_ips"] = None
+        __props__.__dict__["extra_ipids"] = None
         __props__.__dict__["hostname"] = None
         __props__.__dict__["image"] = None
         __props__.__dict__["ips"] = None
-        __props__.__dict__["os_partition_size"] = None
         __props__.__dict__["plan"] = None
         __props__.__dict__["pricing"] = None
-        __props__.__dict__["project"] = None
+        __props__.__dict__["project_id"] = None
         __props__.__dict__["region"] = None
         __props__.__dict__["spot"] = None
-        __props__.__dict__["ssh_keys"] = None
+        __props__.__dict__["ssh_key_ids"] = None
         __props__.__dict__["tags"] = None
         __props__.__dict__["user_data"] = None
         return Server(resource_name, opts=opts, __props__=__props__)
@@ -455,12 +434,12 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "bgp")
 
     @_builtins.property
-    @pulumi.getter(name="blockStorage")
-    def block_storage(self) -> pulumi.Output[Optional[_builtins.int]]:
+    @pulumi.getter(name="blockStorageID")
+    def block_storage_id(self) -> pulumi.Output[Optional[_builtins.int]]:
         """
         Server elastic block storage ID.
         """
-        return pulumi.get(self, "block_storage")
+        return pulumi.get(self, "block_storage_id")
 
     @_builtins.property
     @pulumi.getter
@@ -479,12 +458,12 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "discount_code")
 
     @_builtins.property
-    @pulumi.getter(name="extraIPs")
-    def extra_ips(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+    @pulumi.getter(name="extraIPIDs")
+    def extra_ipids(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
         """
         IDs of extra IP addresses assigned to the server.
         """
-        return pulumi.get(self, "extra_ips")
+        return pulumi.get(self, "extra_ipids")
 
     @_builtins.property
     @pulumi.getter
@@ -511,14 +490,6 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "ips")
 
     @_builtins.property
-    @pulumi.getter(name="osPartitionSize")
-    def os_partition_size(self) -> pulumi.Output[Optional[_builtins.int]]:
-        """
-        Server OS partition size. Updating requires re-installation.
-        """
-        return pulumi.get(self, "os_partition_size")
-
-    @_builtins.property
     @pulumi.getter
     def plan(self) -> pulumi.Output[_builtins.str]:
         """
@@ -535,12 +506,12 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "pricing")
 
     @_builtins.property
-    @pulumi.getter
-    def project(self) -> pulumi.Output[_builtins.int]:
+    @pulumi.getter(name="projectID")
+    def project_id(self) -> pulumi.Output[_builtins.int]:
         """
         ID of the server the project belongs to.
         """
-        return pulumi.get(self, "project")
+        return pulumi.get(self, "project_id")
 
     @_builtins.property
     @pulumi.getter
@@ -559,12 +530,12 @@ class Server(pulumi.CustomResource):
         return pulumi.get(self, "spot")
 
     @_builtins.property
-    @pulumi.getter(name="sshKeys")
-    def ssh_keys(self) -> pulumi.Output[Optional[Sequence[_builtins.int]]]:
+    @pulumi.getter(name="sshKeyIDs")
+    def ssh_key_ids(self) -> pulumi.Output[Optional[Sequence[_builtins.int]]]:
         """
         Server SSH key IDs. Updating requires re-installation.
         """
-        return pulumi.get(self, "ssh_keys")
+        return pulumi.get(self, "ssh_key_ids")
 
     @_builtins.property
     @pulumi.getter

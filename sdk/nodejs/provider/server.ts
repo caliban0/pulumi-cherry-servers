@@ -47,7 +47,7 @@ export class Server extends pulumi.CustomResource {
     /**
      * Server elastic block storage ID.
      */
-    declare public readonly blockStorage: pulumi.Output<number | undefined>;
+    declare public readonly blockStorageID: pulumi.Output<number | undefined>;
     /**
      * Server billing cycle.
      */
@@ -59,7 +59,7 @@ export class Server extends pulumi.CustomResource {
     /**
      * IDs of extra IP addresses assigned to the server.
      */
-    declare public readonly extraIPs: pulumi.Output<string[] | undefined>;
+    declare public readonly extraIPIDs: pulumi.Output<string[] | undefined>;
     /**
      * Server hostname.
      */
@@ -73,10 +73,6 @@ export class Server extends pulumi.CustomResource {
      */
     declare public /*out*/ readonly ips: pulumi.Output<outputs.provider.ServerIPState[]>;
     /**
-     * Server OS partition size. Updating requires re-installation.
-     */
-    declare public readonly osPartitionSize: pulumi.Output<number | undefined>;
-    /**
      * Server plan slug.
      */
     declare public readonly plan: pulumi.Output<string>;
@@ -87,7 +83,7 @@ export class Server extends pulumi.CustomResource {
     /**
      * ID of the server the project belongs to.
      */
-    declare public readonly project: pulumi.Output<number>;
+    declare public readonly projectID: pulumi.Output<number>;
     /**
      * Server region slug.
      */
@@ -99,7 +95,7 @@ export class Server extends pulumi.CustomResource {
     /**
      * Server SSH key IDs. Updating requires re-installation.
      */
-    declare public readonly sshKeys: pulumi.Output<number[] | undefined>;
+    declare public readonly sshKeyIDs: pulumi.Output<number[] | undefined>;
     /**
      * Server tags.
      */
@@ -123,26 +119,25 @@ export class Server extends pulumi.CustomResource {
             if (args?.plan === undefined && !opts.urn) {
                 throw new Error("Missing required property 'plan'");
             }
-            if (args?.project === undefined && !opts.urn) {
-                throw new Error("Missing required property 'project'");
+            if (args?.projectID === undefined && !opts.urn) {
+                throw new Error("Missing required property 'projectID'");
             }
             if (args?.region === undefined && !opts.urn) {
                 throw new Error("Missing required property 'region'");
             }
             resourceInputs["allowReinstall"] = args?.allowReinstall;
             resourceInputs["bgp"] = args?.bgp;
-            resourceInputs["blockStorage"] = args?.blockStorage;
+            resourceInputs["blockStorageID"] = args?.blockStorageID;
             resourceInputs["cycle"] = args?.cycle;
             resourceInputs["discountCode"] = args?.discountCode;
-            resourceInputs["extraIPs"] = args?.extraIPs;
+            resourceInputs["extraIPIDs"] = args?.extraIPIDs;
             resourceInputs["hostname"] = args?.hostname;
             resourceInputs["image"] = args?.image;
-            resourceInputs["osPartitionSize"] = args?.osPartitionSize;
             resourceInputs["plan"] = args?.plan;
-            resourceInputs["project"] = args?.project;
+            resourceInputs["projectID"] = args?.projectID;
             resourceInputs["region"] = args?.region;
             resourceInputs["spot"] = args?.spot;
-            resourceInputs["sshKeys"] = args?.sshKeys;
+            resourceInputs["sshKeyIDs"] = args?.sshKeyIDs;
             resourceInputs["tags"] = args?.tags;
             resourceInputs["userData"] = args?.userData;
             resourceInputs["ips"] = undefined /*out*/;
@@ -150,20 +145,19 @@ export class Server extends pulumi.CustomResource {
         } else {
             resourceInputs["allowReinstall"] = undefined /*out*/;
             resourceInputs["bgp"] = undefined /*out*/;
-            resourceInputs["blockStorage"] = undefined /*out*/;
+            resourceInputs["blockStorageID"] = undefined /*out*/;
             resourceInputs["cycle"] = undefined /*out*/;
             resourceInputs["discountCode"] = undefined /*out*/;
-            resourceInputs["extraIPs"] = undefined /*out*/;
+            resourceInputs["extraIPIDs"] = undefined /*out*/;
             resourceInputs["hostname"] = undefined /*out*/;
             resourceInputs["image"] = undefined /*out*/;
             resourceInputs["ips"] = undefined /*out*/;
-            resourceInputs["osPartitionSize"] = undefined /*out*/;
             resourceInputs["plan"] = undefined /*out*/;
             resourceInputs["pricing"] = undefined /*out*/;
-            resourceInputs["project"] = undefined /*out*/;
+            resourceInputs["projectID"] = undefined /*out*/;
             resourceInputs["region"] = undefined /*out*/;
             resourceInputs["spot"] = undefined /*out*/;
-            resourceInputs["sshKeys"] = undefined /*out*/;
+            resourceInputs["sshKeyIDs"] = undefined /*out*/;
             resourceInputs["tags"] = undefined /*out*/;
             resourceInputs["userData"] = undefined /*out*/;
         }
@@ -187,7 +181,7 @@ export interface ServerArgs {
     /**
      * Server elastic block storage ID.
      */
-    blockStorage?: pulumi.Input<number>;
+    blockStorageID?: pulumi.Input<number>;
     /**
      * Server billing cycle.
      */
@@ -199,7 +193,7 @@ export interface ServerArgs {
     /**
      * IDs of extra IP addresses assigned to the server.
      */
-    extraIPs?: pulumi.Input<pulumi.Input<string>[]>;
+    extraIPIDs?: pulumi.Input<pulumi.Input<string>[]>;
     /**
      * Server hostname.
      */
@@ -209,17 +203,13 @@ export interface ServerArgs {
      */
     image?: pulumi.Input<string>;
     /**
-     * Server OS partition size. Updating requires re-installation.
-     */
-    osPartitionSize?: pulumi.Input<number>;
-    /**
      * Server plan slug.
      */
     plan: pulumi.Input<string>;
     /**
      * ID of the server the project belongs to.
      */
-    project: pulumi.Input<number>;
+    projectID: pulumi.Input<number>;
     /**
      * Server region slug.
      */
@@ -231,7 +221,7 @@ export interface ServerArgs {
     /**
      * Server SSH key IDs. Updating requires re-installation.
      */
-    sshKeys?: pulumi.Input<pulumi.Input<number>[]>;
+    sshKeyIDs?: pulumi.Input<pulumi.Input<number>[]>;
     /**
      * Server tags.
      */

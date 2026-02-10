@@ -21,33 +21,31 @@ type Server struct {
 	// Whether BGP is enabled for the server.
 	Bgp pulumi.BoolPtrOutput `pulumi:"bgp"`
 	// Server elastic block storage ID.
-	BlockStorage pulumi.IntPtrOutput `pulumi:"blockStorage"`
+	BlockStorageID pulumi.IntPtrOutput `pulumi:"blockStorageID"`
 	// Server billing cycle.
 	Cycle pulumi.StringPtrOutput `pulumi:"cycle"`
 	// Server discount code.
 	DiscountCode pulumi.StringPtrOutput `pulumi:"discountCode"`
 	// IDs of extra IP addresses assigned to the server.
-	ExtraIPs pulumi.StringArrayOutput `pulumi:"extraIPs"`
+	ExtraIPIDs pulumi.StringArrayOutput `pulumi:"extraIPIDs"`
 	// Server hostname.
 	Hostname pulumi.StringPtrOutput `pulumi:"hostname"`
 	// Server image slug. Updating requires re-installation.
 	Image pulumi.StringPtrOutput `pulumi:"image"`
 	// Server IP addresses.
 	Ips ServerIPStateArrayOutput `pulumi:"ips"`
-	// Server OS partition size. Updating requires re-installation.
-	OsPartitionSize pulumi.IntPtrOutput `pulumi:"osPartitionSize"`
 	// Server plan slug.
 	Plan pulumi.StringOutput `pulumi:"plan"`
 	// Server pricing.
 	Pricing ServerPricingStateOutput `pulumi:"pricing"`
 	// ID of the server the project belongs to.
-	Project pulumi.IntOutput `pulumi:"project"`
+	ProjectID pulumi.IntOutput `pulumi:"projectID"`
 	// Server region slug.
 	Region pulumi.StringOutput `pulumi:"region"`
 	// Whether the server is a spot instance.
 	Spot pulumi.BoolPtrOutput `pulumi:"spot"`
 	// Server SSH key IDs. Updating requires re-installation.
-	SshKeys pulumi.IntArrayOutput `pulumi:"sshKeys"`
+	SshKeyIDs pulumi.IntArrayOutput `pulumi:"sshKeyIDs"`
 	// Server tags.
 	Tags pulumi.StringMapOutput `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -64,8 +62,8 @@ func NewServer(ctx *pulumi.Context,
 	if args.Plan == nil {
 		return nil, errors.New("invalid value for required argument 'Plan'")
 	}
-	if args.Project == nil {
-		return nil, errors.New("invalid value for required argument 'Project'")
+	if args.ProjectID == nil {
+		return nil, errors.New("invalid value for required argument 'ProjectID'")
 	}
 	if args.Region == nil {
 		return nil, errors.New("invalid value for required argument 'Region'")
@@ -108,29 +106,27 @@ type serverArgs struct {
 	// Whether BGP is enabled for the server.
 	Bgp *bool `pulumi:"bgp"`
 	// Server elastic block storage ID.
-	BlockStorage *int `pulumi:"blockStorage"`
+	BlockStorageID *int `pulumi:"blockStorageID"`
 	// Server billing cycle.
 	Cycle *string `pulumi:"cycle"`
 	// Server discount code.
 	DiscountCode *string `pulumi:"discountCode"`
 	// IDs of extra IP addresses assigned to the server.
-	ExtraIPs []string `pulumi:"extraIPs"`
+	ExtraIPIDs []string `pulumi:"extraIPIDs"`
 	// Server hostname.
 	Hostname *string `pulumi:"hostname"`
 	// Server image slug. Updating requires re-installation.
 	Image *string `pulumi:"image"`
-	// Server OS partition size. Updating requires re-installation.
-	OsPartitionSize *int `pulumi:"osPartitionSize"`
 	// Server plan slug.
 	Plan string `pulumi:"plan"`
 	// ID of the server the project belongs to.
-	Project int `pulumi:"project"`
+	ProjectID int `pulumi:"projectID"`
 	// Server region slug.
 	Region string `pulumi:"region"`
 	// Whether the server is a spot instance.
 	Spot *bool `pulumi:"spot"`
 	// Server SSH key IDs. Updating requires re-installation.
-	SshKeys []int `pulumi:"sshKeys"`
+	SshKeyIDs []int `pulumi:"sshKeyIDs"`
 	// Server tags.
 	Tags map[string]string `pulumi:"tags"`
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -144,29 +140,27 @@ type ServerArgs struct {
 	// Whether BGP is enabled for the server.
 	Bgp pulumi.BoolPtrInput
 	// Server elastic block storage ID.
-	BlockStorage pulumi.IntPtrInput
+	BlockStorageID pulumi.IntPtrInput
 	// Server billing cycle.
 	Cycle pulumi.StringPtrInput
 	// Server discount code.
 	DiscountCode pulumi.StringPtrInput
 	// IDs of extra IP addresses assigned to the server.
-	ExtraIPs pulumi.StringArrayInput
+	ExtraIPIDs pulumi.StringArrayInput
 	// Server hostname.
 	Hostname pulumi.StringPtrInput
 	// Server image slug. Updating requires re-installation.
 	Image pulumi.StringPtrInput
-	// Server OS partition size. Updating requires re-installation.
-	OsPartitionSize pulumi.IntPtrInput
 	// Server plan slug.
 	Plan pulumi.StringInput
 	// ID of the server the project belongs to.
-	Project pulumi.IntInput
+	ProjectID pulumi.IntInput
 	// Server region slug.
 	Region pulumi.StringInput
 	// Whether the server is a spot instance.
 	Spot pulumi.BoolPtrInput
 	// Server SSH key IDs. Updating requires re-installation.
-	SshKeys pulumi.IntArrayInput
+	SshKeyIDs pulumi.IntArrayInput
 	// Server tags.
 	Tags pulumi.StringMapInput
 	// Server user data. Bash or cloud-config script. Updating requires re-installation.
@@ -271,8 +265,8 @@ func (o ServerOutput) Bgp() pulumi.BoolPtrOutput {
 }
 
 // Server elastic block storage ID.
-func (o ServerOutput) BlockStorage() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.BlockStorage }).(pulumi.IntPtrOutput)
+func (o ServerOutput) BlockStorageID() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.BlockStorageID }).(pulumi.IntPtrOutput)
 }
 
 // Server billing cycle.
@@ -286,8 +280,8 @@ func (o ServerOutput) DiscountCode() pulumi.StringPtrOutput {
 }
 
 // IDs of extra IP addresses assigned to the server.
-func (o ServerOutput) ExtraIPs() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v *Server) pulumi.StringArrayOutput { return v.ExtraIPs }).(pulumi.StringArrayOutput)
+func (o ServerOutput) ExtraIPIDs() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *Server) pulumi.StringArrayOutput { return v.ExtraIPIDs }).(pulumi.StringArrayOutput)
 }
 
 // Server hostname.
@@ -305,11 +299,6 @@ func (o ServerOutput) Ips() ServerIPStateArrayOutput {
 	return o.ApplyT(func(v *Server) ServerIPStateArrayOutput { return v.Ips }).(ServerIPStateArrayOutput)
 }
 
-// Server OS partition size. Updating requires re-installation.
-func (o ServerOutput) OsPartitionSize() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntPtrOutput { return v.OsPartitionSize }).(pulumi.IntPtrOutput)
-}
-
 // Server plan slug.
 func (o ServerOutput) Plan() pulumi.StringOutput {
 	return o.ApplyT(func(v *Server) pulumi.StringOutput { return v.Plan }).(pulumi.StringOutput)
@@ -321,8 +310,8 @@ func (o ServerOutput) Pricing() ServerPricingStateOutput {
 }
 
 // ID of the server the project belongs to.
-func (o ServerOutput) Project() pulumi.IntOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntOutput { return v.Project }).(pulumi.IntOutput)
+func (o ServerOutput) ProjectID() pulumi.IntOutput {
+	return o.ApplyT(func(v *Server) pulumi.IntOutput { return v.ProjectID }).(pulumi.IntOutput)
 }
 
 // Server region slug.
@@ -336,8 +325,8 @@ func (o ServerOutput) Spot() pulumi.BoolPtrOutput {
 }
 
 // Server SSH key IDs. Updating requires re-installation.
-func (o ServerOutput) SshKeys() pulumi.IntArrayOutput {
-	return o.ApplyT(func(v *Server) pulumi.IntArrayOutput { return v.SshKeys }).(pulumi.IntArrayOutput)
+func (o ServerOutput) SshKeyIDs() pulumi.IntArrayOutput {
+	return o.ApplyT(func(v *Server) pulumi.IntArrayOutput { return v.SshKeyIDs }).(pulumi.IntArrayOutput)
 }
 
 // Server tags.

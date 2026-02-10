@@ -47,56 +47,57 @@ func (s *Server) Annotate(a infer.Annotator) {
 }
 
 type ServerArgs struct {
-	Plan            string            `pulumi:"plan"`
-	Project         int               `pulumi:"project"`
-	Region          string            `pulumi:"region"`
-	Hostname        string            `pulumi:"hostname,optional"`
-	Image           string            `pulumi:"image,optional"`
-	SSHKeys         []int             `pulumi:"sshKeys,optional"`
-	ExtraIPs        []string          `pulumi:"extraIPs,optional"`
-	UserData        string            `pulumi:"userData,optional"`
-	Tags            map[string]string `pulumi:"tags,optional"`
-	Spot            bool              `pulumi:"spot,optional"`
-	OSPartitionSize *int              `pulumi:"osPartitionSize,optional"`
-	Cycle           string            `pulumi:"cycle,optional"`
-	DiscountCode    string            `pulumi:"discountCode,optional"`
-	BlockStorage    int               `pulumi:"blockStorage,optional"`
-	BGP             bool              `pulumi:"bgp,optional"`
-	AllowReinstall  bool              `pulumi:"allowReinstall,optional"`
+	Plan           string            `pulumi:"plan"`
+	ProjectID      int               `pulumi:"projectID"`
+	Region         string            `pulumi:"region"`
+	Hostname       string            `pulumi:"hostname,optional"`
+	Image          string            `pulumi:"image,optional"`
+	SSHKeyIDs      []int             `pulumi:"sshKeyIDs,optional"`
+	ExtraIPIDs     []string          `pulumi:"extraIPIDs,optional"`
+	UserData       string            `pulumi:"userData,optional"`
+	Tags           map[string]string `pulumi:"tags,optional"`
+	Spot           bool              `pulumi:"spot,optional"`
+	Cycle          string            `pulumi:"cycle,optional"`
+	DiscountCode   string            `pulumi:"discountCode,optional"`
+	BlockStorageID int               `pulumi:"blockStorageID,optional"`
+	BGP            bool              `pulumi:"bgp,optional"`
+	AllowReinstall bool              `pulumi:"allowReinstall,optional"`
 }
 
 func (s *ServerArgs) Annotate(a infer.Annotator) {
 	a.Describe(&s.Plan, "Server plan slug.")
-	a.Describe(&s.Project, "ID of the server the project belongs to.")
+	a.Describe(&s.ProjectID, "ID of the server the project belongs to.")
 	a.Describe(&s.Region, "Server region slug.")
 	a.Describe(&s.Hostname, "Server hostname.")
 	a.Describe(&s.Image, "Server image slug. Updating requires re-installation.")
-	a.Describe(&s.SSHKeys, "Server SSH key IDs. Updating requires re-installation.")
-	a.Describe(&s.ExtraIPs, "IDs of extra IP addresses assigned to the server.")
+	a.Describe(&s.SSHKeyIDs, "Server SSH key IDs. Updating requires re-installation.")
+	a.Describe(&s.ExtraIPIDs, "IDs of extra IP addresses assigned to the server.")
 	a.Describe(&s.UserData, "Server user data. Bash or cloud-config script. Updating requires re-installation.")
 	a.Describe(&s.Tags, "Server tags.")
 	a.Describe(&s.Spot, "Whether the server is a spot instance.")
-	a.Describe(&s.OSPartitionSize, "Server OS partition size. Updating requires re-installation.")
 	a.Describe(&s.Cycle, "Server billing cycle.")
 	a.Describe(&s.DiscountCode, "Server discount code.")
-	a.Describe(&s.BlockStorage, "Server elastic block storage ID.")
+	a.Describe(&s.BlockStorageID, "Server elastic block storage ID.")
 	a.Describe(&s.BGP, "Whether BGP is enabled for the server.")
 	a.Describe(&s.AllowReinstall, "Whether re-installation is permitted for this server.")
 }
 
-// ensureSorted ensures sortable arguments are sorted.
-func (s *ServerArgs) ensureSorted() {
-	slices.Sort(s.SSHKeys)
-	slices.Sort(s.ExtraIPs)
+func (s *ServerArgs) canonicalize() {
+	slices.Sort(s.SSHKeyIDs)
+	slices.Sort(s.ExtraIPIDs)
+
+	// Cherry Servers API silently converts hostnames to lowercase, so convert here, to
+	// avoid state drift.
+	s.Hostname = strings.ToLower(s.Hostname)
 }
 
 // replacementInducing returns the input fields that cause resource replacement.
 func (s *ServerArgs) replacementInducing(f infer.FieldSelector) []infer.InputField {
 	return []infer.InputField{
 		f.InputField(&s.Plan),
-		f.InputField(&s.Project),
+		f.InputField(&s.ProjectID),
 		f.InputField(&s.Region),
-		f.InputField(&s.ExtraIPs),
+		f.InputField(&s.ExtraIPIDs),
 		f.InputField(&s.Spot),
 		f.InputField(&s.Cycle),
 		f.InputField(&s.DiscountCode),
@@ -120,6 +121,20 @@ type ServerState struct {
 
 	IPs     []ServerIPState    `pulumi:"ips"`
 	Pricing ServerPricingState `pulumi:"pricing"`
+}
+
+func (s *ServerState) canonicalize() {
+	slices.Sort(s.SSHKeyIDs)
+	slices.Sort(s.ExtraIPIDs)
+	slices.SortFunc(s.IPs, func(a ServerIPState, b ServerIPState) int {
+		if a.ID < b.ID {
+			return -1
+		}
+		if a.ID > b.ID {
+			return 1
+		}
+		return 0
+	})
 }
 
 func (s *ServerState) Annotate(a infer.Annotator) {
@@ -156,28 +171,24 @@ func (s *Server) Create(ctx context.Context, req infer.CreateRequest[ServerArgs]
 		return infer.CreateResponse[ServerState]{}, err
 	}
 
-	sshKeyIDs := make([]string, len(req.Inputs.SSHKeys))
-	for i, v := range req.Inputs.SSHKeys {
+	sshKeyIDs := make([]string, len(req.Inputs.SSHKeyIDs))
+	for i, v := range req.Inputs.SSHKeyIDs {
 		sshKeyIDs[i] = strconv.Itoa(v)
 	}
 
 	creationReq := cherrygo.CreateServer{
-		ProjectID:    req.Inputs.Project,
+		ProjectID:    req.Inputs.ProjectID,
 		Plan:         req.Inputs.Plan,
 		Hostname:     req.Inputs.Hostname,
 		Region:       req.Inputs.Region,
 		SSHKeys:      sshKeyIDs,
-		IPAddresses:  req.Inputs.ExtraIPs,
+		IPAddresses:  req.Inputs.ExtraIPIDs,
 		UserData:     base64.StdEncoding.EncodeToString([]byte(req.Inputs.UserData)),
 		Tags:         &req.Inputs.Tags,
 		SpotInstance: req.Inputs.Spot,
 		Cycle:        req.Inputs.Cycle,
 		DiscountCode: req.Inputs.DiscountCode,
 		Image:        req.Inputs.Image,
-	}
-
-	if req.Inputs.OSPartitionSize != nil {
-		creationReq.OSPartitionSize = *req.Inputs.OSPartitionSize
 	}
 
 	server, _, err := client.Create(&creationReq)
@@ -255,12 +266,12 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 		args.Tags = make(map[string]string)
 	}
 
-	if args.ExtraIPs == nil {
-		args.ExtraIPs = make([]string, 0)
+	if args.ExtraIPIDs == nil {
+		args.ExtraIPIDs = make([]string, 0)
 	}
 
-	if args.SSHKeys == nil {
-		args.SSHKeys = make([]int, 0)
+	if args.SSHKeyIDs == nil {
+		args.SSHKeyIDs = make([]int, 0)
 	}
 
 	args.Image, err = s.checkImage(ctx, args.Image, args.Plan, req.OldInputs.Get("image"))
@@ -273,9 +284,8 @@ func (s *Server) Check(ctx context.Context, req infer.CheckRequest) (
 
 	args.Hostname, err = autoname(args.Hostname, req.Name, req.OldInputs.Get("hostname"))
 
-	// Cherry Servers API silently converts hostnames to lowercase, so convert here, to
-	// avoid state drift.
-	args.Hostname = strings.ToLower(args.Hostname)
+	args.canonicalize()
+
 	return infer.CheckResponse[ServerArgs]{
 		Inputs:   args,
 		Failures: failures,
@@ -301,8 +311,6 @@ func (s *Server) Update(
 			},
 		}, nil
 	}
-
-	req.Inputs.ensureSorted()
 
 	client, err := s.GetClient(ctx)
 	if err != nil {
@@ -346,16 +354,15 @@ func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerAr
 		return ServerState{}, fmt.Errorf("server ID %q not parsable to int: %w", req.ID, err)
 	}
 
-	sshKeyIDs := make([]string, len(req.Inputs.SSHKeys))
-	for i, v := range req.Inputs.SSHKeys {
+	sshKeyIDs := make([]string, len(req.Inputs.SSHKeyIDs))
+	for i, v := range req.Inputs.SSHKeyIDs {
 		sshKeyIDs[i] = strconv.Itoa(v)
 	}
 
 	server, _, err := client.Reinstall(id, &cherrygo.ReinstallServerFields{
-		Image:           req.Inputs.Image,
-		SSHKeys:         sshKeyIDs,
-		UserData:        req.Inputs.UserData,
-		OSPartitionSize: *req.Inputs.OSPartitionSize,
+		Image:    req.Inputs.Image,
+		SSHKeys:  sshKeyIDs,
+		UserData: req.Inputs.UserData,
 	})
 
 	if err != nil {
@@ -373,9 +380,8 @@ func (s *Server) reinstall(ctx context.Context, req infer.UpdateRequest[ServerAr
 func reinstallNeeded(inputs, state ServerArgs) bool {
 	// Reinstall fields: Image, SSHKeys, UserData, OSPartitionSize.
 	if inputs.Image != state.Image ||
-		!slices.Equal(inputs.SSHKeys, state.SSHKeys) ||
-		inputs.UserData != state.UserData ||
-		inputs.OSPartitionSize != state.OSPartitionSize {
+		!slices.Equal(inputs.SSHKeyIDs, state.SSHKeyIDs) ||
+		inputs.UserData != state.UserData {
 		return true
 	}
 	return false
@@ -419,15 +425,13 @@ func (s *Server) Diff(
 	_ context.Context, req infer.DiffRequest[ServerArgs, ServerState]) (
 	infer.DiffResponse, error) {
 	diff := map[string]prov.PropertyDiff{}
-	req.Inputs.ensureSorted()
-	req.State.ServerArgs.ensureSorted()
 
 	if req.Inputs.Plan != req.State.Plan {
 		diff["plan"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.Project != req.State.Project {
-		diff["project"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
+	if req.Inputs.ProjectID != req.State.ProjectID {
+		diff["projectID"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
 	if req.Inputs.Region != req.State.Region {
@@ -442,12 +446,12 @@ func (s *Server) Diff(
 		diff["image"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if !slices.Equal(req.Inputs.SSHKeys, req.State.SSHKeys) {
-		diff["sshKeys"] = prov.PropertyDiff{Kind: prov.Update}
+	if !slices.Equal(req.Inputs.SSHKeyIDs, req.State.SSHKeyIDs) {
+		diff["sshKeyIDs"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
-	if !slices.Equal(req.Inputs.ExtraIPs, req.State.ExtraIPs) {
-		diff["extraIPs"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
+	if !slices.Equal(req.Inputs.ExtraIPIDs, req.State.ExtraIPIDs) {
+		diff["extraIPIDs"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
 	if req.Inputs.UserData != req.State.UserData {
@@ -462,11 +466,6 @@ func (s *Server) Diff(
 		diff["spot"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.OSPartitionSize != req.State.OSPartitionSize &&
-		req.Inputs.OSPartitionSize != nil {
-		diff["osPartitionSize"] = prov.PropertyDiff{Kind: prov.Update}
-	}
-
 	if req.Inputs.Cycle != req.State.Cycle {
 		diff["cycle"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
@@ -475,8 +474,8 @@ func (s *Server) Diff(
 		diff["discountCode"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
-	if req.Inputs.BlockStorage != req.State.BlockStorage {
-		diff["blockStorage"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
+	if req.Inputs.BlockStorageID != req.State.BlockStorageID {
+		diff["blockStorageID"] = prov.PropertyDiff{Kind: prov.UpdateReplace}
 	}
 
 	if req.Inputs.BGP != req.State.BGP {
@@ -521,8 +520,6 @@ func (s *Server) Read(
 }
 
 func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState {
-	inputs.ensureSorted()
-
 	sshKeyIDs := make([]int, len(s.SSHKeys))
 	for i, v := range s.SSHKeys {
 		sshKeyIDs[i] = v.ID
@@ -537,34 +534,37 @@ func serverStateFromClientResp(s cherrygo.Server, inputs ServerArgs) ServerState
 		}
 	}
 
+	args := ServerArgs{
+		Plan:       s.Plan.Slug,
+		ProjectID:  s.Project.ID,
+		Region:     s.Region.Slug,
+		Hostname:   s.Hostname,
+		SSHKeyIDs:  sshKeyIDs,
+		ExtraIPIDs: inputs.ExtraIPIDs,
+		UserData:   inputs.UserData,
+		Tags:       s.Tags,
+		Spot:       s.SpotInstance,
+		// Don't use 'cycle' from the response, because it doesn't
+		// use the same form (it's capitalized).
+		Cycle:          inputs.Cycle,
+		DiscountCode:   inputs.DiscountCode,
+		BGP:            s.BGP.Enabled,
+		AllowReinstall: inputs.AllowReinstall,
+		BlockStorageID: s.Storage.ID,
+		Image:          s.DeployedImage.Slug,
+	}
+
 	state := ServerState{
-		ServerArgs: ServerArgs{
-			Plan:            s.Plan.Slug,
-			Project:         s.Project.ID,
-			Region:          s.Region.Slug,
-			Hostname:        s.Hostname,
-			SSHKeys:         sshKeyIDs,
-			ExtraIPs:        inputs.ExtraIPs,
-			UserData:        inputs.UserData,
-			Tags:            s.Tags,
-			Spot:            s.SpotInstance,
-			OSPartitionSize: inputs.OSPartitionSize,
-			// Don't use 'cycle' from the response, because it doesn't
-			// use the same form (it's capitalized).
-			Cycle:          inputs.Cycle,
-			DiscountCode:   inputs.DiscountCode,
-			BGP:            s.BGP.Enabled,
-			AllowReinstall: inputs.AllowReinstall,
-			BlockStorage:   s.Storage.ID,
-			Image:          s.DeployedImage.Slug,
-		},
-		IPs: ips,
+		ServerArgs: args,
+		IPs:        ips,
 		Pricing: ServerPricingState{
 			Price:    float64(s.Pricing.UnitPrice),
 			Currency: s.Pricing.Currency,
 			Unit:     s.Pricing.Unit,
 		},
 	}
+
+	state.canonicalize()
 
 	return state
 }
@@ -579,19 +579,18 @@ func (s *Server) WireDependencies(
 		f.InputField(&args.Cycle),
 	)
 	f.OutputField(&state.Plan).DependsOn(f.InputField(&args.Plan))
-	f.OutputField(&state.Project).DependsOn(f.InputField(&args.Project))
+	f.OutputField(&state.ProjectID).DependsOn(f.InputField(&args.ProjectID))
 	f.OutputField(&state.Region).DependsOn(f.InputField(&args.Region))
 	f.OutputField(&state.Hostname).DependsOn(f.InputField(&args.Hostname))
 	f.OutputField(&state.Image).DependsOn(f.InputField(&args.Image))
-	f.OutputField(&state.SSHKeys).DependsOn(f.InputField(&args.SSHKeys))
-	f.OutputField(&state.ExtraIPs).DependsOn(f.InputField(&args.ExtraIPs))
+	f.OutputField(&state.SSHKeyIDs).DependsOn(f.InputField(&args.SSHKeyIDs))
+	f.OutputField(&state.ExtraIPIDs).DependsOn(f.InputField(&args.ExtraIPIDs))
 	f.OutputField(&state.UserData).DependsOn(f.InputField(&args.UserData))
 	f.OutputField(&state.Tags).DependsOn(f.InputField(&args.Tags))
 	f.OutputField(&state.Spot).DependsOn(f.InputField(&args.Spot))
-	f.OutputField(&state.OSPartitionSize).DependsOn(f.InputField(&args.OSPartitionSize))
 	f.OutputField(&state.Cycle).DependsOn(f.InputField(&args.Cycle))
 	f.OutputField(&state.DiscountCode).DependsOn(f.InputField(&args.DiscountCode))
-	f.OutputField(&state.BlockStorage).DependsOn(f.InputField(&args.BlockStorage))
+	f.OutputField(&state.BlockStorageID).DependsOn(f.InputField(&args.BlockStorageID))
 	f.OutputField(&state.BGP).DependsOn(f.InputField(&args.BGP))
 	f.OutputField(&state.AllowReinstall).DependsOn(f.InputField(&args.AllowReinstall))
 }

@@ -57,15 +57,15 @@ public class Server extends com.pulumi.resources.CustomResource {
      * Server elastic block storage ID.
      * 
      */
-    @Export(name="blockStorage", refs={Integer.class}, tree="[0]")
-    private Output</* @Nullable */ Integer> blockStorage;
+    @Export(name="blockStorageID", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> blockStorageID;
 
     /**
      * @return Server elastic block storage ID.
      * 
      */
-    public Output<Optional<Integer>> blockStorage() {
-        return Codegen.optional(this.blockStorage);
+    public Output<Optional<Integer>> blockStorageID() {
+        return Codegen.optional(this.blockStorageID);
     }
     /**
      * Server billing cycle.
@@ -99,15 +99,15 @@ public class Server extends com.pulumi.resources.CustomResource {
      * IDs of extra IP addresses assigned to the server.
      * 
      */
-    @Export(name="extraIPs", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> extraIPs;
+    @Export(name="extraIPIDs", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> extraIPIDs;
 
     /**
      * @return IDs of extra IP addresses assigned to the server.
      * 
      */
-    public Output<Optional<List<String>>> extraIPs() {
-        return Codegen.optional(this.extraIPs);
+    public Output<Optional<List<String>>> extraIPIDs() {
+        return Codegen.optional(this.extraIPIDs);
     }
     /**
      * Server hostname.
@@ -152,20 +152,6 @@ public class Server extends com.pulumi.resources.CustomResource {
         return this.ips;
     }
     /**
-     * Server OS partition size. Updating requires re-installation.
-     * 
-     */
-    @Export(name="osPartitionSize", refs={Integer.class}, tree="[0]")
-    private Output</* @Nullable */ Integer> osPartitionSize;
-
-    /**
-     * @return Server OS partition size. Updating requires re-installation.
-     * 
-     */
-    public Output<Optional<Integer>> osPartitionSize() {
-        return Codegen.optional(this.osPartitionSize);
-    }
-    /**
      * Server plan slug.
      * 
      */
@@ -197,15 +183,15 @@ public class Server extends com.pulumi.resources.CustomResource {
      * ID of the server the project belongs to.
      * 
      */
-    @Export(name="project", refs={Integer.class}, tree="[0]")
-    private Output<Integer> project;
+    @Export(name="projectID", refs={Integer.class}, tree="[0]")
+    private Output<Integer> projectID;
 
     /**
      * @return ID of the server the project belongs to.
      * 
      */
-    public Output<Integer> project() {
-        return this.project;
+    public Output<Integer> projectID() {
+        return this.projectID;
     }
     /**
      * Server region slug.
@@ -239,15 +225,15 @@ public class Server extends com.pulumi.resources.CustomResource {
      * Server SSH key IDs. Updating requires re-installation.
      * 
      */
-    @Export(name="sshKeys", refs={List.class,Integer.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<Integer>> sshKeys;
+    @Export(name="sshKeyIDs", refs={List.class,Integer.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<Integer>> sshKeyIDs;
 
     /**
      * @return Server SSH key IDs. Updating requires re-installation.
      * 
      */
-    public Output<Optional<List<Integer>>> sshKeys() {
-        return Codegen.optional(this.sshKeys);
+    public Output<Optional<List<Integer>>> sshKeyIDs() {
+        return Codegen.optional(this.sshKeyIDs);
     }
     /**
      * Server tags.
