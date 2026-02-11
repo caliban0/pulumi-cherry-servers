@@ -18,7 +18,11 @@ import (
 )
 
 type ServerClient interface {
-	cherrygo.ServersService
+	Create(*cherrygo.CreateServer) (cherrygo.Server, *cherrygo.Response, error)
+	Update(int, *cherrygo.UpdateServer) (cherrygo.Server, *cherrygo.Response, error)
+	Get(int, *cherrygo.GetOptions) (cherrygo.Server, *cherrygo.Response, error)
+	Delete(int) (cherrygo.Server, *cherrygo.Response, error)
+	Reinstall(int, *cherrygo.ReinstallServerFields) (cherrygo.Server, *cherrygo.Response, error)
 }
 
 type ServerClientFactory func(ctx context.Context) (ServerClient, error)

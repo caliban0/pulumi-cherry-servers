@@ -1,7 +1,5 @@
 package provider_test
 
-// Unit tests for stuff that's tricky to cover with integration/lifecycle tests.
-
 import (
 	"context"
 	"errors"
