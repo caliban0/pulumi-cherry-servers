@@ -48,7 +48,8 @@ func (p *ProjectState) Annotate(a infer.Annotator) {
 	a.Describe(&p.Name, "Project name.")
 	a.Describe(&p.Team, "ID of the team the project belongs to.")
 	a.Describe(&p.BGP, "Whether BGP is enabled for the project.")
-	a.Describe(&p.LocalASN, "LocalASN assigned to the project.")
+	a.Describe(&p.LocalASN, "LocalASN assigned to the project."+
+		" To get an ASN, the project must have at least one server.")
 }
 
 var (
