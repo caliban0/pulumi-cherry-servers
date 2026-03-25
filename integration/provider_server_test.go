@@ -8,7 +8,7 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 )
 
-func newServer(t *testing.T) integration.Server {
+func newProviderServer(t *testing.T) integration.Server {
 	t.Helper()
 
 	prov, err := provider.Provider()

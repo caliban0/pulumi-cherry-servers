@@ -29,7 +29,7 @@ func teamFromEnv(t *testing.T) int {
 }
 
 func TestProjectLifecycleWithOnlyRequiredArgs(t *testing.T) {
-	server := newServer(t)
+	server := newProviderServer(t)
 
 	team := teamFromEnv(t)
 
@@ -49,7 +49,7 @@ func TestProjectLifecycleWithOnlyRequiredArgs(t *testing.T) {
 }
 
 func TestProjectLifecycleWithOptionalArgs(t *testing.T) {
-	server := newServer(t)
+	server := newProviderServer(t)
 
 	const name = "pulumi-test-project-optionals"
 	team := teamFromEnv(t)

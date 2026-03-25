@@ -35,17 +35,17 @@ export class Project extends pulumi.CustomResource {
     }
 
     /**
-     * Whether BGP should be enabled for the project.
+     * Whether BGP is enabled for the project.
      */
     declare public readonly bgp: pulumi.Output<boolean | undefined>;
     /**
      * LocalASN assigned to the project.
      */
-    declare public /*out*/ readonly localASN: pulumi.Output<number | undefined>;
+    declare public /*out*/ readonly localASN: pulumi.Output<number>;
     /**
      * Project name.
      */
-    declare public readonly name: pulumi.Output<string | undefined>;
+    declare public readonly name: pulumi.Output<string>;
     /**
      * ID of the team the project belongs to.
      */
@@ -62,6 +62,9 @@ export class Project extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
+            if (args?.name === undefined && !opts.urn) {
+                throw new Error("Missing required property 'name'");
+            }
             if (args?.team === undefined && !opts.urn) {
                 throw new Error("Missing required property 'team'");
             }
@@ -91,7 +94,7 @@ export interface ProjectArgs {
     /**
      * Project name.
      */
-    name?: pulumi.Input<string>;
+    name: pulumi.Input<string>;
     /**
      * ID of the team the project belongs to.
      */

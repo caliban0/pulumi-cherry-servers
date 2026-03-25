@@ -27,7 +27,7 @@ func (p *Project) Annotate(a infer.Annotator) {
 }
 
 type ProjectArgs struct {
-	Name string `pulumi:"name,optional"`
+	Name string `pulumi:"name"`
 	Team int    `pulumi:"team"`
 	BGP  bool   `pulumi:"bgp,optional"`
 }
@@ -41,11 +41,13 @@ func (p *ProjectArgs) Annotate(a infer.Annotator) {
 type ProjectState struct {
 	ProjectArgs
 
-	LocalASN int `pulumi:"localASN,optional"`
+	LocalASN int `pulumi:"localASN"`
 }
 
 func (p *ProjectState) Annotate(a infer.Annotator) {
-	p.ProjectArgs.Annotate(a)
+	a.Describe(&p.Name, "Project name.")
+	a.Describe(&p.Team, "ID of the team the project belongs to.")
+	a.Describe(&p.BGP, "Whether BGP is enabled for the project.")
 	a.Describe(&p.LocalASN, "LocalASN assigned to the project.")
 }
 
@@ -104,7 +106,7 @@ func (p *Project) Delete(ctx context.Context, req infer.DeleteRequest[ProjectSta
 
 	r, err := client.Delete(id)
 	if err != nil && r.StatusCode == http.StatusNotFound {
-		p.GetLogger(ctx).Warningf("project %s already deleted", req.ID)
+		p.GetLogger(ctx).Warningf("project %d already deleted", id)
 		err = nil
 	}
 	return infer.DeleteResponse{}, err
@@ -120,7 +122,7 @@ func (p *Project) Check(ctx context.Context, req infer.CheckRequest) (
 		}, err
 	}
 
-	args.Name, err = autoname(args.Name, req.Name, req.OldInputs.Get("name"))
+	// args.Name, err = autoname(args.Name, req.Name, req.OldInputs.Get("name"))
 	return infer.CheckResponse[ProjectArgs]{
 		Inputs:   args,
 		Failures: failures,
@@ -131,10 +133,11 @@ func (p *Project) Update(
 	ctx context.Context, req infer.UpdateRequest[ProjectArgs, ProjectState]) (
 	infer.UpdateResponse[ProjectState], error) {
 	if req.DryRun {
+		state := req.State
+		state.BGP = req.Inputs.BGP
+		state.Name = req.Inputs.Name
 		return infer.UpdateResponse[ProjectState]{
-			Output: ProjectState{
-				ProjectArgs: req.Inputs,
-			},
+			Output: state,
 		}, nil
 	}
 
@@ -169,6 +172,7 @@ func (p *Project) Diff(
 
 	if req.Inputs.BGP != req.State.BGP {
 		diff["bgp"] = prov.PropertyDiff{Kind: prov.Update}
+		diff["localASN"] = prov.PropertyDiff{Kind: prov.Update}
 	}
 
 	if req.Inputs.Team != req.State.Team {
@@ -197,15 +201,15 @@ func (p *Project) Read(
 
 	project, r, err := client.Get(id, nil)
 	if err != nil && r.StatusCode == http.StatusNotFound {
-		p.GetLogger(ctx).Warningf("project %s not found", req.ID)
+		p.GetLogger(ctx).Warningf("project %d not found", id)
 		return infer.ReadResponse[ProjectArgs, ProjectState]{}, nil
 	}
 
 	return infer.ReadResponse[ProjectArgs, ProjectState]{
-		ID:     req.ID,
+		ID:     strconv.Itoa(project.ID),
 		Inputs: req.Inputs,
 		State:  projectStateFromClientResp(project, req.Inputs.Team),
-	}, err
+	}, nil
 }
 
 func projectStateFromClientResp(p cherrygo.Project, teamID int) ProjectState {
@@ -222,4 +226,7 @@ func projectStateFromClientResp(p cherrygo.Project, teamID int) ProjectState {
 func (*Project) WireDependencies(
 	f infer.FieldSelector, args *ProjectArgs, state *ProjectState) {
 	f.OutputField(&state.LocalASN).DependsOn(f.InputField(&args.BGP))
+	f.OutputField(&state.Name).DependsOn(f.InputField(&args.Name))
+	f.OutputField(&state.Team).DependsOn(f.InputField(&args.Team))
+	f.OutputField(&state.BGP).DependsOn(f.InputField(&args.BGP))
 }

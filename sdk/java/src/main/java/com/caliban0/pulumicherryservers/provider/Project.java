@@ -22,14 +22,14 @@ import javax.annotation.Nullable;
 @ResourceType(type="pulumi-cherry-servers:provider:Project")
 public class Project extends com.pulumi.resources.CustomResource {
     /**
-     * Whether BGP should be enabled for the project.
+     * Whether BGP is enabled for the project.
      * 
      */
     @Export(name="bgp", refs={Boolean.class}, tree="[0]")
     private Output</* @Nullable */ Boolean> bgp;
 
     /**
-     * @return Whether BGP should be enabled for the project.
+     * @return Whether BGP is enabled for the project.
      * 
      */
     public Output<Optional<Boolean>> bgp() {
@@ -40,28 +40,28 @@ public class Project extends com.pulumi.resources.CustomResource {
      * 
      */
     @Export(name="localASN", refs={Integer.class}, tree="[0]")
-    private Output</* @Nullable */ Integer> localASN;
+    private Output<Integer> localASN;
 
     /**
      * @return LocalASN assigned to the project.
      * 
      */
-    public Output<Optional<Integer>> localASN() {
-        return Codegen.optional(this.localASN);
+    public Output<Integer> localASN() {
+        return this.localASN;
     }
     /**
      * Project name.
      * 
      */
     @Export(name="name", refs={String.class}, tree="[0]")
-    private Output</* @Nullable */ String> name;
+    private Output<String> name;
 
     /**
      * @return Project name.
      * 
      */
-    public Output<Optional<String>> name() {
-        return Codegen.optional(this.name);
+    public Output<String> name() {
+        return this.name;
     }
     /**
      * ID of the team the project belongs to.

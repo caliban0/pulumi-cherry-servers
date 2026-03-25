@@ -16,12 +16,12 @@ import (
 type Project struct {
 	pulumi.CustomResourceState
 
-	// Whether BGP should be enabled for the project.
+	// Whether BGP is enabled for the project.
 	Bgp pulumi.BoolPtrOutput `pulumi:"bgp"`
 	// LocalASN assigned to the project.
-	LocalASN pulumi.IntPtrOutput `pulumi:"localASN"`
+	LocalASN pulumi.IntOutput `pulumi:"localASN"`
 	// Project name.
-	Name pulumi.StringPtrOutput `pulumi:"name"`
+	Name pulumi.StringOutput `pulumi:"name"`
 	// ID of the team the project belongs to.
 	Team pulumi.IntOutput `pulumi:"team"`
 }
@@ -33,6 +33,9 @@ func NewProject(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
+	if args.Name == nil {
+		return nil, errors.New("invalid value for required argument 'Name'")
+	}
 	if args.Team == nil {
 		return nil, errors.New("invalid value for required argument 'Team'")
 	}
@@ -72,7 +75,7 @@ type projectArgs struct {
 	// Whether BGP should be enabled for the project.
 	Bgp *bool `pulumi:"bgp"`
 	// Project name.
-	Name *string `pulumi:"name"`
+	Name string `pulumi:"name"`
 	// ID of the team the project belongs to.
 	Team int `pulumi:"team"`
 }
@@ -82,7 +85,7 @@ type ProjectArgs struct {
 	// Whether BGP should be enabled for the project.
 	Bgp pulumi.BoolPtrInput
 	// Project name.
-	Name pulumi.StringPtrInput
+	Name pulumi.StringInput
 	// ID of the team the project belongs to.
 	Team pulumi.IntInput
 }
@@ -174,19 +177,19 @@ func (o ProjectOutput) ToProjectOutputWithContext(ctx context.Context) ProjectOu
 	return o
 }
 
-// Whether BGP should be enabled for the project.
+// Whether BGP is enabled for the project.
 func (o ProjectOutput) Bgp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *Project) pulumi.BoolPtrOutput { return v.Bgp }).(pulumi.BoolPtrOutput)
 }
 
 // LocalASN assigned to the project.
-func (o ProjectOutput) LocalASN() pulumi.IntPtrOutput {
-	return o.ApplyT(func(v *Project) pulumi.IntPtrOutput { return v.LocalASN }).(pulumi.IntPtrOutput)
+func (o ProjectOutput) LocalASN() pulumi.IntOutput {
+	return o.ApplyT(func(v *Project) pulumi.IntOutput { return v.LocalASN }).(pulumi.IntOutput)
 }
 
 // Project name.
-func (o ProjectOutput) Name() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Project) pulumi.StringPtrOutput { return v.Name }).(pulumi.StringPtrOutput)
+func (o ProjectOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v *Project) pulumi.StringOutput { return v.Name }).(pulumi.StringOutput)
 }
 
 // ID of the team the project belongs to.

@@ -17,7 +17,7 @@ namespace Caliban0.PulumiCherryServers.Provider
     public partial class Project : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// Whether BGP should be enabled for the project.
+        /// Whether BGP is enabled for the project.
         /// </summary>
         [Output("bgp")]
         public Output<bool?> Bgp { get; private set; } = null!;
@@ -26,13 +26,13 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// LocalASN assigned to the project.
         /// </summary>
         [Output("localASN")]
-        public Output<int?> LocalASN { get; private set; } = null!;
+        public Output<int> LocalASN { get; private set; } = null!;
 
         /// <summary>
         /// Project name.
         /// </summary>
         [Output("name")]
-        public Output<string?> Name { get; private set; } = null!;
+        public Output<string> Name { get; private set; } = null!;
 
         /// <summary>
         /// ID of the team the project belongs to.
@@ -94,8 +94,8 @@ namespace Caliban0.PulumiCherryServers.Provider
         /// <summary>
         /// Project name.
         /// </summary>
-        [Input("name")]
-        public Input<string>? Name { get; set; }
+        [Input("name", required: true)]
+        public Input<string> Name { get; set; } = null!;
 
         /// <summary>
         /// ID of the team the project belongs to.
