@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/cherryservers/cherrygo/v3"
@@ -31,10 +30,6 @@ var _ infer.Annotated = (*Config)(nil)
 func getProjectClient(ctx context.Context) (ProjectClient, error) {
 	cfg := infer.GetConfig[Config](ctx)
 
-	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
-		cfg.Token = token
-	}
-
 	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
 	if err != nil {
 		return nil, err
@@ -45,10 +40,6 @@ func getProjectClient(ctx context.Context) (ProjectClient, error) {
 
 func getServerClient(ctx context.Context) (ServerClient, error) {
 	cfg := infer.GetConfig[Config](ctx)
-
-	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
-		cfg.Token = token
-	}
 
 	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
 	if err != nil {
@@ -63,10 +54,6 @@ func newGetImagesClientFunc() func(ctx context.Context) (ImageClient, error) {
 	return func(ctx context.Context) (ImageClient, error) {
 		cfg := infer.GetConfig[Config](ctx)
 
-		if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
-			cfg.Token = token
-		}
-
 		client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
 		if err != nil {
 			return nil, err
@@ -77,10 +64,6 @@ func newGetImagesClientFunc() func(ctx context.Context) (ImageClient, error) {
 }
 
 func getIPClient(cfg Config) (IPClient, error) {
-	if token, ok := os.LookupEnv("CHERRY_AUTH_TOKEN"); ok {
-		cfg.Token = token
-	}
-
 	client, err := cherrygo.NewClient(cherrygo.WithAuthToken(cfg.Token))
 	if err != nil {
 		return nil, err
