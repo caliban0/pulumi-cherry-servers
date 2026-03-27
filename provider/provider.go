@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/caliban0/pulumi-cherry-servers/provider/poll"
 	"github.com/cherryservers/cherrygo/v3"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
@@ -81,10 +82,15 @@ func deploymentContext(ctx context.Context) (context.Context, context.CancelFunc
 }
 
 func Provider() (p.Provider, error) {
-	const pollInterval = time.Second * 10
-	durationFunc, err := DurationWithJitter(pollInterval)
+	const (
+		pollIntervalBase = 5 * time.Second
+		pollMinJitter    = time.Second
+		pollMaxJitter    = 5 * time.Second
+	)
+	pollInterval, err := poll.FixedIntervalFunc(
+		pollMinJitter, pollMaxJitter, pollIntervalBase)
 	if err != nil {
-		return p.Provider{}, fmt.Errorf("failed to create polling interval duration: %w", err)
+		return p.Provider{}, fmt.Errorf("failed to create poll interval func: %w", err)
 	}
 
 	return infer.NewProviderBuilder().
@@ -92,11 +98,11 @@ func Provider() (p.Provider, error) {
 			infer.Resource(&Project{GetClient: getProjectClient, GetLogger: GetLogger}),
 			infer.Resource(&IP{getIPClient}),
 			infer.Resource(&Server{
-				GetClient:              getServerClient,
-				GetImageClient:         newGetImagesClientFunc(),
-				GetLogger:              GetLogger,
-				DeploymentContext:      deploymentContext,
-				DeploymentPollInterval: durationFunc,
+				GetClient:         getServerClient,
+				GetImageClient:    newGetImagesClientFunc(),
+				GetLogger:         GetLogger,
+				DeploymentContext: deploymentContext,
+				pollTicker:        poll.Ticker(pollInterval),
 			}),
 		).
 		WithDisplayName(Name).

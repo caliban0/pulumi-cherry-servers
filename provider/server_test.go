@@ -93,3 +93,11 @@ func TestCreatePreview(t *testing.T) {
 
 	assertServerPreview(t, input, resp, err)
 }
+
+// Cases we care about:
+// 1. No more API calls after context is cancelled, graceful exit.
+// 2. API calls happen when poll ticker channel sends.
+func TestServerDeployment(t *testing.T) {
+
+}
+

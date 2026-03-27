@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cherryservers/cherrygo/v3"
 	prov "github.com/pulumi/pulumi-go-provider"
@@ -40,10 +41,10 @@ type Server struct {
 	// DeploymentContext builds the context for server deployment polling.
 	DeploymentContext func(context.Context) (context.Context, context.CancelFunc)
 
-	DeploymentPollInterval DurationFunc
-
 	GetLogger      GetLoggerFunc
 	GetImageClient ImageClientFactory
+
+	pollTicker func() <-chan time.Time
 }
 
 func (s *Server) Annotate(a infer.Annotator) {
@@ -606,12 +607,22 @@ func (s *Server) untilDeployed(
 	ctx, cancel := s.DeploymentContext(ctx)
 	defer cancel()
 
-	var err error
-	err = Until(ctx, NewTickSource(s.DeploymentPollInterval), func() (bool, error) {
-		server, _, err = client.Get(server.ID, nil)
-		return server.Status == "deployed", err
-	})
-	return server, err
+	ticker := s.pollTicker()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return cherrygo.Server{}, ctx.Err()
+		case <-ticker:
+			server, _, err := client.Get(server.ID, nil)
+			if err != nil {
+				return cherrygo.Server{}, err
+			}
+			if server.Status == "deployed" {
+				return server, nil
+			}
+		}
+	}
 }
 
 func (s *Server) defaultImage(ctx context.Context, plan string) (string, error) {

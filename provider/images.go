@@ -60,6 +60,7 @@ func (m *SingleFlightMemoizer[V]) Memoize(fn func(string) (V, error)) func(strin
 	}
 }
 
+// NewSingleFlightMemoizer creates a memoizer that caches V type values.
 func NewSingleFlightMemoizer[V any]() SingleFlightMemoizer[V] {
 	return SingleFlightMemoizer[V]{
 		cache: make(map[string]V),
